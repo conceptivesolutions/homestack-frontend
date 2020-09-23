@@ -1,60 +1,86 @@
-import React from 'react'
-import Graph from 'vis-react';
+import React from 'react';
 import './LayoutComponent.css'
+import {LayoutGraph} from "./LayoutGraph";
+import {getAllDevices, getDeviceByID, updateDevice} from '../../rest/DeviceClient';
 
 /**
  * Component that will render the netplan chart as a network diagram
  */
 export class LayoutComponent extends React.Component
 {
+
+  state = {
+    devices: [],
+  }
+
+  componentDidMount()
+  {
+    // Load all devices into state
+    getAllDevices().then((data) =>
+    {
+      this.setState({
+        devices: data
+      })
+    })
+  }
+
   render()
   {
-    var graph = {
-        nodes: [
-            {
-              id: 1,
-              label: 'Node 1',
-              x: 100,
-              y: 150
-            },
-            {
-              id: 2,
-              label: 'Node 2',
-              x: 100,
-              y: 100
-            }
-        ],
-        edges: [
-            { from: 1, to: 2 }
-        ]
-    };
-
-    var options = {
-        layout: {
-            hierarchical: false
-        },
-        edges: {
-            color: '#000000'
-        },
-        physics: {
-            enabled: false
-        },
-        interaction: { hoverEdges: true }
-    };
-
-    var events = {
-        dragEnd: function(event) {
-          console.log(this.vis)
+    let {devices} = this.state;
+    let nodes = devices
+      .map(({id, address, location}) =>
+      {
+        return {
+          id,
+          label: address,
+          x: location.x,
+          y: location.y
         }
-    };
+      })
 
-    return <div className="layoutGraph">
-      <Graph
-        graph={graph}
-        options={options}
-        events={events}
-        vis={vis => (this.vis = vis)}
-      />
-    </div>;
+    let edges = devices
+      .flatMap(({id, edges}) =>
+      {
+        if (edges === undefined)
+          return [];
+
+        return edges
+          .map(({deviceID}) =>
+          {
+            return {
+              from: id,
+              to: deviceID
+            }
+          })
+      })
+
+    return (<LayoutGraph nodes={nodes} edges={edges} onMove={this._nodesMoved}/>)
   }
+
+  /**
+   * This method gets called, if the positions of nodes
+   * have been moved and should be updated on remote
+   *
+   * @param pPositions Object with {nodeID: {x: 99, y: 99}}
+   * @private
+   */
+  _nodesMoved(pPositions)
+  {
+    Object.keys(pPositions)
+      .forEach(pNodeID =>
+      {
+        getDeviceByID(pNodeID).then(pDevice =>
+        {
+          if (pDevice !== undefined)
+          {
+            pDevice.location = pPositions[pNodeID];
+            pDevice.metrics = null;
+
+            // noinspection JSIgnoredPromiseFromCall
+            updateDevice(pDevice)
+          }
+        })
+      })
+  }
+
 }
