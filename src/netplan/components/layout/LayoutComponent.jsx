@@ -28,13 +28,16 @@ export class LayoutComponent extends React.Component
   {
     let {devices} = this.state;
     let nodes = devices
-      .map(({id, address, location}) =>
+      .map((device) =>
       {
         return {
-          id,
-          label: address,
-          x: location.x,
-          y: location.y
+          id: device.id,
+          label: device.address,
+          x: device.location.x,
+          y: device.location.y,
+          color: {
+            background: this._getStateColor(device)
+          },
         }
       })
 
@@ -81,6 +84,37 @@ export class LayoutComponent extends React.Component
           }
         })
       })
+  }
+
+  /**
+   * Returns the color for a given device state
+   *
+   * @param pDevice device to check
+   * @returns {string} color als hex string
+   * @private
+   */
+  _getStateColor(pDevice)
+  {
+    if (pDevice.metrics === undefined)
+      return "#737373";
+
+    let failed = [];
+    let success = [];
+
+    pDevice.metrics.forEach(pMetric =>
+    {
+      if (pMetric.state === "SUCCESS")
+        success.push(pMetric);
+      else
+        failed.push(pMetric);
+    })
+
+    if (failed.length > 0 && success.length === 0)
+      return "#dd0404";
+    else if (failed.length > 0 && success.length > 0)
+      return "#fffb03";
+    else
+      return "#4bbf04"
   }
 
 }
