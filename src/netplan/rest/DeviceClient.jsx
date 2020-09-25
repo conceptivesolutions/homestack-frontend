@@ -5,7 +5,7 @@
  */
 export function getAllDevices()
 {
-  return fetch('/devices')
+  return fetch('/api/devices')
     .then(res => res.json())
     .catch(console.log);
 }
@@ -18,7 +18,7 @@ export function getAllDevices()
  */
 export function getDeviceByID(pID)
 {
-  return fetch('/devices/' + pID)
+  return fetch('/api/devices/' + pID)
     .then(res => res.json())
     .catch(console.log);
 }
@@ -31,7 +31,7 @@ export function getDeviceByID(pID)
  */
 export function updateDevice(pDevice)
 {
-  return fetch('/devices/' + pDevice.id, {
+  return fetch('/api/devices/' + pDevice.id, {
     method: 'PATCH',
     body: JSON.stringify(pDevice),
     headers: {
