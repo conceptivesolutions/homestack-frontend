@@ -1,12 +1,12 @@
 import React from 'react';
-import './LayoutComponent.css'
-import {LayoutGraph} from "./LayoutGraph";
+import './NetworkComponent.css'
+import {NetworkGraph} from "./NetworkGraph";
 import {getAllDevices, getDeviceByID, updateDevice} from '../../rest/DeviceClient';
 
 /**
  * Component that will render the netplan chart as a network diagram
  */
-export class LayoutComponent extends React.Component
+export class NetworkComponent extends React.Component
 {
 
   state = {
@@ -57,7 +57,7 @@ export class LayoutComponent extends React.Component
           })
       })
 
-    return (<LayoutGraph nodes={nodes} edges={edges} onMove={this._nodesMoved}/>)
+    return (<NetworkGraph nodes={nodes} edges={edges} onMove={this._nodesMoved}/>)
   }
 
   /**

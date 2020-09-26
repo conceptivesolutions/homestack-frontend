@@ -8,7 +8,7 @@ import {DataSet, Network} from "vis-network/standalone/esm/vis-network";
  * @param edges All edges
  * @param onMove Function that consumes the ID and location of the moved node
  */
-export const LayoutGraph = ({nodes, edges, onMove}) =>
+export const NetworkGraph = ({nodes, edges, onMove}) =>
 {
   // A reference to the div rendered by this component
   const domNode = useRef(null);
