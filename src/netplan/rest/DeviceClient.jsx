@@ -6,8 +6,7 @@
 export function getAllDevices()
 {
   return fetch('/api/devices')
-    .then(res => res.json())
-    .catch(console.log);
+    .then(res => res.json());
 }
 
 /**
@@ -19,8 +18,7 @@ export function getAllDevices()
 export function getDeviceByID(pID)
 {
   return fetch('/api/devices/' + pID)
-    .then(res => res.json())
-    .catch(console.log);
+    .then(res => res.json());
 }
 
 /**
@@ -38,6 +36,5 @@ export function updateDevice(pDevice)
       "Content-Type": "application/json; charset=UTF-8"
     }
   })
-    .then(response => response.json())
-    .catch(console.log);
+    .then(response => response.json());
 }
