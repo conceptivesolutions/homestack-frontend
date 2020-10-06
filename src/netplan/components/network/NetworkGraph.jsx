@@ -10,10 +10,7 @@ import {DataSet, Network} from "vis-network/standalone/esm/vis-network";
  */
 export const NetworkGraph = ({nodes, edges, onMove}) =>
 {
-  // A reference to the div rendered by this component
   const domNode = useRef(null);
-
-  // A reference to the vis network instance
   const network = useRef(null);
 
   const data = {
@@ -38,6 +35,13 @@ export const NetworkGraph = ({nodes, edges, onMove}) =>
     }
   };
 
+  const grid = {
+    spacing: 10,
+    countBoldLines: 5,
+    color: '#eeeeee',
+    boldColor: '#d0d0d0'
+  }
+
   useEffect(() =>
   {
     // noinspection JSValidateTypes
@@ -50,7 +54,51 @@ export const NetworkGraph = ({nodes, edges, onMove}) =>
         // noinspection JSUnresolvedFunction
         onMove(network.current.getPositions(ctx.nodes));
     });
-  }, [domNode, network, data, options, onMove]);
+
+    // noinspection JSUnresolvedFunction
+    network.current.on("beforeDrawing", function (ctx)
+    {
+      const size = grid.spacing; // space between the lines
+      const boldLine = grid.countBoldLines; // number to declare, which n-th line should be "bold"
+      const normalColor = grid.color;
+      const boldColor = grid.boldColor;
+
+      let scale = network.current.getScale();
+      let {x, y} = network.current.getViewPosition();
+      let width = ctx.canvas.width / scale;
+      let height = ctx.canvas.height / scale;
+      let gridSteps = 1;
+
+      let minGridX = Math.floor((x - (width / 2)) / size);
+      let minGridY = Math.floor((y - (height / 2)) / size);
+      let gridCountX = Math.ceil(width / size) + 1;
+      let gridCountY = Math.ceil(height / size) + 1;
+
+      // draw columns
+      for (let currGridCountX = minGridX % 2; currGridCountX < gridCountX; currGridCountX += gridSteps)
+      {
+        let lineX = (minGridX + currGridCountX) * size;
+        let lineY = minGridY * size;
+        ctx.beginPath();
+        ctx.moveTo(lineX, lineY);
+        ctx.lineTo(lineX, lineY + (gridCountY * size));
+        ctx.strokeStyle = (minGridX + currGridCountX) % (boldLine * gridSteps) === 0 ? boldColor : normalColor;
+        ctx.stroke();
+      }
+
+      // draw rows
+      for (let currGridCountY = minGridY % 2; currGridCountY < gridCountY; currGridCountY += gridSteps)
+      {
+        let lineX = minGridX * size;
+        let lineY = (minGridY + currGridCountY) * size;
+        ctx.beginPath();
+        ctx.moveTo(lineX, lineY);
+        ctx.lineTo(lineX + (gridCountX * size), lineY);
+        ctx.strokeStyle = (minGridY + currGridCountY) % (boldLine * gridSteps) === 0 ? boldColor : normalColor;
+        ctx.stroke();
+      }
+    });
+  }, [domNode, network, data, options, grid, onMove]);
 
   return (
     <div className="layoutGraph" ref={domNode}/>
