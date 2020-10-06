@@ -33,10 +33,20 @@ export class NetworkComponent extends React.Component
         return {
           id: device.id,
           label: device.address,
-          x: device.location.x,
-          y: device.location.y,
-          color: {
-            background: this._getStateColor(device)
+          x: device.location === undefined ? 0 : device.location.x,
+          y: device.location === undefined ? 0 : device.location.y,
+          shape: 'icon',
+          icon: {
+            face: '"Font Awesome 5 Free"',
+            code: '\uf6ff',
+            size: 30,
+            color: this._getStateColor(device)
+          },
+          shadow: {
+            enabled: true,
+            x: 2,
+            y: 2,
+            size: 5,
           },
         }
       })
@@ -52,7 +62,9 @@ export class NetworkComponent extends React.Component
           {
             return {
               from: id,
-              to: deviceID
+              to: deviceID,
+              dashes: true,
+              color: "#a0a0a0",
             }
           })
       })
