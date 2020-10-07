@@ -1,0 +1,73 @@
+@import "css/_variables.scss";
+
+$nav-background: white;
+$nav-selection-indicator-color: $primary-color;
+$nav-selection-indicator-width: 5px;
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  background-color: $nav-background;
+
+  .nav-row {
+    padding: 15px 20px 15px 20px - $nav-selection-indicator-width;
+    display: flex;
+    flex-direction: row;
+    border-left: $nav-selection-indicator-width solid transparent;
+
+    .nav-icon {
+      padding-right: 20px;
+      width: 16px;
+      height: 16px;
+    }
+
+    .nav-title {
+      flex-grow: 1;
+    }
+
+    .nav-arrow {
+      font-size: 12px;
+      align-self: center;
+    }
+
+    &:hover {
+      background-color: darken($nav-background, 3%);
+    }
+  }
+
+  .nav-row__selected {
+    border-left: $nav-selection-indicator-width solid $nav-selection-indicator-color;
+    background-color: darken($nav-background, 15%);
+
+    &:hover {
+      background-color: darken($nav-background, 15%);
+    }
+  }
+
+  .nav-content {
+    display: none;
+  }
+
+  // Inside another NavigationItem
+  .nav-content__active {
+    display: block;
+
+    .nav-row {
+      background-color: darken($nav-background, 6%);
+
+      &:hover {
+        background-color: darken($nav-background, 9%);
+      }
+    }
+
+    .nav-row__selected {
+      border-left: $nav-selection-indicator-width solid $nav-selection-indicator-color;
+      background-color: darken($nav-background, 15%);
+
+      &:hover {
+        background-color: darken($nav-background, 15%);
+      }
+    }
+  }
+}

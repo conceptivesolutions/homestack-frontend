@@ -1,22 +1,30 @@
-import React from "react";
-import {MDBIcon, MDBSideNav, MDBSideNavItem} from "mdbreact";
+import React, {useState} from "react";
+import './NavigationComponent.scss'
+import NavigationItem from "./NavigationItem";
 
-export class NavigationComponent extends React.Component
+/**
+ * NavigationComponent
+ *
+ * @returns {JSX.Element}
+ */
+export default () =>
 {
-
-  render()
-  {
-    return (<MDBSideNav logo="/300_dark.png" breakWidth={0} mask="strong" fixed
-                        bg="https://previews.123rf.com/images/ktsdesign/ktsdesign1704/ktsdesign170400031/76059808-3d-darstellung-geprägtes-netz-das-internetverbindungen-cloud-computing-und-neuronales-netzwerk-darstel.jpg">
-
-      <MDBSideNavItem className="border-bottom-1"><MDBIcon icon="user" className="mr-2"/>Login</MDBSideNavItem>
-      {/*<MDBSideNavNav>*/}
-      {/*  <MDBSideNavCat name="Submit blog" id="submit-blog-cat" icon="chevron-right">*/}
-      {/*    <MDBSideNavItem>Submit listing</MDBSideNavItem>*/}
-      {/*    <MDBSideNavItem>Registration form</MDBSideNavItem>*/}
-      {/*  </MDBSideNavCat>*/}
-      {/*</MDBSideNavNav>*/}
-    </MDBSideNav>)
-  }
-
+  const [openItems, setOpenItems] = useState([])
+  const [selection, setSelection] = useState("")
+  const fOnClick = (name) => () => setOpenItems(openItems.includes(name) ? openItems.filter(pI => pI !== name) : [...openItems, name])
+  return (
+    <div className={"nav-container"}>
+      <img className={"logo"} src={"300.png"} alt={"logo"}/>
+      <NavigationItem iconName={"desktop"} title={"Hosts"} open={openItems.includes("hosts")} onClick={fOnClick("hosts")}>
+        <NavigationItem title={"Server 172.16.16.1"} selected={selection === "dummy1"} onClick={() => setSelection("dummy1")}/>
+        <NavigationItem title={"Server home.lan"} selected={selection === "dummy2"} onClick={() => setSelection("dummy2")}/>
+        <NavigationItem title={"Server 192.168.128.129"} selected={selection === "dummy3"} onClick={() => setSelection("dummy3")}/>
+      </NavigationItem>
+      <NavigationItem iconName={"cogs"} title={"Settings"} selected={selection === "settings"} onClick={() => setSelection("settings")}/>
+      <NavigationItem iconName={"question-circle"} title={"Help"} open={openItems.includes("help")} onClick={fOnClick("help")}/>
+      <NavigationItem iconName={"user"} title={"Account"} open={openItems.includes("account")} onClick={fOnClick("account")}>
+        <NavigationItem title={"Logout"}/>
+      </NavigationItem>
+    </div>
+  );
 }
