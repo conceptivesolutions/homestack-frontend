@@ -1,4 +1,9 @@
 .layoutGraph {
   width: 100%;
   height: 100%;
+  flex: 5;
+
+  :focus {
+    outline: none;
+  }
 }

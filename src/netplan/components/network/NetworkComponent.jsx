@@ -1,5 +1,5 @@
 import React from 'react';
-import './NetworkComponent.css'
+import './NetworkComponent.scss'
 import {NetworkGraph} from "./NetworkGraph";
 import {getAllDevices, getDeviceByID, updateDevice} from '../../rest/DeviceClient';
 
