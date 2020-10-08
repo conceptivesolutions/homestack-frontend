@@ -46,6 +46,28 @@ export default () =>
   }
 
   /**
+   * This method gets called, if nodes were double clicked
+   *
+   * @param pNodes Nodes that were double clicked. Mostly a single node.
+   * @private
+   */
+  const _nodesDoubleClicked = (pNodes) =>
+  {
+    if (pNodes.size > 1)
+      return;
+
+    getDeviceByID(pNodes[0])
+      .then(pDevice =>
+      {
+        showDialog({
+          primaryKey: "Save",
+          title: "Node",
+          children: <pre>{JSON.stringify(pDevice, null, " ")}</pre>
+        })
+      })
+  }
+
+  /**
    * Returns the color for a given device state
    *
    * @param pDevice device to check
@@ -122,7 +144,8 @@ export default () =>
   return (
     <NetworkGraph nodes={devices.map(deviceToNode)}
                   edges={devices.flatMap(deviceToEdge)}
-                  onMove={_nodesMoved}/>
+                  onMove={_nodesMoved}
+                  onDoubleClick={_nodesDoubleClicked}/>
   );
 }
 
