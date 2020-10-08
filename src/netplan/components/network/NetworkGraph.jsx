@@ -7,8 +7,9 @@ import {DataSet, Network} from "vis-network/standalone/esm/vis-network";
  * @param nodes All nodes
  * @param edges All edges
  * @param onMove Function that consumes the ID and location of the moved node
+ * @param onDoubleClick Function that consumes the ID of the double clicked node
  */
-export const NetworkGraph = ({nodes, edges, onMove}) =>
+export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick}) =>
 {
   const domNode = useRef(null);
   const network = useRef(null);
@@ -56,6 +57,13 @@ export const NetworkGraph = ({nodes, edges, onMove}) =>
     });
 
     // noinspection JSUnresolvedFunction
+    network.current.on("doubleClick", function (ctx)
+    {
+      if (ctx.nodes !== undefined && ctx.nodes.length > 0)
+        onDoubleClick(ctx.nodes);
+    })
+
+    // noinspection JSUnresolvedFunction
     network.current.on("beforeDrawing", function (ctx)
     {
       const size = grid.spacing; // space between the lines
@@ -98,7 +106,7 @@ export const NetworkGraph = ({nodes, edges, onMove}) =>
         ctx.stroke();
       }
     });
-  }, [domNode, network, data, options, grid, onMove]);
+  }, [domNode, network, data, options, grid, onMove, onDoubleClick]);
 
   return (
     <div className="layoutGraph" ref={domNode}/>
