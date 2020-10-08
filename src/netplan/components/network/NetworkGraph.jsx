@@ -1,5 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import {DataSet, Network} from "vis-network/standalone/esm/vis-network";
+import "./NetworkGraph.scss"
 
 /**
  * Simple Node that contains the graph by vis.js
@@ -109,6 +110,6 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick}) =>
   }, [domNode, network, data, options, grid, onMove, onDoubleClick]);
 
   return (
-    <div className="layoutGraph" ref={domNode}/>
+    <div className="network-graph" ref={domNode}/>
   );
 }

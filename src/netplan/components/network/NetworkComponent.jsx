@@ -142,10 +142,12 @@ export default () =>
   };
 
   return (
-    <NetworkGraph nodes={devices.map(deviceToNode)}
-                  edges={devices.flatMap(deviceToEdge)}
-                  onMove={_nodesMoved}
-                  onDoubleClick={_nodesDoubleClicked}/>
+    <div className={"graph-container"}>
+      <NetworkGraph nodes={devices.map(deviceToNode)}
+                    edges={devices.flatMap(deviceToEdge)}
+                    onMove={_nodesMoved}
+                    onDoubleClick={_nodesDoubleClicked}/>
+    </div>
   );
 }
 
