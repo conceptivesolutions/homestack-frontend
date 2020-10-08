@@ -22,6 +22,9 @@
   border-radius: $border-radius;
   padding: 10px;
   min-width: 200px;
+  max-height: 50%;
+  display: flex;
+  flex-direction: column;
 
   -webkit-box-shadow: $primary-shadow;
   -moz-box-shadow: $primary-shadow;
@@ -38,6 +41,7 @@
   .dialog-titlebar {
     display: flex;
     flex-direction: row;
+    flex-shrink: 0;
 
     .dialog-title {
       flex-grow: 1;
@@ -54,11 +58,12 @@
   }
 
   .dialog-content {
-    background: red;
+    overflow: auto;
   }
 
   .dialog-buttons {
     display: flex;
     flex-direction: row-reverse;
+    flex-shrink: 0;
   }
 }
