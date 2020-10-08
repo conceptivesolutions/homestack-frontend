@@ -1,0 +1,64 @@
+@import "css/_variables.scss";
+
+.dialog-container {
+  z-index: 6000;
+  background: rgba(0, 0, 0, .5);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.dialog-frame {
+  background: white;
+  border-radius: $border-radius;
+  padding: 10px;
+  min-width: 200px;
+
+  -webkit-box-shadow: $primary-shadow;
+  -moz-box-shadow: $primary-shadow;
+  box-shadow: $primary-shadow;
+
+  & > * {
+    margin-bottom: 10px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .dialog-titlebar {
+    display: flex;
+    flex-direction: row;
+
+    .dialog-title {
+      flex-grow: 1;
+      height: 10px;
+    }
+
+    .dialog-control {
+      font-weight: normal;
+
+      &:active {
+        font-weight: bold;
+      }
+    }
+  }
+
+  .dialog-content {
+    background: red;
+  }
+
+  .dialog-buttons {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+}

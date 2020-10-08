@@ -1,12 +1,14 @@
+@import "css/_variables.scss";
+
 .nav-container {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 200px;
 
-  -webkit-box-shadow: 5px 0 5px 0 rgba(0, 0, 0, 0.1);
-  -moz-box-shadow: 5px 0 5px 0 rgba(0, 0, 0, 0.1);
-  box-shadow: 5px 0 5px 0 rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: $primary-shadow;
+  -moz-box-shadow: $primary-shadow;
+  box-shadow: $primary-shadow;
 
   .logo {
     object-fit: contain;

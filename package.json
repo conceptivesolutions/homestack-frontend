@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@devhammed/use-global-hook": "^1.5.1",
     "@fortawesome/fontawesome-free": "^5.15.1",
     "http-proxy-middleware": "^1.0.5",
     "node-sass": "^4.14.1",
