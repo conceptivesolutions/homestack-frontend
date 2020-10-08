@@ -3,7 +3,7 @@
  *
  * @returns {Promise<Response | void>}
  */
-export function getAllDevices()
+export async function getAllDevices()
 {
   return fetch('/api/devices')
     .then(res => res.json());
@@ -15,7 +15,7 @@ export function getAllDevices()
  * @param pID ID to search for
  * @returns {Promise<Response | void>}
  */
-export function getDeviceByID(pID)
+export async function getDeviceByID(pID)
 {
   return fetch('/api/devices/' + pID)
     .then(res => res.json());
@@ -27,7 +27,7 @@ export function getDeviceByID(pID)
  * @param pDevice Device that should be updated
  * @returns {Promise<Response | void>}
  */
-export function updateDevice(pDevice)
+export async function updateDevice(pDevice)
 {
   return fetch('/api/devices/' + pDevice.id, {
     method: 'PATCH',
