@@ -1,0 +1,54 @@
+@import "css/_variables.scss";
+
+$toolbar-gap: 10px;
+
+.network-toolbar-container {
+  z-index: 100;
+  width: 100%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10px;
+
+  .network-toolbar {
+    display: flex;
+    flex-wrap: nowrap;
+    margin-left: $toolbar-gap;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    * {
+      -webkit-box-shadow: $primary-shadow;
+      -moz-box-shadow: $primary-shadow;
+      box-shadow: $primary-shadow;
+      margin: 0;
+      padding: 15px;
+      height: 100%;
+      border-radius: 0;
+      border: 1px solid $outline-color;
+      border-left: none;
+
+      &:first-child {
+        border-bottom-left-radius: $border-radius;
+        border-top-left-radius: $border-radius;
+        border-left: 1px solid $outline-color;
+      }
+
+      &:last-child {
+        border-bottom-right-radius: $border-radius;
+        border-top-right-radius: $border-radius;
+      }
+    }
+
+    span {
+      background-color: white;
+      flex-grow: 1;
+      padding-top: 16px;
+      padding-bottom: 14px;
+    }
+  }
+
+}
