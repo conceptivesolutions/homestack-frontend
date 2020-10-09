@@ -56,8 +56,10 @@ export function deviceToEdge(pDevice)
  * @param edges All edges as DataSet
  * @param onMove Function that consumes the ID and location of the moved node
  * @param onDoubleClick Function that consumes the ID of the double clicked node
+ * @param onDragStart Function that gets called, if a drag was started
+ * @param onDragEnd Function that gets called, if a drag was ended
  */
-export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick}) =>
+export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, onDragEnd}) =>
 {
   const domNode = useRef(null);
   const network = useRef(null);
@@ -97,11 +99,22 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick}) =>
     network.current = new Network(domNode.current, data, options);
 
     // noinspection JSUnresolvedFunction
+    network.current.on("dragStart", function (ctx)
+    {
+      if (ctx.nodes !== undefined && ctx.nodes.length > 0 && !!onDragStart)
+        onDragStart();
+    });
+
+    // noinspection JSUnresolvedFunction
     network.current.on("dragEnd", function (ctx)
     {
       if (ctx.nodes !== undefined && ctx.nodes.length > 0)
+      {
         // noinspection JSUnresolvedFunction
         onMove(network.current.getPositions(ctx.nodes));
+        if (!!onDragEnd)
+          onDragEnd();
+      }
     });
 
     // noinspection JSUnresolvedFunction
@@ -154,7 +167,7 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick}) =>
         ctx.stroke();
       }
     });
-  }, [domNode, network, data, options, grid, onMove, onDoubleClick]);
+  }, [domNode, network, data, options, grid, onMove, onDoubleClick, onDragStart, onDragEnd]);
 
   return (
     <div className="network-graph" ref={domNode}/>

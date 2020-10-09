@@ -95,6 +95,7 @@ function _nodesDoubleClicked(pNodes, pShowDialogFn)
 export default () =>
 {
   const {showDialog} = useGlobalHook("dialogStore");
+  const canRefresh = useRef(true);
   const nodesRef = useRef(new DataSet());
   const edgesRef = useRef(new DataSet());
 
@@ -103,9 +104,13 @@ export default () =>
    */
   function _refresh()
   {
+    // We are not able to refresh currently
+    if (!canRefresh.current)
+      return;
+
     getAllDevices().then((data) =>
     {
-      if (!data)
+      if (!data || !canRefresh.current)
         return;
 
       // noinspection JSUnresolvedFunction
@@ -122,10 +127,11 @@ export default () =>
   useEffect(() => _refresh(), [])
 
   // Create the network graph once
-  const graph = useMemo(() => <NetworkGraph nodes={nodesRef.current}
-                                            edges={edgesRef.current}
-                                            onMove={_nodesMoved}
-                                            onDoubleClick={pNodes => _nodesDoubleClicked(pNodes, showDialog)}/>, [showDialog]);
+  const graph = useMemo(() => (
+    <NetworkGraph nodes={nodesRef.current} edges={edgesRef.current}
+                  onMove={_nodesMoved} onDoubleClick={pNodes => _nodesDoubleClicked(pNodes, showDialog)}
+                  onDragStart={() => canRefresh.current = false} onDragEnd={() => canRefresh.current = true}/>
+  ), [showDialog]);
 
   return (
     <div className={"graph-container"}>
