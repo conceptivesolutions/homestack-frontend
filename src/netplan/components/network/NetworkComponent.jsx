@@ -1,8 +1,92 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 import './NetworkComponent.scss'
-import {NetworkGraph} from "./NetworkGraph";
+import {deviceToEdge, deviceToNode, NetworkGraph} from "./NetworkGraph";
 import {getAllDevices, getDeviceByID, updateDevice} from '../../rest/DeviceClient';
 import {useGlobalHook} from "@devhammed/use-global-hook";
+import ToolbarComponent from "./NetworkToolbarComponent";
+
+// noinspection ES6CheckImport
+import {DataSet} from "vis-network/standalone/esm/vis-network";
+
+/**
+ * Returns the color for a given device state
+ *
+ * @param pDevice device to check
+ * @returns {string} color als hex string
+ * @private
+ */
+function _getStateColor(pDevice)
+{
+  if (pDevice.metrics === undefined)
+    return "#737373";
+
+  let failed = [];
+  let success = [];
+
+  pDevice.metrics.forEach(pMetric =>
+  {
+    if (pMetric.state === "SUCCESS")
+      success.push(pMetric);
+    else
+      failed.push(pMetric);
+  })
+
+  if (failed.length > 0 && success.length === 0)
+    return "#dd0404";
+  else if (failed.length > 0 && success.length > 0)
+    return "#fffb03";
+  else
+    return "#4bbf04"
+}
+
+/**
+ * This method gets called, if the positions of nodes
+ * have been moved and should be updated on remote
+ *
+ * @param pPositions Object with {nodeID: {x: 99, y: 99}}
+ * @private
+ */
+function _nodesMoved(pPositions)
+{
+  Object.keys(pPositions)
+    .forEach(pNodeID =>
+    {
+      getDeviceByID(pNodeID).then(pDevice =>
+      {
+        if (pDevice !== undefined)
+        {
+          pDevice.location = pPositions[pNodeID];
+          pDevice.metrics = null;
+
+          // noinspection JSIgnoredPromiseFromCall
+          updateDevice(pDevice)
+        }
+      })
+    })
+}
+
+/**
+ * This method gets called, if nodes were double clicked
+ *
+ * @param pNodes Nodes that were double clicked. Mostly a single node.
+ * @param pShowDialogFn Function that will show a simple dialog
+ * @private
+ */
+function _nodesDoubleClicked(pNodes, pShowDialogFn)
+{
+  if (pNodes.size > 1)
+    return;
+
+  getDeviceByID(pNodes[0])
+    .then(pDevice =>
+    {
+      pShowDialogFn({
+        primaryKey: "Save",
+        title: "Node",
+        children: <pre>{JSON.stringify(pDevice, null, " ")}</pre>
+      })
+    })
+}
 
 /**
  * Component that will render the netplan chart as a network diagram
@@ -10,143 +94,43 @@ import {useGlobalHook} from "@devhammed/use-global-hook";
 export default () =>
 {
   const {showDialog} = useGlobalHook("dialogStore");
-  const [devices, setDevices] = useState([]);
-
-  // Load all devices into state
-  useEffect(() =>
-  {
-    // noinspection JSCheckFunctionSignatures
-    getAllDevices().then((data) => setDevices(data));
-  }, [])
+  const nodesRef = useRef(new DataSet());
+  const edgesRef = useRef(new DataSet());
 
   /**
-   * This method gets called, if the positions of nodes
-   * have been moved and should be updated on remote
-   *
-   * @param pPositions Object with {nodeID: {x: 99, y: 99}}
-   * @private
+   * Function to refresh the current nodes / edges
    */
-  const _nodesMoved = (pPositions) =>
+  function _refresh()
   {
-    Object.keys(pPositions)
-      .forEach(pNodeID =>
-      {
-        getDeviceByID(pNodeID).then(pDevice =>
-        {
-          if (pDevice !== undefined)
-          {
-            pDevice.location = pPositions[pNodeID];
-            pDevice.metrics = null;
-
-            // noinspection JSIgnoredPromiseFromCall
-            updateDevice(pDevice)
-          }
-        })
-      })
-  }
-
-  /**
-   * This method gets called, if nodes were double clicked
-   *
-   * @param pNodes Nodes that were double clicked. Mostly a single node.
-   * @private
-   */
-  const _nodesDoubleClicked = (pNodes) =>
-  {
-    if (pNodes.size > 1)
-      return;
-
-    getDeviceByID(pNodes[0])
-      .then(pDevice =>
-      {
-        showDialog({
-          primaryKey: "Save",
-          title: "Node",
-          children: <pre>{JSON.stringify(pDevice, null, " ")}</pre>
-        })
-      })
-  }
-
-  /**
-   * Returns the color for a given device state
-   *
-   * @param pDevice device to check
-   * @returns {string} color als hex string
-   * @private
-   */
-  const _getStateColor = (pDevice) =>
-  {
-    if (pDevice.metrics === undefined)
-      return "#737373";
-
-    let failed = [];
-    let success = [];
-
-    pDevice.metrics.forEach(pMetric =>
+    getAllDevices().then((data) =>
     {
-      if (pMetric.state === "SUCCESS")
-        success.push(pMetric);
-      else
-        failed.push(pMetric);
-    })
+      if (!data)
+        return;
 
-    if (failed.length > 0 && success.length === 0)
-      return "#dd0404";
-    else if (failed.length > 0 && success.length > 0)
-      return "#fffb03";
-    else
-      return "#4bbf04"
+      // noinspection JSUnresolvedFunction
+      data.map(pDev => deviceToNode(pDev, _getStateColor(pDev)))
+        .forEach(pNode => nodesRef.current.update(pNode))
+
+      // noinspection JSUnresolvedFunction
+      data.map(deviceToEdge)
+        .forEach(pNode => edgesRef.current.update(pNode))
+    });
   }
 
-  /**
-   * Converts a netplan device to the correct vis.js node
-   */
-  const deviceToNode = pDevice => ({
-    id: pDevice.id,
-    label: pDevice.address,
-    x: pDevice.location === undefined ? 0 : pDevice.location.x,
-    y: pDevice.location === undefined ? 0 : pDevice.location.y,
-    shape: 'icon',
-    icon: {
-      face: '"Font Awesome 5 Free"',
-      code: '\uf6ff',
-      size: 30,
-      color: _getStateColor(pDevice)
-    },
-    shadow: {
-      enabled: true,
-      x: 2,
-      y: 2,
-      size: 5,
-    },
-  });
+  // Load all devices into state on mount
+  useEffect(() => _refresh(), [])
 
-  /**
-   * Extracts vis.js edges from netplan devices
-   */
-  const deviceToEdge = ({id, edges}) =>
-  {
-    if (edges === undefined)
-      return [];
-
-    return edges
-      .map(({deviceID}) =>
-      {
-        return {
-          from: id,
-          to: deviceID,
-          dashes: true,
-          color: "#a0a0a0",
-        }
-      })
-  };
+  // Create the network graph once
+  const graph = useMemo(() => <NetworkGraph nodes={nodesRef.current}
+                                            edges={edgesRef.current}
+                                            onMove={_nodesMoved}
+                                            onDoubleClick={pNodes => _nodesDoubleClicked(pNodes, showDialog)}/>, [showDialog]);
 
   return (
     <div className={"graph-container"}>
-      <NetworkGraph nodes={devices.map(deviceToNode)}
-                    edges={devices.flatMap(deviceToEdge)}
-                    onMove={_nodesMoved}
-                    onDoubleClick={_nodesDoubleClicked}/>
+      <ToolbarComponent>
+      </ToolbarComponent>
+      {graph}
     </div>
   );
 }

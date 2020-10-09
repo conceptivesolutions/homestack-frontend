@@ -1,12 +1,59 @@
 import React, {useEffect, useRef} from 'react';
-import {DataSet, Network} from "vis-network/standalone/esm/vis-network";
+import {Network} from "vis-network/standalone/esm/vis-network";
 import "./NetworkGraph.scss"
+
+/**
+ * Converts a netplan device to the correct vis.js node
+ */
+export function deviceToNode(pDevice, pColor)
+{
+  return {
+    id: pDevice.id,
+    label: pDevice.address,
+    x: pDevice.location === undefined ? 0 : pDevice.location.x,
+    y: pDevice.location === undefined ? 0 : pDevice.location.y,
+    shape: 'icon',
+    icon: {
+      face: '"Font Awesome 5 Free"',
+      code: '\uf6ff',
+      size: 30,
+      color: pColor
+    },
+    shadow: {
+      enabled: true,
+      x: 2,
+      y: 2,
+      size: 5,
+    },
+  };
+}
+
+/**
+ * Extracts vis.js edges from netplan devices
+ */
+export function deviceToEdge(pDevice)
+{
+  const {edges, id} = pDevice;
+  if (edges === undefined)
+    return [];
+
+  return edges
+    .map(({deviceID}) =>
+    {
+      return {
+        from: id,
+        to: deviceID,
+        dashes: true,
+        color: "#a0a0a0",
+      }
+    })
+}
 
 /**
  * Simple Node that contains the graph by vis.js
  *
- * @param nodes All nodes
- * @param edges All edges
+ * @param nodes All nodes as DataSet
+ * @param edges All edges as DataSet
  * @param onMove Function that consumes the ID and location of the moved node
  * @param onDoubleClick Function that consumes the ID of the double clicked node
  */
@@ -16,8 +63,8 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick}) =>
   const network = useRef(null);
 
   const data = {
-    nodes: new DataSet(nodes),
-    edges: new DataSet(edges)
+    nodes,
+    edges
   };
 
   const options = {
@@ -62,7 +109,7 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick}) =>
     {
       if (ctx.nodes !== undefined && ctx.nodes.length > 0)
         onDoubleClick(ctx.nodes);
-    })
+    });
 
     // noinspection JSUnresolvedFunction
     network.current.on("beforeDrawing", function (ctx)
