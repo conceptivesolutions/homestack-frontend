@@ -7,6 +7,7 @@ import ToolbarComponent from "./NetworkToolbarComponent";
 
 // noinspection ES6CheckImport
 import {DataSet} from "vis-network/standalone/esm/vis-network";
+import AutoRefreshComponent from "./AutoRefreshComponent";
 
 /**
  * Returns the color for a given device state
@@ -129,6 +130,7 @@ export default () =>
   return (
     <div className={"graph-container"}>
       <ToolbarComponent>
+        <AutoRefreshComponent onTrigger={_refresh} interval={1000}/>
       </ToolbarComponent>
       {graph}
     </div>
