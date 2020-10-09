@@ -52,4 +52,8 @@ button {
             background-color: darken($primary-color, 9%);
         }
     }
+
+    &.pressed {
+        background-color: darken(white, 9%);
+    }
 }
