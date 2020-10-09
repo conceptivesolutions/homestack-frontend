@@ -8,9 +8,8 @@ import {createGlobalHook, useGlobalHook} from "@devhammed/use-global-hook";
  */
 export const dialogStore = createGlobalHook('dialogStore', () =>
 {
-  const [dialog, setDialog] = React.useState(null);
-  const showDialog = (obj) => setDialog(obj);
-  return {dialog, setDialog, showDialog}
+  const [dialog, showDialog] = React.useState(null);
+  return {dialog, showDialog}
 })
 
 /**
@@ -21,7 +20,7 @@ export const dialogStore = createGlobalHook('dialogStore', () =>
  */
 export default () =>
 {
-  const {dialog, setDialog} = useGlobalHook("dialogStore");
+  const {dialog, showDialog} = useGlobalHook("dialogStore");
 
   // No dialog to show available
   if (!dialog)
@@ -49,7 +48,7 @@ export default () =>
       onResult(pResult)
 
     // hide dialog now
-    setDialog(null)
+    showDialog(null)
   }
 
   return (
