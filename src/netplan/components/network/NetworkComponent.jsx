@@ -3,11 +3,9 @@ import './NetworkComponent.scss'
 import {deviceToEdge, deviceToNode, NetworkGraph} from "./NetworkGraph";
 import {getAllDevices, getDeviceByID, updateDevice} from '../../rest/DeviceClient';
 import {useGlobalHook} from "@devhammed/use-global-hook";
-import ToolbarComponent from "./NetworkToolbarComponent";
-
-// noinspection ES6CheckImport
 import {DataSet} from "vis-network/standalone/esm/vis-network";
-import AutoRefreshComponent from "./AutoRefreshComponent";
+import ToolbarComponent from "./toolbar/NetworkToolbarComponent";
+import AutoRefreshComponent from "./toolbar/AutoRefreshComponent";
 
 /**
  * Returns the color for a given device state
