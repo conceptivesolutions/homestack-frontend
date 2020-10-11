@@ -9,16 +9,13 @@ export function deviceToNode(pDevice, pColor)
 {
   return {
     id: pDevice.id,
-    label: pDevice.address,
     x: pDevice.location === undefined ? 0 : pDevice.location.x,
     y: pDevice.location === undefined ? 0 : pDevice.location.y,
-    shape: 'icon',
-    icon: {
-      face: '"Font Awesome 5 Free"',
-      code: '\uf6ff',
-      size: 30,
-      color: pColor
-    },
+    shape: 'custom',
+    ctxRenderer: _renderNode({
+      title: pDevice.address,
+      description: "id: " + pDevice.id
+    }, pColor, 50),
     shadow: {
       enabled: true,
       x: 2,
@@ -83,6 +80,7 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
     },
     interaction: {
       selectConnectedEdges: false,
+      multiselect: true,
     }
   };
 
@@ -172,4 +170,77 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
   return (
     <div className="network-graph" ref={domNode}/>
   );
+}
+
+/**
+ * Renders a single node on the given context
+ *
+ * @param title Title for this node
+ * @param description Description for this node
+ * @param pColor Color for the icon
+ * @param pSize Size for the icon
+ * @private
+ */
+function _renderNode({title, description}, pColor, pSize)
+{
+  return ({ctx, x, y, state: {selected}}) =>
+  {
+    // do some math here
+    // noinspection JSUnusedGlobalSymbols
+    return {
+      // bellow arrows
+      // primarily meant for nodes and the labels inside of their boundaries
+      drawNode()
+      {
+        // Font
+        ctx.font = (pSize * 0.7) + 'px "Font Awesome 5 Free"';
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+
+        // Shadow
+        ctx.shadowColor = "black";
+        ctx.shadowBlur = 5;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+
+        // Draw Icon
+        ctx.fillStyle = pColor
+        ctx.fillText("\uf6ff", x, y);
+
+        // Draw Checkbox Icon
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.textBaseline = "top";
+        ctx.textAlign = "right";
+        ctx.fillStyle = (selected ? "#007bff" : "#dedede");
+        ctx.font = '12pt "Font Awesome 5 Free"';
+        ctx.fillText(selected ? "\uf14a" : "\uf0c8", x + (pSize / 2), y - (pSize / 2))
+      },
+      // above arrows
+      // primarily meant for labels outside of the node
+      drawExternalLabel()
+      {
+        ctx.textBaseline = "top"
+        ctx.textAlign = "left"
+        ctx.font = "10pt monospace"
+
+        // Draw Title
+        const {width} = ctx.measureText(title);
+        ctx.fillText(title, x - (width / 2), y + (pSize / 2))
+
+        // Draw Description
+        if (description)
+        {
+          ctx.font = "8pt monospace"
+          ctx.fillText(description, x - (width / 2), y + (pSize / 2) + 14)
+        }
+      },
+      // node dimensions defined by node drawing
+      nodeDimensions: {
+        width: pSize,
+        height: pSize
+      },
+    }
+  }
 }
