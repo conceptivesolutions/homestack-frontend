@@ -6,6 +6,7 @@ import {useGlobalHook} from "@devhammed/use-global-hook";
 import {DataSet} from "vis-network/standalone/esm/vis-network";
 import ToolbarComponent from "./toolbar/NetworkToolbarComponent";
 import AutoRefreshComponent from "./toolbar/AutoRefreshComponent";
+import DeviceInspectionDialogContent from "./dialogs/DeviceInspectionDialogContent";
 
 /**
  * Returns the color for a given device state
@@ -50,16 +51,8 @@ function _nodesMoved(pPositions)
   Object.keys(pPositions)
     .forEach(pNodeID =>
     {
-      getDeviceByID(pNodeID).then(pDevice =>
-      {
-        if (pDevice !== undefined)
-        {
-          pDevice.location = pPositions[pNodeID];
-          pDevice.metrics = null;
-
-          // noinspection JSIgnoredPromiseFromCall
-          updateDevice(pDevice)
-        }
+      updateDevice(pNodeID, {
+        location: pPositions[pNodeID],
       })
     })
 }
@@ -69,20 +62,34 @@ function _nodesMoved(pPositions)
  *
  * @param pNodes Nodes that were double clicked. Mostly a single node.
  * @param pShowDialogFn Function that will show a simple dialog
+ * @param pRefreshFn Function that will refresh the whole network
  * @private
  */
-function _nodesDoubleClicked(pNodes, pShowDialogFn)
+function _nodesDoubleClicked(pNodes, pShowDialogFn, pRefreshFn)
 {
   if (pNodes.size > 1)
     return;
 
-  getDeviceByID(pNodes[0])
+  const id = pNodes[0];
+  getDeviceByID(id)
     .then(pDevice =>
     {
+      let changedProps = {};
+      const primaryKey = "Save";
+
+      const onResultFn = pResult =>
+      {
+        if (pResult === primaryKey)
+          updateDevice(id, changedProps)
+            .then(() => pRefreshFn())
+      }
+
+      // noinspection JSUnusedGlobalSymbols
       pShowDialogFn({
-        primaryKey: "Save",
-        title: "Node",
-        children: <pre>{JSON.stringify(pDevice, null, " ")}</pre>
+        primaryKey: primaryKey,
+        title: "Modify Node '" + id + "'",
+        children: <DeviceInspectionDialogContent onPropChange={(prop, value) => changedProps[prop] = value} device={pDevice}/>,
+        onResult: onResultFn,
       })
     })
 }
@@ -127,7 +134,7 @@ export default () =>
   // Create the network graph once
   const graph = useMemo(() => (
     <NetworkGraph nodes={nodesRef.current} edges={edgesRef.current}
-                  onMove={_nodesMoved} onDoubleClick={pNodes => _nodesDoubleClicked(pNodes, showDialog)}
+                  onMove={_nodesMoved} onDoubleClick={pNodes => _nodesDoubleClicked(pNodes, showDialog, _refresh)}
                   onDragStart={() => canRefresh.current = false} onDragEnd={() => canRefresh.current = true}/>
   ), [showDialog]);
 

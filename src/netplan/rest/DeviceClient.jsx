@@ -24,12 +24,13 @@ export async function getDeviceByID(pID)
 /**
  * Updates the given device on remote
  *
+ * @param pID ID of the device that should be updated
  * @param pDevice Device that should be updated
  * @returns {Promise<Response | void>}
  */
-export async function updateDevice(pDevice)
+export async function updateDevice(pID, pDevice)
 {
-  return fetch('/api/devices/' + pDevice.id, {
+  return fetch('/api/devices/' + pID, {
     method: 'PATCH',
     body: JSON.stringify(pDevice),
     headers: {

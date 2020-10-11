@@ -1,0 +1,16 @@
+.device-inspection-dialog-content__container {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  grid-column-gap: 10px;
+  grid-row-gap: 5px;
+  align-items: center;
+
+  * {
+    font-size: small;
+  }
+
+  .device-inspection-dialog-content__metrics {
+    line-break: anywhere;
+    font-size: x-small;
+  }
+}
