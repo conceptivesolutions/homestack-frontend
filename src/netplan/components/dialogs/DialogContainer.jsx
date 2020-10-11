@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useEffect} from 'react';
 import "./DialogContainer.scss"
 import {createGlobalHook, useGlobalHook} from "@devhammed/use-global-hook";
 
@@ -22,10 +22,6 @@ export default () =>
 {
   const {dialog, showDialog} = useGlobalHook("dialogStore");
 
-  // No dialog to show available
-  if (!dialog)
-    return <React.Fragment/>;
-
   const {
     title,
     children,
@@ -34,7 +30,7 @@ export default () =>
     cancelKey = "Cancel",
     additionalButtons,
     closeOnOutsideClick = false
-  } = dialog;
+  } = dialog || {};
 
   /**
    * Function that returns a function that executes onResult()
@@ -42,14 +38,41 @@ export default () =>
    * @param pResult result that should be fired to onResult-Consumer
    * @returns {function(): void}
    */
-  const fOnResult = (pResult) => () =>
+  const fOnResult = useCallback((pResult) => () =>
   {
     if (!!onResult)
       onResult(pResult)
 
     // hide dialog now
     showDialog(null)
-  }
+  }, [onResult, showDialog]);
+
+  /**
+   * Function that handels the onKeyDown-Event on window instance.
+   * Used for ESC and RETURN key for dialogs
+   */
+  useEffect(() =>
+  {
+    if (!dialog)
+      return;
+
+    const listener = event =>
+    {
+      // Escape-Key
+      if (event.keyCode === 27)
+        fOnResult(null)();
+
+      // STRG / META Key and ENTER
+      else if (event.keyCode === 13 && (event.metaKey || event.ctrlKey))
+        fOnResult(primaryKey)();
+    };
+    window.addEventListener("keydown", listener)
+    return () => window.removeEventListener("keydown", listener);
+  }, [dialog, primaryKey, fOnResult])
+
+  // No dialog to show available
+  if (!dialog)
+    return <React.Fragment/>;
 
   return (
     <div className={"dialog-container"} onClick={evt => closeOnOutsideClick && fOnResult(null)(evt)}>
