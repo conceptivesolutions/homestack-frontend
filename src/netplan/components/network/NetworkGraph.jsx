@@ -55,8 +55,9 @@ export function deviceToEdge(pDevice)
  * @param onDoubleClick Function that consumes the ID of the double clicked node
  * @param onDragStart Function that gets called, if a drag was started
  * @param onDragEnd Function that gets called, if a drag was ended
+ * @param onSelectionChanged Function that gets called, if the selection changed
  */
-export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, onDragEnd}) =>
+export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, onDragEnd, onSelectionChanged}) =>
 {
   const domNode = useRef(null);
   const network = useRef(null);
@@ -123,6 +124,13 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
     });
 
     // noinspection JSUnresolvedFunction
+    network.current.on("selectNode", function (ctx)
+    {
+      if (ctx.nodes !== undefined && !!onSelectionChanged)
+        onSelectionChanged(ctx.nodes)
+    })
+
+    // noinspection JSUnresolvedFunction
     network.current.on("beforeDrawing", function (ctx)
     {
       const size = grid.spacing; // space between the lines
@@ -165,7 +173,7 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
         ctx.stroke();
       }
     });
-  }, [domNode, network, data, options, grid, onMove, onDoubleClick, onDragStart, onDragEnd]);
+  }, [domNode, network, data, options, grid, onMove, onDoubleClick, onDragStart, onDragEnd, onSelectionChanged]);
 
   return (
     <div className="network-graph" ref={domNode}/>

@@ -56,4 +56,9 @@ button {
     &.pressed {
         background-color: darken(white, 9%);
     }
+
+    &.disabled {
+        background-color: darken($outline-color, 6%);
+        color: gray;
+    }
 }

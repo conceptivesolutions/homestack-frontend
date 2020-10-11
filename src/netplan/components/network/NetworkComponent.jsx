@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import './NetworkComponent.scss'
 import {deviceToEdge, deviceToNode, NetworkGraph} from "./NetworkGraph";
 import {getAllDevices, getDeviceByID, updateDevice} from '../../rest/DeviceClient';
@@ -7,6 +7,7 @@ import {DataSet} from "vis-network/standalone/esm/vis-network";
 import ToolbarComponent from "./toolbar/NetworkToolbarComponent";
 import AutoRefreshComponent from "./toolbar/AutoRefreshComponent";
 import DeviceInspectionDialogContent from "./dialogs/DeviceInspectionDialogContent";
+import AddEdgeComponent from "./toolbar/AddComponent";
 
 /**
  * Component that will render the netplan chart as a network diagram
@@ -17,6 +18,7 @@ export default () =>
   const canRefresh = useRef(true);
   const nodesRef = useRef(new DataSet());
   const edgesRef = useRef(new DataSet());
+  const [selectedNodes, setSelectedNodes] = useState([]);
 
   /**
    * Function to refresh the current nodes / edges
@@ -39,6 +41,9 @@ export default () =>
       // noinspection JSUnresolvedFunction
       data.map(deviceToEdge)
         .forEach(pNode => edgesRef.current.update(pNode))
+
+      // Clear selection, because we do not have anything selected after updating
+      setSelectedNodes([])
     });
   }
 
@@ -49,13 +54,15 @@ export default () =>
   const graph = useMemo(() => (
     <NetworkGraph nodes={nodesRef.current} edges={edgesRef.current}
                   onMove={_nodesMoved} onDoubleClick={pNodes => _nodesDoubleClicked(pNodes, showDialog, _refresh)}
+                  onSelectionChanged={pNodes => setSelectedNodes(pNodes)}
                   onDragStart={() => canRefresh.current = false} onDragEnd={() => canRefresh.current = true}/>
-  ), [showDialog]);
+  ), [showDialog, setSelectedNodes]);
 
   return (
     <div className={"graph-container"}>
       <ToolbarComponent>
         <AutoRefreshComponent onTrigger={_refresh} interval={1000}/>
+        <AddEdgeComponent enabled={selectedNodes.length === 2} onClick={() => _addEdgeBetweenNode(selectedNodes[0], selectedNodes[1], _refresh)}/>
       </ToolbarComponent>
       {graph}
     </div>
@@ -146,4 +153,18 @@ function _nodesDoubleClicked(pNodes, pShowDialogFn, pRefreshFn)
         onResult: onResultFn,
       })
     })
+}
+
+/**
+ * Adds a new edge between node1 and node2
+ *
+ * @param pNode1ID ID of the first node
+ * @param pNode2ID ID of the second node
+ * @param pRefreshFn Function that will refresh the whole network
+ * @private
+ */
+function _addEdgeBetweenNode(pNode1ID, pNode2ID, pRefreshFn)
+{
+  updateDevice(pNode1ID, {edges: [{deviceID: pNode2ID}]})
+    .then(() => pRefreshFn())
 }
