@@ -9,6 +9,60 @@ import AutoRefreshComponent from "./toolbar/AutoRefreshComponent";
 import DeviceInspectionDialogContent from "./dialogs/DeviceInspectionDialogContent";
 
 /**
+ * Component that will render the netplan chart as a network diagram
+ */
+export default () =>
+{
+  const {showDialog} = useGlobalHook("dialogStore");
+  const canRefresh = useRef(true);
+  const nodesRef = useRef(new DataSet());
+  const edgesRef = useRef(new DataSet());
+
+  /**
+   * Function to refresh the current nodes / edges
+   */
+  function _refresh()
+  {
+    // We are not able to refresh currently
+    if (!canRefresh.current)
+      return;
+
+    getAllDevices().then((data) =>
+    {
+      if (!data || !canRefresh.current)
+        return;
+
+      // noinspection JSUnresolvedFunction
+      data.map(pDev => deviceToNode(pDev, _getStateColor(pDev)))
+        .forEach(pNode => nodesRef.current.update(pNode))
+
+      // noinspection JSUnresolvedFunction
+      data.map(deviceToEdge)
+        .forEach(pNode => edgesRef.current.update(pNode))
+    });
+  }
+
+  // Load all devices into state on mount
+  useEffect(() => _refresh(), [])
+
+  // Create the network graph once
+  const graph = useMemo(() => (
+    <NetworkGraph nodes={nodesRef.current} edges={edgesRef.current}
+                  onMove={_nodesMoved} onDoubleClick={pNodes => _nodesDoubleClicked(pNodes, showDialog, _refresh)}
+                  onDragStart={() => canRefresh.current = false} onDragEnd={() => canRefresh.current = true}/>
+  ), [showDialog]);
+
+  return (
+    <div className={"graph-container"}>
+      <ToolbarComponent>
+        <AutoRefreshComponent onTrigger={_refresh} interval={1000}/>
+      </ToolbarComponent>
+      {graph}
+    </div>
+  );
+}
+
+/**
  * Returns the color for a given device state
  *
  * @param pDevice device to check
@@ -93,58 +147,3 @@ function _nodesDoubleClicked(pNodes, pShowDialogFn, pRefreshFn)
       })
     })
 }
-
-/**
- * Component that will render the netplan chart as a network diagram
- */
-export default () =>
-{
-  const {showDialog} = useGlobalHook("dialogStore");
-  const canRefresh = useRef(true);
-  const nodesRef = useRef(new DataSet());
-  const edgesRef = useRef(new DataSet());
-
-  /**
-   * Function to refresh the current nodes / edges
-   */
-  function _refresh()
-  {
-    // We are not able to refresh currently
-    if (!canRefresh.current)
-      return;
-
-    getAllDevices().then((data) =>
-    {
-      if (!data || !canRefresh.current)
-        return;
-
-      // noinspection JSUnresolvedFunction
-      data.map(pDev => deviceToNode(pDev, _getStateColor(pDev)))
-        .forEach(pNode => nodesRef.current.update(pNode))
-
-      // noinspection JSUnresolvedFunction
-      data.map(deviceToEdge)
-        .forEach(pNode => edgesRef.current.update(pNode))
-    });
-  }
-
-  // Load all devices into state on mount
-  useEffect(() => _refresh(), [])
-
-  // Create the network graph once
-  const graph = useMemo(() => (
-    <NetworkGraph nodes={nodesRef.current} edges={edgesRef.current}
-                  onMove={_nodesMoved} onDoubleClick={pNodes => _nodesDoubleClicked(pNodes, showDialog, _refresh)}
-                  onDragStart={() => canRefresh.current = false} onDragEnd={() => canRefresh.current = true}/>
-  ), [showDialog]);
-
-  return (
-    <div className={"graph-container"}>
-      <ToolbarComponent>
-        <AutoRefreshComponent onTrigger={_refresh} interval={1000}/>
-      </ToolbarComponent>
-      {graph}
-    </div>
-  );
-}
-
