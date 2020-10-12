@@ -1,9 +1,7 @@
 /**
  * Returns all devices from remote server
- *
- * @returns {Promise<Response | void>}
  */
-export async function getAllDevices()
+export async function getAllDevices(): Promise<IDevice[]>
 {
   return fetch('/api/devices')
     .then(res => res.json());
@@ -13,9 +11,8 @@ export async function getAllDevices()
  * Searches a single device with the given ID
  *
  * @param pID ID to search for
- * @returns {Promise<Response | void>}
  */
-export async function getDeviceByID(pID)
+export async function getDeviceByID(pID: string): Promise<IDevice>
 {
   return fetch('/api/devices/' + pID)
     .then(res => res.json());
@@ -26,9 +23,8 @@ export async function getDeviceByID(pID)
  *
  * @param pID ID of the device that should be updated
  * @param pDevice Device that should be updated
- * @returns {Promise<Response | void>}
  */
-export async function updateDevice(pID, pDevice)
+export async function updateDevice(pID: string, pDevice: IDevice): Promise<IDevice>
 {
   return fetch('/api/devices/' + pID, {
     method: 'PATCH',
