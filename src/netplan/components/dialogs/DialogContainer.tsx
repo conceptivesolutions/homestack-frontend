@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect} from 'react';
 import "./DialogContainer.scss"
 import {createGlobalHook, useGlobalHook} from "@devhammed/use-global-hook";
+import {IDialogStore} from "../../types/dialog";
 
 /**
  * Container for the globalHook-Framework and is necessary to open dialogs
@@ -20,7 +21,7 @@ export const dialogStore = createGlobalHook('dialogStore', () =>
  */
 export default () =>
 {
-  const {dialog, showDialog} = useGlobalHook("dialogStore");
+  const {dialog, showDialog} = useGlobalHook("dialogStore") as IDialogStore;
 
   const {
     title,
@@ -56,7 +57,7 @@ export default () =>
     if (!dialog)
       return;
 
-    const listener = event =>
+    const listener = (event: KeyboardEvent) =>
     {
       // Escape-Key
       if (event.keyCode === 27)
@@ -75,7 +76,7 @@ export default () =>
     return <React.Fragment/>;
 
   return (
-    <div className={"dialog-container"} onClick={evt => closeOnOutsideClick && fOnResult(null)(evt)}>
+    <div className={"dialog-container"} onClick={() => closeOnOutsideClick && fOnResult(null)()}>
       <div className={"dialog-frame"} onClick={evt => evt.stopPropagation()}>
         <div className={"dialog-titlebar"}>
           <div className={"dialog-title"}>{title}</div>
