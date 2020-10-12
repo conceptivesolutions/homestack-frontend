@@ -9,9 +9,9 @@ import {getMetrics} from "../../../rest/MetricsClient";
  * @param onPropChange function that gets executed, if a prop has changed
  * @returns {JSX.Element}
  */
-export default ({device, onPropChange}) =>
+export default ({device, onPropChange}: { device: IDevice, onPropChange: (propName: string, propVal: string) => void }) =>
 {
-  const [metrics, setMetrics] = useState([])
+  const [metrics, setMetrics] = useState<IMetric[]>([])
 
   useEffect(() =>
   {
