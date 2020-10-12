@@ -9,9 +9,9 @@ import NavigationItem from "./NavigationItem";
  */
 export default () =>
 {
-  const [openItems, setOpenItems] = useState([])
-  const [selection, setSelection] = useState("")
-  const fOnClick = (name) => () => setOpenItems(openItems.includes(name) ? openItems.filter(pI => pI !== name) : [...openItems, name])
+  const [openItems, setOpenItems] = useState<string[]>([])
+  const [selection, setSelection] = useState<string>("")
+  const fOnClick = (name: string) => () => setOpenItems(openItems.includes(name) ? openItems.filter(pI => pI !== name) : [...openItems, name])
   return (
     <div className={"nav-container"}>
       <img className={"logo"} src={"300.png"} alt={"logo"}/>
