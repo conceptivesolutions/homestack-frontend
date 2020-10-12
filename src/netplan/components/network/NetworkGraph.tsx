@@ -151,7 +151,6 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
     // noinspection JSUnresolvedFunction
     network.current.on("selectEdge", function ({nodes, edges})
     {
-      console.log(edges)
       if (!!onSelectionChanged)
         onSelectionChanged(nodes, edges)
     })
