@@ -1,3 +1,5 @@
+import {IEdge} from "../types/model";
+
 /**
  * Retrieves all edges for a given deviceID
  *

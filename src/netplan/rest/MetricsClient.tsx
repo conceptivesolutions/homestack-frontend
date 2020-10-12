@@ -1,3 +1,5 @@
+import {IMetric} from "../types/model";
+
 /**
  * Retrieves all metrics for the given device
  *

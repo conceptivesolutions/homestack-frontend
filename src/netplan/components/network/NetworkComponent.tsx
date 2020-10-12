@@ -10,18 +10,22 @@ import DeviceInspectionDialogContent from "./dialogs/DeviceInspectionDialogConte
 import AddComponent from "./toolbar/AddComponent";
 import {addEdgeBetween, getEdges} from "../../rest/EdgeClient";
 import {getMetrics} from "../../rest/MetricsClient";
+import {IDialogStore} from "../../types/dialog";
+import {DataSetEdges, DataSetNodes} from "vis-network/dist/types";
+import {Position} from "vis-network/declarations/network/Network";
+import {EMetricState, IMetric} from "../../types/model";
 
 /**
  * Component that will render the netplan chart as a network diagram
  */
 export default () =>
 {
-  const {showDialog} = useGlobalHook("dialogStore");
-  const canRefresh = useRef(true);
-  const nodesRef = useRef(new DataSet());
-  const edgesRef = useRef(new DataSet());
-  const [selectedNodes, setSelectedNodes] = useState([]);
-  const [selectedEdges, setSelectedEdges] = useState([]);
+  const {showDialog} = useGlobalHook("dialogStore") as IDialogStore;
+  const canRefresh = useRef<boolean>(true);
+  const nodesRef = useRef<DataSetNodes>(new DataSet());
+  const edgesRef = useRef<DataSetEdges>(new DataSet());
+  const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
+  const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
 
   /**
    * Function to refresh the current nodes / edges
@@ -38,8 +42,6 @@ export default () =>
         return;
 
       // todo on remove?!
-
-      // noinspection JSUnresolvedFunction
       data.forEach(pDevice =>
       {
         Promise.all([getMetrics(pDevice.id), getEdges(pDevice.id)]).then((values) =>
@@ -61,12 +63,12 @@ export default () =>
   const graph = useMemo(() => (
     <NetworkGraph nodes={nodesRef.current} edges={edgesRef.current}
                   onMove={_nodesMoved} onDoubleClick={pNodes => _nodesDoubleClicked(pNodes, showDialog, _refresh)}
-                  onSelectionChanged={pSelected =>
+                  onSelectionChanged={(nodes, edges) =>
                   {
-                    if (pSelected.nodes)
-                      setSelectedNodes(pSelected.nodes);
-                    if (pSelected.edges)
-                      setSelectedEdges(pSelected.edges)
+                    if (nodes)
+                      setSelectedNodes(nodes);
+                    if (edges)
+                      setSelectedEdges(edges)
                   }}
                   onDragStart={() => canRefresh.current = false} onDragEnd={() => canRefresh.current = true}/>
   ), [showDialog, setSelectedNodes]);
@@ -89,7 +91,7 @@ export default () =>
  * @returns {string} color als hex string
  * @private
  */
-function _getStateColor(pMetrics)
+function _getStateColor(pMetrics: IMetric[])
 {
   if (pMetrics === undefined)
     return "#737373";
@@ -99,7 +101,7 @@ function _getStateColor(pMetrics)
 
   pMetrics.forEach(pMetric =>
   {
-    if (pMetric.state === "SUCCESS")
+    if (pMetric.state === EMetricState.SUCCESS)
       success.push(pMetric);
     else
       failed.push(pMetric);
@@ -120,12 +122,13 @@ function _getStateColor(pMetrics)
  * @param pPositions Object with {nodeID: {x: 99, y: 99}}
  * @private
  */
-function _nodesMoved(pPositions)
+function _nodesMoved(pPositions: { [nodeID: string]: Position })
 {
   Object.keys(pPositions)
     .forEach(pNodeID =>
     {
       updateDevice(pNodeID, {
+        id: pNodeID,
         location: pPositions[pNodeID],
       })
     })
@@ -139,19 +142,19 @@ function _nodesMoved(pPositions)
  * @param pRefreshFn Function that will refresh the whole network
  * @private
  */
-function _nodesDoubleClicked(pNodes, pShowDialogFn, pRefreshFn)
+function _nodesDoubleClicked(pNodes: string[], pShowDialogFn: (dialog: any) => void, pRefreshFn: () => void)
 {
-  if (pNodes.size > 1)
+  if (pNodes.length > 1)
     return;
 
   const id = pNodes[0];
   getDeviceByID(id)
     .then(pDevice =>
     {
-      let changedProps = {};
+      let changedProps: any = {id};
       const primaryKey = "Save";
 
-      const onResultFn = pResult =>
+      const onResultFn = (pResult: string) =>
       {
         if (pResult === primaryKey)
           updateDevice(id, changedProps)
@@ -176,7 +179,7 @@ function _nodesDoubleClicked(pNodes, pShowDialogFn, pRefreshFn)
  * @param pRefreshFn Function that will refresh the whole network
  * @private
  */
-function _addEdgeBetweenNode(pNode1ID, pNode2ID, pRefreshFn)
+function _addEdgeBetweenNode(pNode1ID: string, pNode2ID: string, pRefreshFn: () => void)
 {
   addEdgeBetween(pNode1ID, pNode2ID)
     .then(() => pRefreshFn())

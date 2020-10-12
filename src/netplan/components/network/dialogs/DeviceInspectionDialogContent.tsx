@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import "./DeviceInspectionDialogContent.scss"
 import {getMetrics} from "../../../rest/MetricsClient";
+import {IDevice, IMetric} from "../../../types/model";
 
 /**
  * Dialog to edit a single device

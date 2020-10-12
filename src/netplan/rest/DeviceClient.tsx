@@ -1,3 +1,5 @@
+import {IDevice} from "../types/model";
+
 /**
  * Returns all devices from remote server
  */

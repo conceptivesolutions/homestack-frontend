@@ -1,11 +1,14 @@
 import React, {useEffect, useRef} from 'react';
 import {Network} from "vis-network/standalone/esm/vis-network";
 import "./NetworkGraph.scss"
+import {DataSetEdges, DataSetNodes, Edge, Node} from "vis-network/dist/types";
+import {Position} from "vis-network/declarations/network/Network";
+import {IDevice, IEdge} from "../../types/model";
 
 /**
  * Converts a netplan device to the correct vis.js node
  */
-export function deviceToNode(pDevice, pColor)
+export function deviceToNode(pDevice: IDevice, pColor: string): Node
 {
   return {
     id: pDevice.id.toString(),
@@ -16,20 +19,23 @@ export function deviceToNode(pDevice, pColor)
     x: pDevice.location === undefined ? 0 : pDevice.location.x,
     y: pDevice.location === undefined ? 0 : pDevice.location.y,
     shape: 'custom',
-    ctxRenderer: _renderNode(pColor, 50),
     shadow: {
+      color: "",
       enabled: true,
       x: 2,
       y: 2,
       size: 5,
     },
+
+    // @ts-ignore Enforce renderer
+    ctxRenderer: _renderNode(pColor, 50),
   };
 }
 
 /**
  * Extracts vis.js edges from netplan edge
  */
-export function edgeToEdge(pEdge)
+export function edgeToEdge(pEdge: IEdge): Edge
 {
   const {sourceID, targetID} = pEdge;
   return {
@@ -38,6 +44,17 @@ export function edgeToEdge(pEdge)
     dashes: true,
     color: "#a0a0a0",
   }
+}
+
+interface INetworkGraph
+{
+  nodes: DataSetNodes,
+  edges: DataSetEdges,
+  onMove: (positions: { [nodeID: string]: Position }) => void,
+  onDoubleClick: (nodeIDs: string[]) => void,
+  onDragStart: () => void,
+  onDragEnd: () => void,
+  onSelectionChanged: (nodes: string[], edges: string[]) => void
 }
 
 /**
@@ -51,10 +68,10 @@ export function edgeToEdge(pEdge)
  * @param onDragEnd Function that gets called, if a drag was ended
  * @param onSelectionChanged Function that gets called, if the selection changed
  */
-export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, onDragEnd, onSelectionChanged}) =>
+export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, onDragEnd, onSelectionChanged}: INetworkGraph) =>
 {
-  const domNode = useRef(null);
-  const network = useRef(null);
+  const domNode = useRef<HTMLDivElement>(null);
+  const network = useRef<Network | null>(null);
 
   const data = {
     nodes,
@@ -89,7 +106,7 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
   useEffect(() =>
   {
     // noinspection JSValidateTypes
-    network.current = new Network(domNode.current, data, options);
+    network.current = new Network(domNode.current!, data, options);
 
     // noinspection JSUnresolvedFunction
     network.current.on("dragStart", function (ctx)
@@ -104,7 +121,7 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
       if (ctx.nodes !== undefined && ctx.nodes.length > 0)
       {
         // noinspection JSUnresolvedFunction
-        onMove(network.current.getPositions(ctx.nodes));
+        onMove(network.current!.getPositions(ctx.nodes));
         if (!!onDragEnd)
           onDragEnd();
       }
@@ -121,14 +138,14 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
     network.current.on("selectNode", function ({nodes, edges})
     {
       if (!!onSelectionChanged)
-        onSelectionChanged({nodes, edges})
+        onSelectionChanged(nodes, edges)
     })
 
     // noinspection JSUnresolvedFunction
     network.current.on("deselectNode", function ({nodes, edges})
     {
       if (!!onSelectionChanged)
-        onSelectionChanged({nodes, edges})
+        onSelectionChanged(nodes, edges)
     })
 
     // noinspection JSUnresolvedFunction
@@ -136,14 +153,14 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
     {
       console.log(edges)
       if (!!onSelectionChanged)
-        onSelectionChanged({nodes, edges})
+        onSelectionChanged(nodes, edges)
     })
 
     // noinspection JSUnresolvedFunction
     network.current.on("deselectEdge", function ({nodes, edges})
     {
       if (!!onSelectionChanged)
-        onSelectionChanged({nodes, edges})
+        onSelectionChanged(nodes, edges)
     })
 
     // noinspection JSUnresolvedFunction
@@ -154,8 +171,8 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
       const normalColor = grid.color;
       const boldColor = grid.boldColor;
 
-      let scale = network.current.getScale();
-      let {x, y} = network.current.getViewPosition();
+      let scale = network.current!.getScale();
+      let {x, y} = network.current!.getViewPosition();
       let width = ctx.canvas.width / scale;
       let height = ctx.canvas.height / scale;
       let gridSteps = 1;
@@ -203,9 +220,9 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
  * @param pSize Size for the icon
  * @private
  */
-function _renderNode(pColor, pSize)
+function _renderNode(pColor: string, pSize: number)
 {
-  return ({ctx, x, y, state: {selected}, label}) =>
+  return ({ctx, x, y, state: {selected}, label}: { ctx: any, x: number, y: number, state: { selected: boolean }, label: string }) =>
   {
     // do some math here
     // noinspection JSUnusedGlobalSymbols
