@@ -8,14 +8,15 @@ import "./NetworkGraph.scss"
 export function deviceToNode(pDevice, pColor)
 {
   return {
-    id: pDevice.id,
+    id: pDevice.id.toString(),
+    label: JSON.stringify({
+      title: pDevice.address,
+      description: "id: " + pDevice.id
+    }),
     x: pDevice.location === undefined ? 0 : pDevice.location.x,
     y: pDevice.location === undefined ? 0 : pDevice.location.y,
     shape: 'custom',
-    ctxRenderer: _renderNode({
-      title: pDevice.address,
-      description: "id: " + pDevice.id
-    }, pColor, 50),
+    ctxRenderer: _renderNode(pColor, 50),
     shadow: {
       enabled: true,
       x: 2,
@@ -26,24 +27,17 @@ export function deviceToNode(pDevice, pColor)
 }
 
 /**
- * Extracts vis.js edges from netplan devices
+ * Extracts vis.js edges from netplan edge
  */
-export function deviceToEdge(pDevice)
+export function edgeToEdge(pEdge)
 {
-  const {edges, id} = pDevice;
-  if (edges === undefined)
-    return [];
-
-  return edges
-    .map(({deviceID}) =>
-    {
-      return {
-        from: id,
-        to: deviceID,
-        dashes: true,
-        color: "#a0a0a0",
-      }
-    })
+  const {sourceID, targetID} = pEdge;
+  return {
+    from: sourceID,
+    to: targetID,
+    dashes: true,
+    color: "#a0a0a0",
+  }
 }
 
 /**
@@ -183,15 +177,13 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
 /**
  * Renders a single node on the given context
  *
- * @param title Title for this node
- * @param description Description for this node
  * @param pColor Color for the icon
  * @param pSize Size for the icon
  * @private
  */
-function _renderNode({title, description}, pColor, pSize)
+function _renderNode(pColor, pSize)
 {
-  return ({ctx, x, y, state: {selected}}) =>
+  return ({ctx, x, y, state: {selected}, label}) =>
   {
     // do some math here
     // noinspection JSUnusedGlobalSymbols
@@ -234,6 +226,7 @@ function _renderNode({title, description}, pColor, pSize)
         ctx.font = "10pt monospace"
 
         // Draw Title
+        const {title, description} = JSON.parse(label);
         const {width} = ctx.measureText(title);
         ctx.fillText(title, x - (width / 2), y + (pSize / 2))
 
