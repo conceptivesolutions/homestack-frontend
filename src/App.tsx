@@ -8,10 +8,11 @@ import {GlobalHooksProvider} from "@devhammed/use-global-hook";
 export default function App()
 {
   return (
+    // @ts-ignore
     <GlobalHooksProvider hooks={[dialogStore]}>
       <NavigationComponent/>
       <NetworkComponent/>
-      <DialogContainer primaryButton={"Save"}/>
+      <DialogContainer/>
     </GlobalHooksProvider>
   );
 };
