@@ -7,7 +7,7 @@ import React from "react";
  * @param onClick executes on click
  * @returns {JSX.Element}
  */
-export default ({enabled = true, onClick}) =>
+export default ({enabled = true, onClick}: { enabled: boolean, onClick: () => void }) =>
 {
   return <button className={"fa fa-plus " + (!enabled && "disabled")} disabled={!enabled} onClick={onClick}/>
 }

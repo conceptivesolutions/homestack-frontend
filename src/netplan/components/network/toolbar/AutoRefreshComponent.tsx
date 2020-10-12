@@ -6,9 +6,8 @@ import {useTimer} from "use-timer";
  *
  * @param interval Interval to trigger "onTrigger"
  * @param onTrigger Function that gets triggered
- * @returns {JSX.Element}
  */
-export default ({interval, onTrigger}) =>
+export default ({interval, onTrigger}: { interval: number, onTrigger: () => void }) =>
 {
   const {start, pause, isRunning} = useTimer({
     initialTime: 0,
