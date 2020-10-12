@@ -118,10 +118,32 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
     });
 
     // noinspection JSUnresolvedFunction
-    network.current.on("selectNode", function (ctx)
+    network.current.on("selectNode", function ({nodes, edges})
     {
-      if (ctx.nodes !== undefined && !!onSelectionChanged)
-        onSelectionChanged(ctx.nodes)
+      if (!!onSelectionChanged)
+        onSelectionChanged({nodes, edges})
+    })
+
+    // noinspection JSUnresolvedFunction
+    network.current.on("deselectNode", function ({nodes, edges})
+    {
+      if (!!onSelectionChanged)
+        onSelectionChanged({nodes, edges})
+    })
+
+    // noinspection JSUnresolvedFunction
+    network.current.on("selectEdge", function ({nodes, edges})
+    {
+      console.log(edges)
+      if (!!onSelectionChanged)
+        onSelectionChanged({nodes, edges})
+    })
+
+    // noinspection JSUnresolvedFunction
+    network.current.on("deselectEdge", function ({nodes, edges})
+    {
+      if (!!onSelectionChanged)
+        onSelectionChanged({nodes, edges})
     })
 
     // noinspection JSUnresolvedFunction
