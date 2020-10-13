@@ -19,6 +19,7 @@ export function deviceToNode(pDevice: IDevice, pColor: string): Node
     x: pDevice.location === undefined ? 0 : pDevice.location.x,
     y: pDevice.location === undefined ? 0 : pDevice.location.y,
     shape: 'custom',
+    color: pColor,
     shadow: {
       color: "",
       enabled: true,
@@ -28,7 +29,7 @@ export function deviceToNode(pDevice: IDevice, pColor: string): Node
     },
 
     // @ts-ignore Enforce renderer
-    ctxRenderer: _renderNode(pColor, 50),
+    ctxRenderer: _renderNode(50),
   };
 }
 
@@ -216,13 +217,12 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
 /**
  * Renders a single node on the given context
  *
- * @param pColor Color for the icon
  * @param pSize Size for the icon
  * @private
  */
-function _renderNode(pColor: string, pSize: number)
+function _renderNode(pSize: number)
 {
-  return ({ctx, x, y, state: {selected}, label}: { ctx: any, x: number, y: number, state: { selected: boolean }, label: string }) =>
+  return ({ctx, x, y, state: {selected}, style: {color}, label}: { ctx: any, x: number, y: number, state: { selected: boolean }, style: any, label: string }) =>
   {
     // do some math here
     // noinspection JSUnusedGlobalSymbols
@@ -243,7 +243,7 @@ function _renderNode(pColor: string, pSize: number)
         ctx.shadowOffsetY = 2;
 
         // Draw Icon
-        ctx.fillStyle = pColor
+        ctx.fillStyle = color
         ctx.fillText("\uf6ff", x, y);
 
         // Draw Checkbox Icon
