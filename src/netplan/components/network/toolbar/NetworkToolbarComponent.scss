@@ -7,9 +7,9 @@ $toolbar-gap: 10px;
   width: 100%;
   position: absolute;
   display: flex;
-  justify-content: center;
+  top: 0;
+  justify-content: flex-end;
   align-items: center;
-  padding-top: 10px;
   pointer-events: none;
 
   .network-toolbar {
@@ -17,6 +17,7 @@ $toolbar-gap: 10px;
     flex-wrap: nowrap;
     margin-left: $toolbar-gap;
     pointer-events: all;
+    padding: 10px;
 
     &:first-child {
       margin-left: 0;
@@ -27,7 +28,8 @@ $toolbar-gap: 10px;
       -moz-box-shadow: $primary-shadow;
       box-shadow: $primary-shadow;
       margin: 0;
-      padding: 15px;
+      padding: 7px;
+      font-size: 12px;
       height: 100%;
       border-radius: 0;
       border: 1px solid $outline-color;
