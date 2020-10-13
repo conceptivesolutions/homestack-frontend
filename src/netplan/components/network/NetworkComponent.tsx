@@ -8,12 +8,13 @@ import ToolbarComponent from "./toolbar/NetworkToolbarComponent";
 import AutoRefreshComponent from "./toolbar/AutoRefreshComponent";
 import DeviceInspectionDialogContent from "./dialogs/DeviceInspectionDialogContent";
 import AddComponent from "./toolbar/AddComponent";
-import {addEdgeBetween, getEdges} from "../../rest/EdgeClient";
+import {addEdgeBetween, getEdges, removeEdgeBetween} from "../../rest/EdgeClient";
 import {getMetrics} from "../../rest/MetricsClient";
 import {IDialogStore} from "../../types/dialog";
 import {DataSetEdges, DataSetNodes, Edge, Node} from "vis-network/dist/types";
 import {Position} from "vis-network/declarations/network/Network";
 import {EMetricState, IMetric} from "../../types/model";
+import RemoveComponent from "./toolbar/RemoveComponent";
 
 /**
  * Component that will render the netplan chart as a network diagram
@@ -106,6 +107,8 @@ export default () =>
       <ToolbarComponent>
         <AutoRefreshComponent onTrigger={_refresh} interval={1000}/>
         <AddComponent enabled={selectedNodes.length === 2} onClick={() => _addEdgeBetweenNode(selectedNodes[0], selectedNodes[1], _refresh)}/>
+        <RemoveComponent enabled={selectedEdges.length > 0}
+                         onClick={() => _removeEdges(selectedEdges.map(pEdgeID => edgesRef.current.get(pEdgeID)), _refresh)}/>
       </ToolbarComponent>
       {graph}
     </div>
@@ -205,10 +208,21 @@ function _nodesDoubleClicked(pNodes: string[], pShowDialogFn: (dialog: any) => v
  * @param pNode1ID ID of the first node
  * @param pNode2ID ID of the second node
  * @param pRefreshFn Function that will refresh the whole network
- * @private
  */
 function _addEdgeBetweenNode(pNode1ID: string, pNode2ID: string, pRefreshFn: () => void)
 {
   addEdgeBetween(pNode1ID, pNode2ID)
     .then(() => pRefreshFn())
+}
+
+/**
+ * Removes the given edges
+ *
+ * @param pEdges Edges to remove
+ * @param pRefreshFn Function that will refresh the whole network
+ */
+function _removeEdges(pEdges: Edge[], pRefreshFn: () => void)
+{
+  Promise.all(pEdges.map(pEdge => removeEdgeBetween(pEdge.from as string, pEdge.to as string)))
+    .then(() => pRefreshFn());
 }

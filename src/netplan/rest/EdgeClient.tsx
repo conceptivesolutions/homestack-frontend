@@ -27,3 +27,19 @@ export async function addEdgeBetween(pSourceID: string, pTargetID: string): Prom
     }
   });
 }
+
+/**
+ * Removes an edge between two devices
+ *
+ * @param pSourceID ID of the source device
+ * @param pTargetID ID of the target device
+ */
+export async function removeEdgeBetween(pSourceID: string, pTargetID: string): Promise<Response>
+{
+  return fetch('/api/devices/' + pSourceID + '/edges/' + pTargetID, {
+    method: 'DELETE',
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8"
+    }
+  });
+}
