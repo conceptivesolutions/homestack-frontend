@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import './NetworkComponent.scss'
 import {deviceToNode, edgeToEdge, NetworkGraph} from "./NetworkGraph";
-import {getAllDevices, getDeviceByID, updateDevice} from '../../rest/DeviceClient';
+import {createDevice, deleteDevice, getAllDevices, getDeviceByID, updateDevice} from '../../rest/DeviceClient';
 import {useGlobalHook} from "@devhammed/use-global-hook";
 import {DataSet} from "vis-network/standalone/esm/vis-network";
 import ToolbarComponent from "./toolbar/NetworkToolbarComponent";
@@ -15,6 +15,7 @@ import {DataSetEdges, DataSetNodes, Edge, Node} from "vis-network/dist/types";
 import {Position} from "vis-network/declarations/network/Network";
 import {EMetricState, IMetric} from "../../types/model";
 import RemoveComponent from "./toolbar/RemoveComponent";
+import {v4 as uuidv4} from 'uuid';
 
 /**
  * Component that will render the netplan chart as a network diagram
@@ -85,6 +86,20 @@ export default () =>
     });
   }
 
+  // Keyboard-Events
+  useEffect(() =>
+  {
+    const listener = (event: KeyboardEvent) =>
+    {
+      if (event.keyCode === 46)
+        _handleDelete(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, _refresh)
+      else if (event.key === "a")
+        _handleCreate(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, _refresh)
+    };
+    window.addEventListener("keydown", listener)
+    return () => window.removeEventListener("keydown", listener);
+  }, [selectedNodes, selectedEdges])
+
   // Load all devices into state on mount
   useEffect(() => _refresh(), [])
 
@@ -106,9 +121,10 @@ export default () =>
     <div className={"graph-container"}>
       <ToolbarComponent>
         <AutoRefreshComponent onTrigger={_refresh} interval={1000}/>
-        <AddComponent enabled={selectedNodes.length === 2} onClick={() => _addEdgeBetweenNode(selectedNodes[0], selectedNodes[1], _refresh)}/>
-        <RemoveComponent enabled={selectedEdges.length > 0}
-                         onClick={() => _removeEdges(selectedEdges.map(pEdgeID => edgesRef.current.get(pEdgeID)), _refresh)}/>
+        <AddComponent enabled={true}
+                      onClick={() => _handleCreate(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, _refresh)}/>
+        <RemoveComponent enabled={(selectedNodes.length + selectedEdges.length) > 0}
+                         onClick={() => _handleDelete(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, _refresh)}/>
       </ToolbarComponent>
       {graph}
     </div>
@@ -203,26 +219,48 @@ function _nodesDoubleClicked(pNodes: string[], pShowDialogFn: (dialog: any) => v
 }
 
 /**
- * Adds a new edge between node1 and node2
+ * Handles a create request
  *
- * @param pNode1ID ID of the first node
- * @param pNode2ID ID of the second node
- * @param pRefreshFn Function that will refresh the whole network
+ * @param pCurrentNodes Reference to the currently used nodes
+ * @param pCurrentEdges Reference to the currently used edges
+ * @param pSelectedNodeIDs string-array of the selected nodes ids
+ * @param pSelectedEdgeIDs string-array of the selected edge ids
+ * @param pRefreshFn Function to refresh the network component
  */
-function _addEdgeBetweenNode(pNode1ID: string, pNode2ID: string, pRefreshFn: () => void)
+function _handleCreate(pCurrentNodes: DataSetNodes, pCurrentEdges: DataSetEdges,
+                       pSelectedNodeIDs: string[], pSelectedEdgeIDs: string[], pRefreshFn: () => void)
 {
-  addEdgeBetween(pNode1ID, pNode2ID)
-    .then(() => pRefreshFn())
+  if (pSelectedNodeIDs.length === 2)
+    addEdgeBetween(pSelectedNodeIDs[0], pSelectedNodeIDs[1])
+      .then(() => pRefreshFn())
+  else if (pSelectedNodeIDs.length + pSelectedEdgeIDs.length === 0)
+    createDevice(uuidv4())
+      .then(() => pRefreshFn())
 }
 
 /**
- * Removes the given edges
+ * Handles a delete request
  *
- * @param pEdges Edges to remove
- * @param pRefreshFn Function that will refresh the whole network
+ * @param pCurrentNodes Reference to the currently used nodes
+ * @param pCurrentEdges Reference to the currently used edges
+ * @param pSelectedNodeIDs string-array of the selected nodes ids
+ * @param pSelectedEdgeIDs string-array of the selected edge ids
+ * @param pRefreshFn Function to refresh the network component
  */
-function _removeEdges(pEdges: Edge[], pRefreshFn: () => void)
+function _handleDelete(pCurrentNodes: DataSetNodes, pCurrentEdges: DataSetEdges,
+                       pSelectedNodeIDs: string[], pSelectedEdgeIDs: string[], pRefreshFn: () => void)
 {
-  Promise.all(pEdges.map(pEdge => removeEdgeBetween(pEdge.from as string, pEdge.to as string)))
-    .then(() => pRefreshFn());
+  // Remove Nodes
+  const nodeRemovePromises: Promise<any>[] = pSelectedNodeIDs.map(pNodeIDToRemove => pCurrentNodes.get(pNodeIDToRemove))
+    .filter(pNode => !!pNode)
+    .map(pNode => deleteDevice(pNode.id))
+
+  // Remove Edges
+  const edgeRemovePromises: Promise<any>[] = pSelectedEdgeIDs.map(pEdgeIDToRemove => pCurrentEdges.get(pEdgeIDToRemove))
+    .filter(pEdge => !!pEdge)
+    .map(pEdge => removeEdgeBetween(pEdge.from as string, pEdge.to as string))
+
+  // Refresh, if necessary and finished
+  if (nodeRemovePromises.length + edgeRemovePromises.length > 0)
+    Promise.all(nodeRemovePromises.concat(edgeRemovePromises)).then(pRefreshFn)
 }

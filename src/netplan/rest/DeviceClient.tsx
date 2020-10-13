@@ -10,6 +10,26 @@ export async function getAllDevices(): Promise<IDevice[]>
 }
 
 /**
+ * Creates a new device with the given ID
+ *
+ * @param pID ID of the device to create
+ */
+export async function createDevice(pID: string): Promise<IDevice>
+{
+  const dev: IDevice = {
+    id: pID,
+  }
+  return fetch('/api/devices/' + pID, {
+    method: 'PUT',
+    body: JSON.stringify(dev),
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8"
+    }
+  })
+    .then(res => res.json());
+}
+
+/**
  * Searches a single device with the given ID
  *
  * @param pID ID to search for
@@ -36,4 +56,19 @@ export async function updateDevice(pID: string, pDevice: IDevice): Promise<IDevi
     }
   })
     .then(response => response.json());
+}
+
+/**
+ * Deletes the given device
+ *
+ * @param pID ID of the device to delete
+ */
+export async function deleteDevice(pID: string): Promise<Response>
+{
+  return fetch('/api/devices/' + pID, {
+    method: 'DELETE',
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8"
+    }
+  });
 }
