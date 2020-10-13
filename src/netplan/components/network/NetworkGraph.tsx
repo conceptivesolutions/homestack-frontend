@@ -102,7 +102,8 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
     spacing: 10,
     countBoldLines: 5,
     color: '#eeeeee',
-    boldColor: '#d0d0d0'
+    boldColor: '#d0d0d0',
+    coordinateSystemColor: '#c0c0c0'
   }
 
   useEffect(() =>
@@ -171,6 +172,7 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
       const boldLine = grid.countBoldLines; // number to declare, which n-th line should be "bold"
       const normalColor = grid.color;
       const boldColor = grid.boldColor;
+      const coordinateSystemColor = grid.coordinateSystemColor;
 
       let scale = network.current!.getScale();
       let {x, y} = network.current!.getViewPosition();
@@ -206,6 +208,17 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
         ctx.strokeStyle = (minGridY + currGridCountY) % (boldLine * gridSteps) === 0 ? boldColor : normalColor;
         ctx.stroke();
       }
+
+      // draw x and y coordinate system lines
+      ctx.strokeStyle = coordinateSystemColor;
+      ctx.beginPath();
+      ctx.moveTo(minGridX * size, 0);
+      ctx.lineTo((minGridX + gridCountX) * size, 0);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, minGridY * size);
+      ctx.lineTo(0, (minGridY + gridCountY) * size);
+      ctx.stroke();
     });
   }, [domNode, network, data, options, grid, onMove, onDoubleClick, onDragStart, onDragEnd, onSelectionChanged]);
 
