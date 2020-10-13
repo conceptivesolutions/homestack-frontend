@@ -11,7 +11,7 @@ import AddComponent from "./toolbar/AddComponent";
 import {addEdgeBetween, getEdges} from "../../rest/EdgeClient";
 import {getMetrics} from "../../rest/MetricsClient";
 import {IDialogStore} from "../../types/dialog";
-import {DataSetEdges, DataSetNodes} from "vis-network/dist/types";
+import {DataSetEdges, DataSetNodes, Edge, Node} from "vis-network/dist/types";
 import {Position} from "vis-network/declarations/network/Network";
 import {EMetricState, IMetric} from "../../types/model";
 
@@ -41,18 +41,46 @@ export default () =>
       if (!data || !canRefresh.current)
         return;
 
-      // todo on remove?!
-      data.forEach(pDevice =>
-      {
-        Promise.all([getMetrics(pDevice.id), getEdges(pDevice.id)]).then((values) =>
-        {
-          nodesRef.current.update(deviceToNode(pDevice, _getStateColor(values[0])));
-          values[1].forEach(pEdge => edgesRef.current.update(edgeToEdge(pEdge)));
-        })
-      })
+      const usedNodeIDs: any[] = [];
+      const usedEdgeIDs: any[] = [];
 
-      // Clear selection, because we do not have anything selected after updating
-      setSelectedNodes([])
+      // Update all current IDs (incl. add)
+      Promise.all(data
+        .map(pDevice => Promise.all([getMetrics(pDevice.id), getEdges(pDevice.id)])
+          .then((values) =>
+          {
+            // Update Node
+            const node = deviceToNode(pDevice, _getStateColor(values[0]));
+            usedNodeIDs.push(node.id);
+            nodesRef.current.update(node);
+
+            // Update Edges
+            values[1].forEach(pEdge =>
+            {
+              const edge = edgeToEdge(pEdge);
+              usedEdgeIDs.push(edge.id);
+              edgesRef.current.update(edge)
+            });
+          })))
+
+        // Remove unused objects
+        .then(() =>
+        {
+          // Remove unused nodes
+          nodesRef.current.stream()
+            .filter((pNode: Node) => usedNodeIDs.indexOf(pNode.id) === -1)
+            .forEach(((pNode: Node) =>
+            {
+              nodesRef.current.remove(pNode.id)
+            }));
+          // Remove unused edges
+          edgesRef.current.stream()
+            .filter((pEdge: Edge) => usedEdgeIDs.indexOf(pEdge.id) === -1)
+            .forEach(((pEdge: Edge) =>
+            {
+              edgesRef.current.remove(pEdge.id)
+            }));
+        })
     });
   }
 

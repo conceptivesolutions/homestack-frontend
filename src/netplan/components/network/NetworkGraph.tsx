@@ -37,8 +37,9 @@ export function deviceToNode(pDevice: IDevice, pColor: string): Node
  */
 export function edgeToEdge(pEdge: IEdge): Edge
 {
-  const {sourceID, targetID} = pEdge;
+  const {id, sourceID, targetID} = pEdge;
   return {
+    id,
     from: sourceID,
     to: targetID,
     dashes: true,

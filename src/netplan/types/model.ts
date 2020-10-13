@@ -13,6 +13,7 @@ export interface IDevice
 
 export interface IEdge
 {
+  id: string,
   sourceID: string,
   targetID: string,
 }
