@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@auth0/auth0-react": "^1.1.0",
     "@devhammed/use-global-hook": "^1.5.1",
     "@fortawesome/fontawesome-free": "^5.15.1",
     "http-proxy-middleware": "^1.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "use-timer": "^1.4.0",
     "uuid": "^8.3.1",
@@ -18,9 +20,11 @@
     "@types/node": "^12.12.67",
     "@types/react": "^16.9.52",
     "@types/react-dom": "^16.9.8",
+    "@types/react-router": "^5.1.8",
+    "@types/react-router-dom": "^5.1.6",
     "@types/uuid": "^8.3.0",
-    "react-scripts": "3.4.3",
     "node-sass": "^4.14.1",
+    "react-scripts": "3.4.3",
     "typescript": "^3.7.5"
   },
   "scripts": {

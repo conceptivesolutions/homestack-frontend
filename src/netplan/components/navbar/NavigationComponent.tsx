@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import './NavigationComponent.scss'
 import NavigationItem from "./NavigationItem";
+import {useAuth0} from "@auth0/auth0-react";
 
 /**
  * NavigationComponent
@@ -11,6 +12,7 @@ export default () =>
 {
   const [openItems, setOpenItems] = useState<string[]>([])
   const [selection, setSelection] = useState<string>("")
+  const {user, logout} = useAuth0();
   const fOnClick = (name: string) => () => setOpenItems(openItems.includes(name) ? openItems.filter(pI => pI !== name) : [...openItems, name])
   return (
     <div className={"nav-container"}>
@@ -22,8 +24,9 @@ export default () =>
       </NavigationItem>
       <NavigationItem iconName={"cogs"} title={"Settings"} selected={selection === "settings"} onClick={() => setSelection("settings")}/>
       <NavigationItem iconName={"question-circle"} title={"Help"} open={openItems.includes("help")} onClick={fOnClick("help")}/>
-      <NavigationItem iconName={"user"} title={"Account"} open={openItems.includes("account")} onClick={fOnClick("account")}>
-        <NavigationItem title={"Logout"}/>
+      <NavigationItem iconElement={<img alt="Avatar" className={"nav-icon nav-icon__profile"} src={user.picture}/>} title={user.nickname}
+                      open={openItems.includes("account")} onClick={fOnClick("account")}>
+        <NavigationItem title={"Logout"} onClick={() => logout()}/>
       </NavigationItem>
     </div>
   );

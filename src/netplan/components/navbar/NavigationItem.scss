@@ -17,9 +17,17 @@ $nav-selection-indicator-width: 5px;
     border-left: $nav-selection-indicator-width solid transparent;
 
     .nav-icon {
-      padding-right: 20px;
+      margin-right: 20px;
       width: 16px;
       height: 16px;
+    }
+
+    .nav-icon__profile {
+      margin-right: 12px;
+      margin-top: -5px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
     }
 
     .nav-title {
