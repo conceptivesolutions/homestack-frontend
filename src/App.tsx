@@ -11,7 +11,7 @@ export default function App()
 {
   return (
     <BrowserRouter>
-      <Auth0Provider domain={Config.auth.DOMAIN} clientId={Config.auth.CLIENTID} redirectUri={window.location.origin}>
+      <Auth0Provider domain={Config.auth.DOMAIN} clientId={Config.auth.CLIENTID} audience={Config.auth.APIID} redirectUri={window.location.origin}>
         {/* @ts-ignore */}
         <GlobalHooksProvider hooks={[dialogStore]}>
           <NetPlanApplication/>
