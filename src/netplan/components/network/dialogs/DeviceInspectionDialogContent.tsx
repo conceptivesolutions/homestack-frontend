@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import "./DeviceInspectionDialogContent.scss"
 import {getMetrics} from "../../../rest/MetricsClient";
 import {IDevice, IMetric} from "../../../types/model";
+import {useAuth0} from "@auth0/auth0-react";
 
 /**
  * Dialog to edit a single device
@@ -13,11 +14,14 @@ import {IDevice, IMetric} from "../../../types/model";
 export default ({device, onPropChange}: { device: IDevice, onPropChange: (propName: string, propVal: string) => void }) =>
 {
   const [metrics, setMetrics] = useState<IMetric[]>([])
+  const {getAccessTokenSilently} = useAuth0();
 
   useEffect(() =>
   {
-    getMetrics(device.id).then(setMetrics)
-  }, [device.id])
+    getAccessTokenSilently()
+      .then(pToken => getMetrics(pToken, device.id))
+      .then(setMetrics)
+  }, [device.id, getAccessTokenSilently])
 
   return (
     <div className={"device-inspection-dialog-content__container"}>

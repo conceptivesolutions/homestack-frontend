@@ -2,19 +2,27 @@ import {IDevice} from "../types/model";
 
 /**
  * Returns all devices from remote server
+ *
+ * @param pToken AccessToken for the backend
  */
-export async function getAllDevices(): Promise<IDevice[]>
+export async function getAllDevices(pToken: string): Promise<IDevice[]>
 {
-  return fetch('/api/devices')
+  return fetch('/api/devices', {
+    method: 'GET',
+    headers: {
+      "Authorization": "Bearer " + pToken
+    }
+  })
     .then(res => res.json());
 }
 
 /**
  * Creates a new device with the given ID
  *
+ * @param pToken AccessToken for the backend
  * @param pID ID of the device to create
  */
-export async function createDevice(pID: string): Promise<IDevice>
+export async function createDevice(pToken: string, pID: string): Promise<IDevice>
 {
   const dev: IDevice = {
     id: pID,
@@ -23,6 +31,7 @@ export async function createDevice(pID: string): Promise<IDevice>
     method: 'PUT',
     body: JSON.stringify(dev),
     headers: {
+      "Authorization": "Bearer " + pToken,
       "Content-Type": "application/json; charset=UTF-8"
     }
   })
@@ -32,26 +41,34 @@ export async function createDevice(pID: string): Promise<IDevice>
 /**
  * Searches a single device with the given ID
  *
+ * @param pToken AccessToken for the backend
  * @param pID ID to search for
  */
-export async function getDeviceByID(pID: string): Promise<IDevice>
+export async function getDeviceByID(pToken: string, pID: string): Promise<IDevice>
 {
-  return fetch('/api/devices/' + pID)
+  return fetch('/api/devices/' + pID, {
+    method: 'GET',
+    headers: {
+      "Authorization": "Bearer " + pToken
+    }
+  })
     .then(res => res.json());
 }
 
 /**
  * Updates the given device on remote
  *
+ * @param pToken AccessToken for the backend
  * @param pID ID of the device that should be updated
  * @param pDevice Device that should be updated
  */
-export async function updateDevice(pID: string, pDevice: IDevice): Promise<IDevice>
+export async function updateDevice(pToken: string, pID: string, pDevice: IDevice): Promise<IDevice>
 {
   return fetch('/api/devices/' + pID, {
     method: 'PATCH',
     body: JSON.stringify(pDevice),
     headers: {
+      "Authorization": "Bearer " + pToken,
       "Content-Type": "application/json; charset=UTF-8"
     }
   })
@@ -61,13 +78,15 @@ export async function updateDevice(pID: string, pDevice: IDevice): Promise<IDevi
 /**
  * Deletes the given device
  *
+ * @param pToken AccessToken for the backend
  * @param pID ID of the device to delete
  */
-export async function deleteDevice(pID: string): Promise<Response>
+export async function deleteDevice(pToken: string, pID: string): Promise<Response>
 {
   return fetch('/api/devices/' + pID, {
     method: 'DELETE',
     headers: {
+      "Authorization": "Bearer " + pToken,
       "Content-Type": "application/json; charset=UTF-8"
     }
   });
