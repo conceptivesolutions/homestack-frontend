@@ -1,0 +1,54 @@
+@import "css/_variables.scss";
+
+.loading-indicator__container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes ldio-gvx5s1ne94g {
+  0% {
+    transform: rotate(0deg)
+  }
+  50% {
+    transform: rotate(180deg)
+  }
+  100% {
+    transform: rotate(360deg)
+  }
+}
+
+.ldio-gvx5s1ne94g div {
+  position: absolute;
+  animation: ldio-gvx5s1ne94g 1s linear infinite;
+  width: 156px;
+  height: 156px;
+  top: 22px;
+  left: 22px;
+  border-radius: 50%;
+  box-shadow: 0 4px 0 0 $outline-color;
+  transform-origin: 78px 80px;
+}
+
+.loadingio-spinner-eclipse-gd2eyl6rmc9 {
+  width: 200px;
+  height: 200px;
+  display: inline-block;
+  overflow: hidden;
+  background: none;
+}
+
+.ldio-gvx5s1ne94g {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: translateZ(0) scale(1);
+  backface-visibility: hidden;
+  transform-origin: 0 0; /* see note above */
+}
+
+.ldio-gvx5s1ne94g div {
+  box-sizing: content-box;
+}

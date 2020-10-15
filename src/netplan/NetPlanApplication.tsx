@@ -5,6 +5,7 @@ import React from "react";
 import {withAuthenticationRequired} from "@auth0/auth0-react";
 import {Route} from "react-router";
 import HomeDummy from "./components/home/HomeDummy";
+import LoadingIndicator from "./components/loader/LoadingIndicator";
 
 /**
  * Contains the whole application that requires a previous login
@@ -25,5 +26,5 @@ const NetPlanApplication = () =>
 }
 
 export default withAuthenticationRequired(NetPlanApplication, {
-  onRedirecting: () => <span>Loading...</span>, //todo
+  onRedirecting: () => <LoadingIndicator/>,
 });
