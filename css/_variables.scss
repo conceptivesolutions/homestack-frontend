@@ -1,5 +1,10 @@
-$primary-color: #007bff;
-$outline-color: #dedede;
+$palette-1: #222831;
+$palette-2: #393e46;
+$palette-3: #00adb5;
+$palette-4: #eeeeee;
+
+$primary-color: $palette-3;
+$outline-color: $palette-4;
 
 $border-radius: 5px;
 $primary-shadow: 5px 5px 5px 0 rgba(0, 0, 0, 0.1);
