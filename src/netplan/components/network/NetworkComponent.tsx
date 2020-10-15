@@ -17,6 +17,7 @@ import {EMetricState, IMetric} from "../../types/model";
 import RemoveComponent from "./toolbar/RemoveComponent";
 import {v4 as uuidv4} from 'uuid';
 import {useParams} from "react-router";
+import LoadingIndicator from "../loader/LoadingIndicator";
 
 /**
  * Component that will render the netplan chart as a network diagram
@@ -28,8 +29,20 @@ export default () =>
   const nodesRef = useRef<DataSetNodes>(new DataSet());
   const edgesRef = useRef<DataSetEdges>(new DataSet());
   const {hostID} = useParams();
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
+
+  /**
+   * Function to execute a promise with the "global" loading indicator
+   *
+   * @param pFn Promise that gets executed
+   */
+  function _withLoadingIndicator(pFn: Promise<any>)
+  {
+    setLoading(true)
+    pFn.finally(() => setLoading(false));
+  }
 
   /**
    * Function to refresh the current nodes / edges
@@ -38,9 +51,9 @@ export default () =>
   {
     // We are not able to refresh currently
     if (!canRefresh.current)
-      return;
+      return Promise.resolve();
 
-    getAllDevices().then((data) =>
+    return getAllDevices().then((data) =>
     {
       if (!data || !canRefresh.current)
         return;
@@ -103,7 +116,10 @@ export default () =>
   }, [selectedNodes, selectedEdges])
 
   // Load all devices into state on mount
-  useEffect(() => _refresh(), [])
+  useEffect(() =>
+  {
+    _withLoadingIndicator(_refresh())
+  }, [])
 
   // Create the network graph once
   const graph = useMemo(() => (
@@ -118,6 +134,9 @@ export default () =>
                   }}
                   onDragStart={() => canRefresh.current = false} onDragEnd={() => canRefresh.current = true}/>
   ), [showDialog, setSelectedNodes]);
+
+  if (loading)
+    return <LoadingIndicator/>
 
   return (
     <div className={"graph-container"}>
