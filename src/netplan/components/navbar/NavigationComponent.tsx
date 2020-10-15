@@ -13,7 +13,7 @@ export default () =>
   const {user, logout} = useAuth0();
   return (
     <div className={"nav-container"}>
-      <img className={"logo"} src={"/300.png"} alt={"logo"}/>
+      <img className={"logo"} src={"/300_dark.png"} alt={"logo"}/>
       <NavigationItem linkTo={"/"} iconName={"home"} title={"Dashboard"}/>
       <NavigationItem iconName={"desktop"} title={"Hosts"} defaultOpen={true}>
         <NavigationItem linkTo={"/hosts/server1"} title={"Server 172.16.16.1"}/>

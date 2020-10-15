@@ -1,14 +1,14 @@
 @import "css/_variables.scss";
 
-$nav-background: white;
-$nav-selection-indicator-color: $primary-color;
-$nav-selection-indicator-width: 5px;
-
 .nav-item {
   display: flex;
   flex-direction: column;
   cursor: pointer;
   background-color: $nav-background;
+
+  * {
+    color: $nav-color;
+  }
 
   .nav-row {
     padding: 15px 20px 15px 20px - $nav-selection-indicator-width;
@@ -63,10 +63,10 @@ $nav-selection-indicator-width: 5px;
     display: block;
 
     .nav-row {
-      background-color: darken($nav-background, 6%);
+      background-color: darken($nav-background, 3%);
 
       &:hover {
-        background-color: darken($nav-background, 9%);
+        background-color: darken($nav-background, 5%);
       }
     }
 
