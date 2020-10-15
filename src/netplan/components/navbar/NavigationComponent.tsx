@@ -15,7 +15,7 @@ export default () =>
     <div className={"nav-container"}>
       <img className={"logo"} src={"/300.png"} alt={"logo"}/>
       <NavigationItem linkTo={"/"} iconName={"home"} title={"Dashboard"}/>
-      <NavigationItem iconName={"desktop"} title={"Hosts"}>
+      <NavigationItem iconName={"desktop"} title={"Hosts"} defaultOpen={true}>
         <NavigationItem linkTo={"/hosts/server1"} title={"Server 172.16.16.1"}/>
         <NavigationItem linkTo={"/hosts/server2"} title={"Server home.lan"}/>
         <NavigationItem linkTo={"/hosts/server3"} title={"Server 192.168.128.129"}/>

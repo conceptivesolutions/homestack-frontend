@@ -9,13 +9,17 @@ import {NavLink} from "react-router-dom";
  * @param iconElement Element to display the icon
  * @param title Title to display
  * @param children optional children
+ * @param defaultOpen true, if this item should be opened by default
  * @param linkTo Link to redirect to
  * @param onClick function to execute on click
  */
-export default ({iconName, iconElement, title, linkTo, children, onClick}:
-                  { iconName?: string, iconElement?: ReactNode, title: string, linkTo?: string, children?: React.ReactNode, onClick?: () => void }) =>
+export default ({iconName, iconElement, title, linkTo, children, defaultOpen = false, onClick}:
+                  {
+                    iconName?: string, iconElement?: ReactNode, title: string, linkTo?: string, children?: React.ReactNode, defaultOpen?: boolean,
+                    onClick?: () => void
+                  }) =>
 {
-  const [open, setOpen] = useState<boolean>(false)
+  const [open, setOpen] = useState<boolean>(defaultOpen)
 
   const myChildren = (
     <>
