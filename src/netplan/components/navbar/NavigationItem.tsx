@@ -1,5 +1,6 @@
-import React, {ReactNode} from "react";
+import React, {ReactNode, useState} from "react";
 import "./NavigationItem.scss"
+import {NavLink} from "react-router-dom";
 
 /**
  * A simple Item for the NavigationComponent
@@ -8,20 +9,38 @@ import "./NavigationItem.scss"
  * @param iconElement Element to display the icon
  * @param title Title to display
  * @param children optional children
+ * @param linkTo Link to redirect to
  * @param onClick function to execute on click
- * @param open TRUE, if this item is "opened" (if it contains children)
- * @param selected TRUE, if this item is "selected"
  */
-export default ({iconName, iconElement = (<div className={"nav-icon fa fa-" + iconName}/>), title, children, onClick, open = false, selected = false}:
-                  { iconName?: string, iconElement?: ReactNode, title: string, children?: React.ReactNode, onClick?: () => void, open?: boolean, selected?: boolean }) => (
-  <div className={"nav-item"}>
-    <div className={"nav-row " + (selected && "nav-row__selected")} onClick={onClick}>
-      {iconElement}
+export default ({iconName, iconElement, title, linkTo, children, onClick}:
+                  { iconName?: string, iconElement?: ReactNode, title: string, linkTo?: string, children?: React.ReactNode, onClick?: () => void }) =>
+{
+  const [open, setOpen] = useState<boolean>(false)
+
+  const myChildren = (
+    <>
+      {iconElement || <div className={"nav-icon fa fa-" + iconName}/>}
       <div className={"nav-title"}>{title}</div>
       {children && <div className={"nav-arrow fa " + (open ? "fa-chevron-up" : "fa-chevron-down")}/>}
+    </>
+  )
+
+  function fOnClick()
+  {
+    setOpen(pPrev => !pPrev);
+    onClick && onClick();
+  }
+
+  const myItem = !!linkTo ?
+    (<NavLink to={linkTo || ""} exact activeClassName={linkTo && "nav-row__selected"} className={"nav-row"} onClick={fOnClick}>{myChildren}</NavLink>) :
+    (<div className={"nav-row"} onClick={fOnClick}>{myChildren}</div>);
+
+  return (
+    <div className={"nav-item"}>
+      {myItem}
+      <div className={open ? "nav-content__active" : "nav-content"}>
+        {children}
+      </div>
     </div>
-    <div className={open ? "nav-content__active" : "nav-content"}>
-      {children}
-    </div>
-  </div>
-)
+  );
+}

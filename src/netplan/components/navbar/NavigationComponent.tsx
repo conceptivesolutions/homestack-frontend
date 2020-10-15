@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import './NavigationComponent.scss'
 import NavigationItem from "./NavigationItem";
 import {useAuth0} from "@auth0/auth0-react";
@@ -10,22 +10,19 @@ import {useAuth0} from "@auth0/auth0-react";
  */
 export default () =>
 {
-  const [openItems, setOpenItems] = useState<string[]>([])
-  const [selection, setSelection] = useState<string>("")
   const {user, logout} = useAuth0();
-  const fOnClick = (name: string) => () => setOpenItems(openItems.includes(name) ? openItems.filter(pI => pI !== name) : [...openItems, name])
   return (
     <div className={"nav-container"}>
-      <img className={"logo"} src={"300.png"} alt={"logo"}/>
-      <NavigationItem iconName={"desktop"} title={"Hosts"} open={openItems.includes("hosts")} onClick={fOnClick("hosts")}>
-        <NavigationItem title={"Server 172.16.16.1"} selected={selection === "dummy1"} onClick={() => setSelection("dummy1")}/>
-        <NavigationItem title={"Server home.lan"} selected={selection === "dummy2"} onClick={() => setSelection("dummy2")}/>
-        <NavigationItem title={"Server 192.168.128.129"} selected={selection === "dummy3"} onClick={() => setSelection("dummy3")}/>
+      <img className={"logo"} src={"/300.png"} alt={"logo"}/>
+      <NavigationItem linkTo={"/"} iconName={"home"} title={"Dashboard"}/>
+      <NavigationItem iconName={"desktop"} title={"Hosts"}>
+        <NavigationItem linkTo={"/hosts/server1"} title={"Server 172.16.16.1"}/>
+        <NavigationItem linkTo={"/hosts/server2"} title={"Server home.lan"}/>
+        <NavigationItem linkTo={"/hosts/server3"} title={"Server 192.168.128.129"}/>
       </NavigationItem>
-      <NavigationItem iconName={"cogs"} title={"Settings"} selected={selection === "settings"} onClick={() => setSelection("settings")}/>
-      <NavigationItem iconName={"question-circle"} title={"Help"} open={openItems.includes("help")} onClick={fOnClick("help")}/>
-      <NavigationItem iconElement={<img alt="Avatar" className={"nav-icon nav-icon__profile"} src={user.picture}/>} title={user.nickname}
-                      open={openItems.includes("account")} onClick={fOnClick("account")}>
+      <NavigationItem linkTo={"/settings"} iconName={"cogs"} title={"Settings"}/>
+      <NavigationItem linkTo={"/help"} iconName={"question-circle"} title={"Help"}/>
+      <NavigationItem iconElement={<img alt="Avatar" className={"nav-icon nav-icon__profile"} src={user.picture}/>} title={user.nickname}>
         <NavigationItem title={"Logout"} onClick={() => logout()}/>
       </NavigationItem>
     </div>

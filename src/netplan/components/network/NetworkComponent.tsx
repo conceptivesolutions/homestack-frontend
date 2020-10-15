@@ -16,6 +16,7 @@ import {Position} from "vis-network/declarations/network/Network";
 import {EMetricState, IMetric} from "../../types/model";
 import RemoveComponent from "./toolbar/RemoveComponent";
 import {v4 as uuidv4} from 'uuid';
+import {useParams} from "react-router";
 
 /**
  * Component that will render the netplan chart as a network diagram
@@ -26,6 +27,7 @@ export default () =>
   const canRefresh = useRef<boolean>(true);
   const nodesRef = useRef<DataSetNodes>(new DataSet());
   const edgesRef = useRef<DataSetEdges>(new DataSet());
+  const {hostID} = useParams();
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
 
