@@ -16,7 +16,7 @@ import {Position} from "vis-network/declarations/network/Network";
 import {EMetricState, IMetric} from "../../types/model";
 import RemoveComponent from "./toolbar/RemoveComponent";
 import {v4 as uuidv4} from 'uuid';
-import LoadingIndicator from "../loader/LoadingIndicator";
+import LoadingIndicator from "../../components/loader/LoadingIndicator";
 import {useAuth0} from "@auth0/auth0-react";
 
 /**

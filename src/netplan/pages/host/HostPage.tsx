@@ -1,5 +1,5 @@
 import React from "react";
-import NetworkComponent from "../../components/network/NetworkComponent";
+import NetworkComponent from "./NetworkComponent";
 import {useParams} from "react-router";
 
 /**
