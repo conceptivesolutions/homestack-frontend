@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import "./SettingsPage.scss"
 import {useAuth0} from "@auth0/auth0-react";
 import {IHost} from "../../types/model";
-import {createHost, getHosts, updateHost} from "../../rest/HostClient";
+import {createHost, deleteHost, getHosts, updateHost} from "../../rest/HostClient";
 import {useGlobalHook} from "@devhammed/use-global-hook";
 import {IDialogStore} from "../../types/dialog";
 import {v4 as uuidv4} from 'uuid';
@@ -59,6 +59,7 @@ function _createHostsTable(hosts: IHost[], pShowDialogFn: (dialog: any) => void,
       <td className={"settings-page__hosts-table__name"}>{pHost.displayName}</td>
       <td className={"settings-page__hosts-table__actions"}>
         <button className={"fa fa-cog"} onClick={() => _upsertHost(pShowDialogFn, pTokenFn, pRefreshFn, pHost)}/>
+        <button className={"fa fa-trash"} onClick={() => _deleteHost(pShowDialogFn, pTokenFn, pRefreshFn, pHost)}/>
       </td>
     </tr>)}
     </tbody>
@@ -103,6 +104,31 @@ function _upsertHost(pShowDialogFn: (dialog: any) => void, pTokenFn: () => Promi
               return updateHost(pToken, changes);
             return createHost(pToken, changes);
           })
+          .then(() => pRefreshFn())
+    }
+  })
+}
+
+/**
+ * Deletes the host with the given ID
+ *
+ * @param pShowDialogFn Function to show dialogs
+ * @param pTokenFn Function to retrieve the accesstoken for backend
+ * @param pRefreshFn Function to refresh all data
+ * @param pHost Host that should be deleted
+ */
+function _deleteHost(pShowDialogFn: (dialog: any) => void, pTokenFn: () => Promise<string>, pRefreshFn: () => void, pHost: IHost)
+{
+  pShowDialogFn({
+    primaryKey: "Delete",
+    title: "Delete Host",
+    children: <span>Do you really want to delete {pHost.displayName} ({pHost.id})?<br/>
+    This action can not be undone and will result in deleting the corresponding devices too</span>,
+    onResult: (pResult: any) =>
+    {
+      if (pResult === "Delete")
+        pTokenFn()
+          .then(pToken => deleteHost(pToken, pHost.id))
           .then(() => pRefreshFn())
     }
   })

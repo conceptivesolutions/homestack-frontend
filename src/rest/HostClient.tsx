@@ -57,3 +57,19 @@ export async function updateHost(pToken: string, pHost: IHost): Promise<IHost>
   })
     .then(response => response.json());
 }
+
+/**
+ * Deletes the host with the given id
+ *
+ * @param pToken AccessToken for the backend
+ * @param pID ID of the host that should be deleted
+ */
+export async function deleteHost(pToken: string, pID: string): Promise<Response>
+{
+  return fetch('/api/hosts/' + pID, {
+    method: 'DELETE',
+    headers: {
+      "Authorization": "Bearer " + pToken
+    }
+  });
+}
