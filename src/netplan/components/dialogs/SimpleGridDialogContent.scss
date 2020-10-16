@@ -1,0 +1,11 @@
+.simple-grid-dialog__container {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  grid-column-gap: 10px;
+  grid-row-gap: 5px;
+  align-items: center;
+
+  * {
+    font-size: small;
+  }
+}
