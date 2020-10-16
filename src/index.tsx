@@ -9,7 +9,8 @@ import Config from "./helpers/Config";
 
 ReactDOM.render(
   <BrowserRouter>
-    <Auth0Provider domain={Config.auth.DOMAIN} clientId={Config.auth.CLIENTID} audience={Config.auth.APIID} redirectUri={window.location.origin}>
+    <Auth0Provider domain={Config.auth.DOMAIN} clientId={Config.auth.CLIENTID} audience={Config.auth.APIID}
+                   cacheLocation={"localstorage"} redirectUri={window.location.origin}>
       <App/>
     </Auth0Provider>
   </BrowserRouter>,
