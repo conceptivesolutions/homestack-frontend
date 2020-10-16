@@ -16,20 +16,20 @@ import {Position} from "vis-network/declarations/network/Network";
 import {EMetricState, IMetric} from "../../types/model";
 import RemoveComponent from "./toolbar/RemoveComponent";
 import {v4 as uuidv4} from 'uuid';
-import {useParams} from "react-router";
 import LoadingIndicator from "../loader/LoadingIndicator";
 import {useAuth0} from "@auth0/auth0-react";
 
 /**
  * Component that will render the netplan chart as a network diagram
+ *
+ * @param hostID ID of the host
  */
-export default () =>
+export default ({hostID}: { hostID: string }) =>
 {
   const {showDialog} = useGlobalHook("dialogStore") as IDialogStore;
   const canRefresh = useRef<boolean>(true);
   const nodesRef = useRef<DataSetNodes>(new DataSet());
   const edgesRef = useRef<DataSetEdges>(new DataSet());
-  const {hostID} = useParams();
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
