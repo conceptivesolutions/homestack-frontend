@@ -1,7 +1,9 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import './NavigationComponent.scss'
 import NavigationItem from "./NavigationItem";
 import {useAuth0} from "@auth0/auth0-react";
+import {IHost} from "../../types/model";
+import {getHosts} from "../../rest/HostClient";
 
 /**
  * NavigationComponent
@@ -10,15 +12,23 @@ import {useAuth0} from "@auth0/auth0-react";
  */
 export default () =>
 {
-  const {user, logout} = useAuth0();
+  const {user, logout, getAccessTokenSilently} = useAuth0();
+  const [hosts, setHosts] = useState<IHost[]>([]);
+
+  // Load hosts
+  useEffect(() =>
+  {
+    getAccessTokenSilently()
+      .then(pToken => getHosts(pToken))
+      .then((pHosts) => setHosts(pHosts))
+  }, [getAccessTokenSilently])
+
   return (
     <div className={"nav-container"}>
       <img className={"logo"} src={"/300_dark.png"} alt={"logo"}/>
       <NavigationItem linkTo={"/"} iconName={"home"} title={"Dashboard"}/>
       <NavigationItem iconName={"desktop"} title={"Hosts"} defaultOpen={true}>
-        <NavigationItem linkTo={"/hosts/server1"} title={"Server 172.16.16.1"}/>
-        <NavigationItem linkTo={"/hosts/server2"} title={"Server home.lan"}/>
-        <NavigationItem linkTo={"/hosts/server3"} title={"Server 192.168.128.129"}/>
+        {hosts.map(pHost => <NavigationItem key={pHost.id} linkTo={"/hosts/" + pHost.id} title={pHost.displayName || pHost.id}/>)}
       </NavigationItem>
       <NavigationItem linkTo={"/settings"} iconName={"cogs"} title={"Settings"}/>
       <NavigationItem linkTo={"/help"} iconName={"question-circle"} title={"Help"}/>

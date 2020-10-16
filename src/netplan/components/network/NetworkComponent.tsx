@@ -56,7 +56,7 @@ export default () =>
       return Promise.resolve();
 
     return getAccessTokenSilently()
-      .then(getAllDevices)
+      .then(pToken => getAllDevices(pToken, hostID))
       .then((data) =>
       {
         if (!data || !canRefresh.current)
@@ -104,7 +104,7 @@ export default () =>
               }));
           })
       });
-  }, [getAccessTokenSilently]);
+  }, [getAccessTokenSilently, hostID]);
 
   // Keyboard-Events
   useEffect(() =>
@@ -114,11 +114,11 @@ export default () =>
       if (event.keyCode === 46)
         _handleDelete(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, getAccessTokenSilently, _refresh)
       else if (event.key === "a")
-        _handleCreate(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, getAccessTokenSilently, _refresh)
+        _handleCreate(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, hostID, getAccessTokenSilently, _refresh)
     };
     window.addEventListener("keydown", listener)
     return () => window.removeEventListener("keydown", listener);
-  }, [selectedNodes, selectedEdges, getAccessTokenSilently, _refresh])
+  }, [selectedNodes, selectedEdges, getAccessTokenSilently, hostID, _refresh])
 
   // Load all devices into state on mount
   useEffect(() =>
@@ -148,7 +148,7 @@ export default () =>
       <ToolbarComponent>
         <AutoRefreshComponent onTrigger={_refresh} interval={1000}/>
         <AddComponent enabled={true}
-                      onClick={() => _handleCreate(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, getAccessTokenSilently, _refresh)}/>
+                      onClick={() => _handleCreate(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, hostID, getAccessTokenSilently, _refresh)}/>
         <RemoveComponent enabled={(selectedNodes.length + selectedEdges.length) > 0}
                          onClick={() => _handleDelete(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, getAccessTokenSilently, _refresh)}/>
       </ToolbarComponent>
@@ -255,11 +255,13 @@ function _nodesDoubleClicked(pNodes: string[], pShowDialogFn: (dialog: any) => v
  * @param pCurrentEdges Reference to the currently used edges
  * @param pSelectedNodeIDs string-array of the selected nodes ids
  * @param pSelectedEdgeIDs string-array of the selected edge ids
+ * @param pHostID ID of the host to create the device in
  * @param pTokenFn Function to retrieve the current access token
  * @param pRefreshFn Function to refresh the network component
  */
 function _handleCreate(pCurrentNodes: DataSetNodes, pCurrentEdges: DataSetEdges,
-                       pSelectedNodeIDs: string[], pSelectedEdgeIDs: string[], pTokenFn: () => Promise<string>, pRefreshFn: () => void)
+                       pSelectedNodeIDs: string[], pSelectedEdgeIDs: string[], pHostID: string,
+                       pTokenFn: () => Promise<string>, pRefreshFn: () => void)
 {
   if (pSelectedNodeIDs.length === 2)
     pTokenFn()
@@ -267,7 +269,7 @@ function _handleCreate(pCurrentNodes: DataSetNodes, pCurrentEdges: DataSetEdges,
       .then(() => pRefreshFn())
   else if (pSelectedNodeIDs.length + pSelectedEdgeIDs.length === 0)
     pTokenFn()
-      .then(pToken => createDevice(pToken, uuidv4()))
+      .then(pToken => createDevice(pToken, uuidv4(), pHostID))
       .then(() => pRefreshFn())
 }
 

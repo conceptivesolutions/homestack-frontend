@@ -1,3 +1,9 @@
+export interface IHost
+{
+  id: string,
+  displayName?: string,
+}
+
 export interface ILocation
 {
   x: number,
@@ -7,6 +13,7 @@ export interface ILocation
 export interface IDevice
 {
   id: string,
+  hostID?: string,
   address?: string,
   location?: ILocation,
 }

@@ -4,10 +4,11 @@ import {IDevice} from "../types/model";
  * Returns all devices from remote server
  *
  * @param pToken AccessToken for the backend
+ * @param pHostID ID of the host to retrieve all devices for
  */
-export async function getAllDevices(pToken: string): Promise<IDevice[]>
+export async function getAllDevices(pToken: string, pHostID: string): Promise<IDevice[]>
 {
-  return fetch('/api/devices', {
+  return fetch('/api/devices?host=' + pHostID, {
     method: 'GET',
     headers: {
       "Authorization": "Bearer " + pToken
@@ -21,11 +22,13 @@ export async function getAllDevices(pToken: string): Promise<IDevice[]>
  *
  * @param pToken AccessToken for the backend
  * @param pID ID of the device to create
+ * @param pHostID ID of the host where the given device should be created
  */
-export async function createDevice(pToken: string, pID: string): Promise<IDevice>
+export async function createDevice(pToken: string, pID: string, pHostID: string): Promise<IDevice>
 {
   const dev: IDevice = {
     id: pID,
+    hostID: pHostID,
   }
   return fetch('/api/devices/' + pID, {
     method: 'PUT',
