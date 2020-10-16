@@ -4,6 +4,7 @@ import NavigationItem from "./NavigationItem";
 import {useAuth0} from "@auth0/auth0-react";
 import {IHost} from "../../types/model";
 import {getHosts} from "../../rest/HostClient";
+import _ from "lodash";
 
 /**
  * NavigationComponent
@@ -28,7 +29,8 @@ export default () =>
       <img className={"logo"} src={"/300_dark.png"} alt={"logo"}/>
       <NavigationItem linkTo={"/"} iconName={"home"} title={"Dashboard"}/>
       <NavigationItem iconName={"desktop"} title={"Hosts"} defaultOpen={true}>
-        {hosts.map(pHost => <NavigationItem key={pHost.id} linkTo={"/hosts/" + pHost.id} title={pHost.displayName || pHost.id}/>)}
+        {_.sortBy(hosts, ['displayName', 'id'])
+          .map(pHost => <NavigationItem key={pHost.id} linkTo={"/hosts/" + pHost.id} title={pHost.displayName || pHost.id}/>)}
       </NavigationItem>
       <NavigationItem linkTo={"/settings"} iconName={"cogs"} title={"Settings"}/>
       <NavigationItem linkTo={"/help"} iconName={"question-circle"} title={"Help"}/>
