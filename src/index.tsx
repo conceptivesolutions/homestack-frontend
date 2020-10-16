@@ -3,11 +3,16 @@ import ReactDOM from 'react-dom';
 import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import {BrowserRouter} from "react-router-dom";
+import {Auth0Provider} from "@auth0/auth0-react";
+import Config from "./helpers/Config";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <BrowserRouter>
+    <Auth0Provider domain={Config.auth.DOMAIN} clientId={Config.auth.CLIENTID} audience={Config.auth.APIID} redirectUri={window.location.origin}>
+      <App/>
+    </Auth0Provider>
+  </BrowserRouter>,
   document.getElementById('root')
 );
 
