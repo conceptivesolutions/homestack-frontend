@@ -18,6 +18,8 @@ import RemoveComponent from "./toolbar/RemoveComponent";
 import {v4 as uuidv4} from 'uuid';
 import LoadingIndicator from "../../components/loader/LoadingIndicator";
 import {useAuth0} from "@auth0/auth0-react";
+import SelectionDetailsComponent from "./details/SelectionDetailsComponent";
+import _ from "lodash";
 
 /**
  * Component that will render the netplan chart as a network diagram
@@ -28,6 +30,7 @@ export default ({hostID}: { hostID: string }) =>
 {
   const {showDialog} = useGlobalHook("dialogStore") as IDialogStore;
   const canRefresh = useRef<boolean>(true);
+  const dataMap = useRef<Map<string, any>>(new Map());
   const nodesRef = useRef<DataSetNodes>(new DataSet());
   const edgesRef = useRef<DataSetEdges>(new DataSet());
   const [loading, setLoading] = useState<boolean>(false);
@@ -57,9 +60,9 @@ export default ({hostID}: { hostID: string }) =>
 
     return getAccessTokenSilently()
       .then(pToken => getAllDevices(pToken, hostID))
-      .then((data) =>
+      .then((pData) =>
       {
-        if (!data || !canRefresh.current)
+        if (!pData || !canRefresh.current)
           return;
 
         const usedNodeIDs: any[] = [];
@@ -67,10 +70,13 @@ export default ({hostID}: { hostID: string }) =>
 
         // Update all current IDs (incl. add)
         getAccessTokenSilently()
-          .then(pToken => Promise.all(data
+          .then(pToken => Promise.all(pData
             .map(pDevice => Promise.all([getMetrics(pToken, pDevice.id), getEdges(pToken, pDevice.id)])
               .then((values) =>
               {
+                // add to data map
+                dataMap.current.set(pDevice.id, pDevice);
+
                 // Update Node
                 const node = deviceToNode(pDevice, _getStateColor(values[0]));
                 usedNodeIDs.push(node.id);
@@ -79,6 +85,10 @@ export default ({hostID}: { hostID: string }) =>
                 // Update Edges
                 values[1].forEach(pEdge =>
                 {
+                  // add to data map
+                  dataMap.current.set(pEdge.id, pEdge);
+
+                  // Update Edge
                   const edge = edgeToEdge(pEdge);
                   usedEdgeIDs.push(edge.id);
                   edgesRef.current.update(edge)
@@ -93,13 +103,16 @@ export default ({hostID}: { hostID: string }) =>
               .filter((pNode: Node) => usedNodeIDs.indexOf(pNode.id) === -1)
               .forEach(((pNode: Node) =>
               {
+                dataMap.current.delete(pNode.id as string);
                 nodesRef.current.remove(pNode.id)
               }));
+
             // Remove unused edges
             edgesRef.current.stream()
               .filter((pEdge: Edge) => usedEdgeIDs.indexOf(pEdge.id) === -1)
               .forEach(((pEdge: Edge) =>
               {
+                dataMap.current.delete(pEdge.id as string);
                 edgesRef.current.remove(pEdge.id)
               }));
           })
@@ -153,6 +166,7 @@ export default ({hostID}: { hostID: string }) =>
                          onClick={() => _handleDelete(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, getAccessTokenSilently, _refresh)}/>
       </ToolbarComponent>
       {graph}
+      <SelectionDetailsComponent pNode={_.head(selectedNodes.concat(selectedEdges).map(pNode => dataMap.current.get(pNode)))}/>
     </div>
   );
 }

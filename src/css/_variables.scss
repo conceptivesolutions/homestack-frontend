@@ -4,7 +4,7 @@ $palette-3: #00adb5;
 $palette-4: #eeeeee;
 
 $primary-color: $palette-3;
-$outline-color: $palette-4;
+$outline-color: darken($palette-4, 20%);
 
 $border-radius: 5px;
 $primary-shadow: 5px 5px 5px 0 rgba(0, 0, 0, 0.1);
