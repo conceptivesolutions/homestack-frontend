@@ -26,7 +26,6 @@ export default () =>
 
   return (
     <div className={"nav-container"}>
-      <img className={"logo"} src={"/300_dark.png"} alt={"logo"}/>
       <NavigationItem linkTo={"/"} iconName={"home"} title={"Dashboard"}/>
       <NavigationItem iconName={"desktop"} title={"Hosts"} defaultOpen={true}>
         {_.sortBy(hosts, ['displayName', 'id'])

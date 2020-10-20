@@ -10,11 +10,13 @@ import HostPage from "./pages/host/HostPage";
 import SettingsPage from "./pages/settings/SettingsPage";
 import HelpPage from "./pages/help/HelpPage";
 import LoadingIndicator from "./components/loader/LoadingIndicator";
+import TopBarComponent from "./components/topbar/TopBarComponent";
 
 const App = () =>
   // @ts-ignore
   <GlobalHooksProvider hooks={[dialogStore]}>
     <NavigationComponent/>
+    <TopBarComponent/>
     <Route exact path={"/"} component={DashboardPage}/>
     <Route exact path={"/hosts/:hostID"} component={HostPage}/>
     <Route exact path={"/settings"} component={SettingsPage}/>

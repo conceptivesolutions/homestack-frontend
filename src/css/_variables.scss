@@ -5,11 +5,15 @@ $palette-4: #eeeeee;
 
 $primary-color: $palette-3;
 $outline-color: darken($palette-4, 20%);
+$text-color: #424242;
 
 $border-radius: 5px;
 $primary-shadow: 5px 5px 5px 0 rgba(0, 0, 0, 0.1);
 
-$nav-background: $palette-1;
-$nav-color: white;
+$topbar-height: 60px;
+$topbar-background: $palette-1;
+
+$nav-background: $palette-4;
+$nav-color: $text-color;
 $nav-selection-indicator-color: $primary-color;
 $nav-selection-indicator-width: 5px;

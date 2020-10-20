@@ -6,17 +6,9 @@
   flex-direction: column;
   min-width: 200px;
   background: $nav-background;
+  margin-top: $topbar-height;
 
   -webkit-box-shadow: $primary-shadow;
   -moz-box-shadow: $primary-shadow;
   box-shadow: $primary-shadow;
-
-  .logo {
-    object-fit: contain;
-    padding: 20px;
-    border-bottom: 1px solid #dedede;
-    margin-bottom: 10px;
-    height: auto;
-    max-width: 100%;
-  }
 }

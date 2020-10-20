@@ -1,0 +1,30 @@
+@import "src/css/_variables.scss";
+
+.topbar__container {
+  position: absolute;
+  z-index: 500;
+  top: 0;
+  width: 100%;
+  height: $topbar-height;
+  background: $topbar-background;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  -webkit-box-shadow: $primary-shadow;
+  -moz-box-shadow: $primary-shadow;
+  box-shadow: $primary-shadow;
+
+  .topbar__logo {
+    height: 70%;
+    object-fit: contain;
+  }
+
+  .topbar__entries-container {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: row;
+    justify-content: center;
+  }
+}
