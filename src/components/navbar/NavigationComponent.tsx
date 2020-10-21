@@ -11,7 +11,7 @@ import _ from "lodash";
  *
  * @returns {JSX.Element}
  */
-export default () =>
+export default ({className}: { className?: string }) =>
 {
   const {user, logout, getAccessTokenSilently} = useAuth0();
   const [hosts, setHosts] = useState<IHost[]>([]);
@@ -25,7 +25,7 @@ export default () =>
   }, [getAccessTokenSilently])
 
   return (
-    <div className={"nav-container"}>
+    <div className={(className || "") + " nav-container"}>
       <NavigationItem linkTo={"/"} iconName={"home"} title={"Dashboard"}/>
       <NavigationItem iconName={"desktop"} title={"Hosts"} defaultOpen={true}>
         {_.sortBy(hosts, ['displayName', 'id'])

@@ -9,7 +9,7 @@ import _ from "lodash";
 /**
  * Component for the upper navigation bar
  */
-export default () =>
+export default ({className}: { className?: string }) =>
 {
   const {user, logout, getAccessTokenSilently} = useAuth0();
   const [hosts, setHosts] = useState<IHost[]>([]);
@@ -23,7 +23,7 @@ export default () =>
   }, [getAccessTokenSilently])
 
   return (
-    <div className={"topbar__container"}>
+    <div className={(className || "") + " topbar__container"}>
       <img className={"topbar__logo"} src={"/300_dark.png"} alt={"logo"}/>
       <div className={"topbar__entries-container"}>
         <TopBarItem id={"home"} linkTo={"/"} iconName={"home"} title={"Dashboard"}/>

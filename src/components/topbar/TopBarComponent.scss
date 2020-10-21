@@ -1,9 +1,6 @@
 @import "src/css/_variables.scss";
 
 .topbar__container {
-  position: absolute;
-  z-index: 500;
-  top: 0;
   width: 100%;
   height: $topbar-height;
   background: $topbar-background;
