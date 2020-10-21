@@ -4,7 +4,6 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import DialogContainer, {dialogStore} from "./components/dialogs/DialogContainer";
 import {GlobalHooksProvider} from "@devhammed/use-global-hook";
 import {withAuthenticationRequired} from "@auth0/auth0-react";
-import NavigationComponent from "./components/navbar/NavigationComponent";
 import {Route} from "react-router";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import HostPage from "./pages/host/HostPage";
@@ -16,7 +15,6 @@ import TopBarComponent from "./components/topbar/TopBarComponent";
 const App = () =>
   // @ts-ignore
   <GlobalHooksProvider hooks={[dialogStore]}>
-    <NavigationComponent className={"root__navigation"}/>
     <TopBarComponent className={"root__topbar"}/>
     <div className={"root_content"}>
       <Route exact path={"/"} component={DashboardPage}/>

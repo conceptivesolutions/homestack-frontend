@@ -24,9 +24,10 @@ import _ from "lodash";
 /**
  * Component that will render the netplan chart as a network diagram
  *
+ * @param className CSS classes
  * @param hostID ID of the host
  */
-export default ({hostID}: { hostID: string }) =>
+export default ({className, hostID}: { className?: string, hostID: string }) =>
 {
   const {showDialog} = useGlobalHook("dialogStore") as IDialogStore;
   const canRefresh = useRef<boolean>(true);
@@ -157,7 +158,7 @@ export default ({hostID}: { hostID: string }) =>
     return <LoadingIndicator/>
 
   return (
-    <div className={"graph-container"}>
+    <div className={(className || "") + " graph-container"}>
       <ToolbarComponent>
         <AutoRefreshComponent onTrigger={_refresh} interval={1000}/>
         <AddComponent enabled={true}

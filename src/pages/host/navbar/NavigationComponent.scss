@@ -1,10 +1,7 @@
 @import "src/css/_variables.scss";
 
-.nav-container {
-  display: flex;
-  flex-direction: column;
-  background: $nav-background;
-
+.navigation__container {
+  background: $palette-4;
   -webkit-box-shadow: $primary-shadow;
   -moz-box-shadow: $primary-shadow;
   box-shadow: $primary-shadow;
