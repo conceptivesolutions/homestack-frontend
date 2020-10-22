@@ -1,24 +1,24 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import './NetworkComponent.scss'
 import {deviceToNode, edgeToEdge, NetworkGraph} from "./NetworkGraph";
-import {createDevice, deleteDevice, getAllDevices, getDeviceByID, updateDevice} from '../../rest/DeviceClient';
+import {createDevice, deleteDevice, getAllDevices, getDeviceByID, updateDevice} from '../../../rest/DeviceClient';
 import {useGlobalHook} from "@devhammed/use-global-hook";
 import {DataSet} from "vis-network/standalone/esm/vis-network";
-import ToolbarComponent from "./toolbar/NetworkToolbarComponent";
-import AutoRefreshComponent from "./toolbar/AutoRefreshComponent";
-import DeviceInspectionDialogContent from "./dialogs/DeviceInspectionDialogContent";
-import AddComponent from "./toolbar/AddComponent";
-import {addEdgeBetween, getEdges, removeEdgeBetween} from "../../rest/EdgeClient";
-import {getMetrics} from "../../rest/MetricsClient";
-import {IDialogStore} from "../../types/dialog";
+import ToolbarComponent from "../toolbar/NetworkToolbarComponent";
+import AutoRefreshComponent from "../toolbar/AutoRefreshComponent";
+import DeviceInspectionDialogContent from "../dialogs/DeviceInspectionDialogContent";
+import AddComponent from "../toolbar/AddComponent";
+import {addEdgeBetween, getEdges, removeEdgeBetween} from "../../../rest/EdgeClient";
+import {getMetrics} from "../../../rest/MetricsClient";
+import {IDialogStore} from "../../../types/dialog";
 import {DataSetEdges, DataSetNodes, Edge, Node} from "vis-network/dist/types";
 import {Position} from "vis-network/declarations/network/Network";
-import {EMetricState, IMetric} from "../../types/model";
-import RemoveComponent from "./toolbar/RemoveComponent";
+import {EMetricState, IMetric} from "../../../types/model";
+import RemoveComponent from "../toolbar/RemoveComponent";
 import {v4 as uuidv4} from 'uuid';
-import LoadingIndicator from "../../components/loader/LoadingIndicator";
+import LoadingIndicator from "../../../components/loader/LoadingIndicator";
 import {useAuth0} from "@auth0/auth0-react";
-import SelectionDetailsComponent from "./details/SelectionDetailsComponent";
+import SelectionDetailsComponent from "../details/SelectionDetailsComponent";
 import _ from "lodash";
 
 /**

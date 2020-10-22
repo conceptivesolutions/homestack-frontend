@@ -3,7 +3,7 @@ import {Network} from "vis-network/standalone/esm/vis-network";
 import "./NetworkGraph.scss"
 import {DataSetEdges, DataSetNodes, Edge, Node} from "vis-network/dist/types";
 import {Position} from "vis-network/declarations/network/Network";
-import {IDevice, IEdge} from "../../types/model";
+import {IDevice, IEdge} from "../../../types/model";
 
 /**
  * Converts a netplan device to the correct vis.js node

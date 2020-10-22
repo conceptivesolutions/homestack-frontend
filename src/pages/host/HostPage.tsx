@@ -1,6 +1,6 @@
 import React from "react";
 import "./HostPage.scss";
-import NetworkComponent from "./NetworkComponent";
+import NetworkComponent from "./network/NetworkComponent";
 import {useParams} from "react-router";
 import NavigationComponent from "./navbar/NavigationComponent";
 
