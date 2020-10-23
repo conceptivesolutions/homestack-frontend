@@ -16,6 +16,8 @@ export interface IDevice
   hostID?: string,
   address?: string,
   location?: ILocation,
+  metrics?: IMetric[],
+  edges?: IEdge[],
 }
 
 export interface IEdge

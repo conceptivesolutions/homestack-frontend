@@ -1,21 +1,25 @@
-import React from "react";
+import React, {useContext} from "react";
 import {useTimer} from "use-timer";
+import {ACTION_RELOAD_DEVICES, EHostStateActions, HostContext} from "../state/HostContext";
 
 /**
- * Toolbar-Component that will trigger the onTrigger-Function, if the button is active / pressed
- *
- * @param interval Interval to trigger "onTrigger"
- * @param onTrigger Function that gets triggered
+ * Toolbar-Component that will trigger the refresh, if the button is active / pressed
  */
-export default ({interval, onTrigger}: { interval: number, onTrigger: () => void }) =>
+export default () =>
 {
+  const {state, dispatch} = useContext(HostContext)
   const {start, pause, isRunning} = useTimer({
     initialTime: 0,
-    onTimeUpdate: onTrigger,
-    interval: interval,
+    onTimeUpdate: () => dispatch(ACTION_RELOAD_DEVICES),
+    interval: 1000,
   })
 
+  if (state.autoRefresh && !isRunning)
+    start();
+  else if (!state.autoRefresh && isRunning)
+    pause();
+
   return (
-    <button className={"fa fa-sync-alt " + (isRunning && "pressed")} onClick={() => isRunning ? pause() : start()}/>
+    <button className={"fa fa-sync-alt " + (isRunning && "pressed")} onClick={() => dispatch({type: EHostStateActions.SET_AUTOREFRESH, payload: !isRunning})}/>
   )
 }
