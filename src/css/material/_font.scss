@@ -1,8 +1,9 @@
 @import "colors";
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
 * {
   color: $font-color;
   font-family: 'Roboto', sans-serif;
-  font-size: 12pt;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
