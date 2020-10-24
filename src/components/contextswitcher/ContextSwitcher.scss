@@ -1,0 +1,20 @@
+@import "contextswitcher";
+
+.contextswitcher__container {
+  padding: $content-size / 2.5;
+  border-right: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+}
+
+.contextswitcher__upper-container {
+
+}
+
+.contextswitcher__middle-container {
+  flex-grow: 1;
+}
+
+.contextswitcher__lower-container {
+
+}
