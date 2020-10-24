@@ -1,0 +1,40 @@
+@import "../borders";
+@import "../colors";
+
+button {
+  background: white;
+  border: 1px solid $border-color;
+  padding: 5px 30px;
+  border-radius: $border-radius;
+  cursor: pointer;
+
+  &:hover {
+    background-color: darken(white, 6%);
+  }
+
+  &:active {
+    background-color: darken(white, 9%);
+  }
+
+  &.primary {
+    background-color: $primary-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($primary-color, 6%);
+    }
+
+    &:active {
+      background-color: darken($primary-color, 9%);
+    }
+  }
+
+  &.pressed {
+    background-color: darken(white, 9%);
+  }
+
+  &.disabled {
+    background-color: darken($border-color, 6%);
+    color: gray;
+  }
+}

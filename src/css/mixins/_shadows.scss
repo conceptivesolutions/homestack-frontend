@@ -1,0 +1,5 @@
+@mixin glow_shadow($color) {
+  -webkit-box-shadow: 0 0 3px 0 rgba($color, 0.85);
+  -moz-box-shadow: 0 0 3px 0 rgba($color, 0.85);
+  box-shadow: 0 0 3px 0 rgba($color, 0.85);
+}

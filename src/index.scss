@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-@import "src/css/_variables.scss";
+@import "src/css/material";
 
 html {
     width: 100%;
@@ -12,47 +11,4 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden; // Disable Safari Overscroll
-}
-
-* {
-    color: $text-color;
-    font-family: 'Roboto', sans-serif;
-    font-size: 12pt;
-}
-
-button {
-    background: white;
-    border: 1px solid $outline-color;
-    padding: 5px 30px;
-    border-radius: $border-radius;
-
-    &:hover {
-        background-color: darken(white, 6%);
-    }
-
-    &:active {
-        background-color: darken(white, 9%);
-    }
-
-    &.primary {
-        background-color: $primary-color;
-        color: white;
-
-        &:hover {
-            background-color: darken($primary-color, 6%);
-        }
-
-        &:active {
-            background-color: darken($primary-color, 9%);
-        }
-    }
-
-    &.pressed {
-        background-color: darken(white, 9%);
-    }
-
-    &.disabled {
-        background-color: darken($outline-color, 6%);
-        color: gray;
-    }
 }
