@@ -1,0 +1,22 @@
+@import "src/css/material";
+
+.navbar__container {
+  height: 65px;
+  display: flex;
+  flex-direction: row;
+  @include box_shadow_bottom(black)
+}
+
+.navbar__left-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.navbar__middle-container {
+  flex-grow: 1;
+}
+
+.navbar__right-container {
+  display: flex;
+  flex-direction: row;
+}

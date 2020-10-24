@@ -35,6 +35,6 @@ button {
 
   &.disabled {
     background-color: darken($border-color, 6%);
-    color: gray;
+    color: $font-color-disabled;
   }
 }

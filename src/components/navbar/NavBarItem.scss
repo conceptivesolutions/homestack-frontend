@@ -1,0 +1,19 @@
+@import "src/css/material";
+
+$inset: 20px;
+
+.navbar-item__container {
+  margin: $inset $inset 0 $inset;
+  color: $font-color-disabled;
+  font-size: 1.35rem;
+  letter-spacing: 0.05em;
+  border-bottom: 3px solid transparent;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.navbar-item__container-active {
+  border-bottom-color: $primary-color;
+  color: $font-color;
+  font-weight: 500;
+}

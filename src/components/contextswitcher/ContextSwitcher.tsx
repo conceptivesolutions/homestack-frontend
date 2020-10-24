@@ -12,17 +12,11 @@ import {IContextSwitcherEntry} from "./ContextSwitcherEntry";
 export default ({className, children}: { className?: string, children?: React.ReactNode }) => (
   <div className={className + " contextswitcher__container"}>
       <div className={"contextswitcher__upper-container"}>
-          {Children.toArray(children).filter(pChild =>
-          {
-              return ((pChild as React.Component).props as IContextSwitcherEntry).alignment === 'top'
-          })}
+          {Children.toArray(children).filter(pChild => ((pChild as React.Component).props as IContextSwitcherEntry).alignment === 'top')}
       </div>
       <div className={"contextswitcher__middle-container"}/>
       <div className={"contextswitcher__lower-container"}>
-          {Children.toArray(children).filter(pChild =>
-          {
-              return ((pChild as React.Component).props as IContextSwitcherEntry).alignment === 'bottom'
-          })}
+            {Children.toArray(children).filter(pChild => ((pChild as React.Component).props as IContextSwitcherEntry).alignment === 'bottom')}
       </div>
   </div>
 )

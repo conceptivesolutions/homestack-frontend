@@ -1,14 +1,27 @@
 .host__container {
-  display: flex;
-  flex-direction: row;
   width: 100%;
   height: 100%;
 
-  .host__network {
-    flex-grow: 1;
-  }
+  // display as grid
+  display: grid;
+  grid-template-areas: "edge navbar" "navigator network";
+  grid-gap: 0 0;
+  grid-template-rows: min-content 1fr;
+  grid-template-columns: 275px 1fr;
+}
 
-  .host__navigator {
-    width: 25%;
-  }
+.host__navigator {
+  grid-area: navigator;
+}
+
+.host__navbar {
+  grid-area: navbar;
+}
+
+.host__edge {
+  grid-area: edge;
+}
+
+.host__network {
+  grid-area: network;
 }
