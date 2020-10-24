@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 @import "src/css/_variables.scss";
 
 html {
@@ -16,7 +16,7 @@ body {
 
 * {
     color: $text-color;
-    font-family: 'Ubuntu Mono', monospace;
+    font-family: 'Roboto', sans-serif;
     font-size: 12pt;
 }
 
