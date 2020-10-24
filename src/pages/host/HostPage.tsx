@@ -23,11 +23,10 @@ export default () =>
     <HostProvider id={hostID}>
       <div className={"host__container"}>
         <NavBar className={"host__navbar"}>
-          <NavBarItem alignment={"left"}>Dashboard</NavBarItem>
-          <NavBarItem alignment={"left"}>Activity</NavBarItem>
-          <NavBarItem alignment={"left"}>Project Namespaces</NavBarItem>
-          <NavBarItem alignment={"left"}>Teams</NavBarItem>
-          <NavBarItem alignment={"left"}>Domains</NavBarItem>
+          <NavBarItem alignment={"left"}>View Network</NavBarItem>
+          <NavBarItem alignment={"left"} active>Manage</NavBarItem>
+          <NavBarItem alignment={"left"}>Devices</NavBarItem>
+          <NavBarItem alignment={"left"}>Settings</NavBarItem>
           <IconItem alignment={"right"} iconName={"bell"}/>
           <ProfileItem alignment={"right"} iconSrc={user.picture}/>
         </NavBar>
