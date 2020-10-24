@@ -3,15 +3,15 @@ import "./NavBarItem.scss";
 
 export interface INavBarItem
 {
-  title: string,
   alignment: 'left' | 'right',
+  children?: React.ReactNode,
+  className?: string,
   active?: boolean,
   onClick?: () => void,
 }
 
-// noinspection JSUnusedLocalSymbols
-export default ({title, alignment, active = false, onClick}: INavBarItem) => (
-  <span className={"navbar-item__container " + (active && "navbar-item__container-active")} onClick={onClick}>
-    {title}
+export default (props: INavBarItem) => (
+  <span className={(props.className || "") + " navbar-item__container " + (props.active && "navbar-item__container-active")} onClick={props.onClick}>
+    {props.children}
   </span>
 )

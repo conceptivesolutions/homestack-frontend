@@ -6,6 +6,9 @@ import {HostProvider} from "./state/HostContext";
 import NavigatorComponent from "./navbar/NavigatorComponent";
 import NavBar from "../../components/navbar/NavBar";
 import NavBarItem from "../../components/navbar/NavBarItem";
+import {useAuth0} from "@auth0/auth0-react";
+import ProfileItem from "../../components/navbar/items/ProfileItem";
+import IconItem from "../../components/navbar/items/IconItem";
 
 /**
  * Creates an "Host"-Page and loads the host with the ID from the url
@@ -13,17 +16,20 @@ import NavBarItem from "../../components/navbar/NavBarItem";
 export default () =>
 {
   const {hostID} = useParams();
+  const {user} = useAuth0();
   if (!hostID)
     return <></>;
   return (
     <HostProvider id={hostID}>
       <div className={"host__container"}>
         <NavBar className={"host__navbar"}>
-          <NavBarItem alignment={"left"} title={"Dashboard"}/>
-          <NavBarItem alignment={"left"} title={"Activity"} active/>
-          <NavBarItem alignment={"left"} title={"Project Namespaces"}/>
-          <NavBarItem alignment={"left"} title={"Teams"}/>
-          <NavBarItem alignment={"left"} title={"Domains"}/>
+          <NavBarItem alignment={"left"}>Dashboard</NavBarItem>
+          <NavBarItem alignment={"left"}>Activity</NavBarItem>
+          <NavBarItem alignment={"left"}>Project Namespaces</NavBarItem>
+          <NavBarItem alignment={"left"}>Teams</NavBarItem>
+          <NavBarItem alignment={"left"}>Domains</NavBarItem>
+          <IconItem alignment={"right"} iconName={"bell"}/>
+          <ProfileItem alignment={"right"} iconSrc={user.picture}/>
         </NavBar>
         <div className={"host__edge"}/>
         <NavigatorComponent className={"host__navigator"}/>

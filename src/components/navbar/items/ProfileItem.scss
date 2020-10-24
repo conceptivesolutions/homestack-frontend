@@ -1,0 +1,19 @@
+.profileitem__container {
+  margin-top: 18px;
+}
+
+.profileitem__innercontainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  img {
+    height: 30px;
+    border-radius: 100%;
+  }
+}
+
+.profileitem__dropdown-arrow {
+  padding-left: 10px;
+  font-size: 0.75rem;
+}
