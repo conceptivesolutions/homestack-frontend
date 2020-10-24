@@ -4,16 +4,16 @@
 
   // display as grid
   display: grid;
-  grid-template-areas: "header" "content";
+  grid-template-areas: "switcher content";
   grid-gap: 0 0;
-  grid-template-rows: min-content 1fr;
-  grid-template-columns: 1fr;
-}
-
-.root__topbar {
-  grid-area: header;
+  grid-template-rows: 1fr;
+  grid-template-columns: min-content 1fr;
 }
 
 .root_content {
   grid-area: content;
+}
+
+.root_switcher {
+  grid-area: switcher;
 }
