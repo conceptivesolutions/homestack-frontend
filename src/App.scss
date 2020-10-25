@@ -6,7 +6,7 @@
   display: grid;
   grid-template-areas: "switcher content";
   grid-gap: 0 0;
-  grid-template-rows: 1fr;
+  grid-template-rows: 100vh;
   grid-template-columns: min-content 1fr;
 }
 
