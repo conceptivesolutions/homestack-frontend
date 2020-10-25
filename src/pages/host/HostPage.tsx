@@ -3,7 +3,7 @@ import "./HostPage.scss";
 import NetworkComponent from "./network/NetworkComponent";
 import {useParams} from "react-router";
 import {HostProvider} from "./state/HostContext";
-import NavigatorComponent from "./navbar/NavigatorComponent";
+import NavigatorComponent from "./navigator/NavigatorComponent";
 import NavBar from "../../components/navbar/NavBar";
 import NavBarItem from "../../components/navbar/NavBarItem";
 import {useAuth0} from "@auth0/auth0-react";
