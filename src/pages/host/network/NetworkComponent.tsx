@@ -9,13 +9,14 @@ import AddComponent from "../toolbar/AddComponent";
 import {IDialogStore} from "../../../types/dialog";
 import {DataSetEdges, DataSetNodes, Edge, Node} from "vis-network/dist/types";
 import {Position} from "vis-network/declarations/network/Network";
-import {EMetricState, IDevice, IMetric} from "../../../types/model";
+import {IDevice} from "../../../types/model";
 import RemoveComponent from "../toolbar/RemoveComponent";
 import {ACTION_ADD_EDGE_BETWEEN, ACTION_CREATE_DEVICE, ACTION_REMOVE_DEVICE, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, HostContext, HostDispatch} from "../state/HostContext";
 import AutoRefreshComponent from "../toolbar/AutoRefreshComponent";
 import SelectionDetailsComponent from "../details/SelectionDetailsComponent";
 import _ from "lodash";
 import {useCallbackNoRefresh} from "../../../helpers/Utility";
+import {getStateColor} from "../../../helpers/NodeHelper";
 
 /**
  * Component that will render the netplan chart as a network diagram
@@ -45,7 +46,7 @@ export default ({className, hostID}: { className?: string, hostID: string }) =>
     {
 
       // Update Node
-      const node = deviceToNode(pDevice, _getStateColor(pDevice.metrics));
+      const node = deviceToNode(pDevice, getStateColor(pDevice.metrics));
       usedNodeIDs.push(node.id);
       nodesRef.current.update(node);
 
@@ -118,37 +119,6 @@ export default ({className, hostID}: { className?: string, hostID: string }) =>
       <SelectionDetailsComponent pNode={_.head(state.devices?.filter(pDevice => selectedNodes.indexOf(pDevice.id) > -1))}/>
     </div>
   );
-}
-
-/**
- * Returns the color for a given device state
- *
- * @param pMetrics metrics to read
- * @returns {string} color als hex string
- * @private
- */
-function _getStateColor(pMetrics?: IMetric[])
-{
-  if (pMetrics === undefined)
-    return "#737373";
-
-  let failed = [];
-  let success = [];
-
-  pMetrics.forEach(pMetric =>
-  {
-    if (pMetric.state === EMetricState.SUCCESS)
-      success.push(pMetric);
-    else
-      failed.push(pMetric);
-  })
-
-  if (failed.length > 0 && success.length === 0)
-    return "#dd0404";
-  else if (failed.length > 0 && success.length > 0)
-    return "#fffb03";
-  else
-    return "#4bbf04"
 }
 
 /**

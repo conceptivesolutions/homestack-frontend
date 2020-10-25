@@ -1,11 +1,20 @@
 import React from "react";
 import "./NavigationTree.scss";
-import Tree, {Loader} from "react-hyper-tree";
+import Tree, {DefaultNodeProps, Loader} from "react-hyper-tree";
 
 export interface INavigationTree
 {
   required: any,
   handlers: any,
+}
+
+export interface ITreeNode
+{
+  id: string,
+  name: string,
+  iconName: string,
+  iconColor?: string,
+  children?: ITreeNode[],
 }
 
 export default (props: INavigationTree) => (
@@ -42,19 +51,17 @@ export default (props: INavigationTree) => (
  * @param onSelect
  * @param onToggle
  */
-function _renderNode({node, onSelect, onToggle}: any)
+function _renderNode({node, onSelect, onToggle}: DefaultNodeProps)
 {
-  if (node.options.root)
-    console.log(node)
   return <div className={"component-tree__node " + (node.options.root && "component-tree__node-root")} onClick={onSelect}>
-    {_createControlNode({node, onToggle})}
+    {_createControlNode({node, onSelect, onToggle})}
     {node.isLoading() && (<Loader/>)}
-    {node.data.iconName && <span className={"component-tree__node-icon fa fa-" + node.data.iconName}/>}
+    {node.data.iconName && <span style={{color: node.data.iconColor}} className={"component-tree__node-icon fa fa-" + node.data.iconName}/>}
     <span className={"component-tree__node-text"}>{node.data.name}</span>
   </div>;
 }
 
-function _createControlNode({node, onToggle}: any)
+function _createControlNode({node, onToggle}: DefaultNodeProps)
 {
   if (node.options.root)
     return null;
