@@ -11,7 +11,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hook-thunk-reducer": "^0.2.4",
-    "react-hyper-tree": "^0.2.18",
+    "react-hyper-tree": "https://github.com/conceptivesolutions/hyper-tree",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "use-timer": "^1.4.0",

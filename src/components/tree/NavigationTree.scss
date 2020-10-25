@@ -1,0 +1,33 @@
+@import "src/css/material";
+
+.component-tree__container {
+}
+
+.component-tree__node {
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  padding: 5px 0;
+}
+
+.component-tree__node-root {
+  .component-tree__node-icon {
+    color: $primary-color;
+    padding-left: 3px;
+  }
+}
+
+.component-tree__node-arrow {
+  color: $secondary-color;
+  padding-left: 10px;
+}
+
+.component-tree__node-icon {
+  padding-left: 10px;
+  padding-right: 10px;
+  color: $secondary-color;
+}
+
+.component-tree__node-text {
+  white-space: nowrap;
+}
