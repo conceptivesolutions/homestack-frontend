@@ -1,9 +1,11 @@
 @import "src/css/material";
 
 .navbar__container {
-  height: 65px;
+  padding: 0 $title-padding;
+  height: 48px;
   display: flex;
   flex-direction: row;
+  border-bottom: 1px solid $border-color;
   @include box_shadow_bottom(black)
 }
 
