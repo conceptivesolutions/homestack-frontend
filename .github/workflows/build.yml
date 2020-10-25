@@ -23,11 +23,11 @@ jobs:
 
       # Install Packages
       - name: Install Packages
-        run: npm install
+        run: yarn install
 
       # Build Page
       - name: Build page
-        run: npm run build
+        run: yarn run build
 
       # Login to Nexus
       - uses: azure/docker-login@v1
