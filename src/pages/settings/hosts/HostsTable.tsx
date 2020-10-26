@@ -1,7 +1,7 @@
 import React, {useContext} from "react";
 import "./HostsTable.scss"
 import _ from "lodash";
-import {ACTION_CREATE_HOST, ACTION_REMOVE_HOST, ACTION_UPDATE_HOST, SettingsContext} from "../state/SettingsContext";
+import {ACTION_CREATE_HOST, ACTION_REMOVE_HOST, ACTION_UPDATE_HOST, GlobalContext} from "../../../state/GlobalContext";
 import {IHost} from "../../../types/model";
 import SimpleGridDialogContent from "../../../components/dialogs/SimpleGridDialogContent";
 import {useGlobalHook} from "@devhammed/use-global-hook";
@@ -10,7 +10,7 @@ import {v4 as uuidv4} from 'uuid';
 
 export default () =>
 {
-  const {state, dispatch} = useContext(SettingsContext);
+  const {state, dispatch} = useContext(GlobalContext);
   const {showDialog} = useGlobalHook("dialogStore") as IDialogStore;
 
   return (
