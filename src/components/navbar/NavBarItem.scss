@@ -7,6 +7,8 @@
   align-items: center;
   cursor: pointer;
   margin: 0 $title-padding;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
 
   &:last-child {
     margin-right: 0;
@@ -21,13 +23,8 @@
   }
 }
 
-.navbar-item__container-left {
-  border-bottom: 3px solid transparent;
-}
-
 .navbar-item__container-inner {
   font-size: 1rem;
-  color: inherit;
   font-weight: inherit;
   letter-spacing: 0.05em;
 }

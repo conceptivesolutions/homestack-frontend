@@ -1,10 +1,5 @@
 @import "src/css/material";
 
 .iconitem {
-  color: $font-color-disabled;
   font-weight: lighter;
-
-  &:hover {
-    color: $font-color-medium;
-  }
 }
