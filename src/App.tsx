@@ -12,6 +12,8 @@ import LoadingIndicator from "./components/loader/LoadingIndicator";
 import ContextSwitcher from "./components/contextswitcher/ContextSwitcher";
 import ContextSwitcherEntry from "./components/contextswitcher/ContextSwitcherEntry";
 import {GlobalContext} from "./state/GlobalContext";
+import _ from "lodash";
+import randomColor from 'randomcolor';
 
 const App = () =>
 {
@@ -24,9 +26,12 @@ const App = () =>
     <GlobalHooksProvider hooks={[dialogStore]}>
       <ContextSwitcher className={"root_switcher"}>
         <ContextSwitcherEntry active={location.pathname === "/"} alignment={"top"} iconName={"home"} title={"Home"}/>
-        {state.hosts?.map(pHost => <ContextSwitcherEntry key={pHost.id} alignment={"top"} iconName={"server"} title={pHost.displayName || ""}
-                                                         active={location.pathname.startsWith("/hosts/" + pHost.id)}
-                                                         onClick={() => history.push("/hosts/" + pHost.id)}/>)}
+        {_.sortBy(state.hosts, ['displayName', 'id']).map(pHost => <ContextSwitcherEntry key={pHost.id} alignment={"top"} iconName={"server"}
+                                                                                         title={pHost.displayName || ""}
+                                                                                         active={location.pathname.startsWith("/hosts/" + pHost.id)}
+                                                                                         iconColor={"white"}
+                                                                                         color={randomColor({seed: pHost.id, luminosity: "dark"})}
+                                                                                         onClick={() => history.push("/hosts/" + pHost.id)}/>)}
         <ContextSwitcherEntry alignment={"bottom"} iconName={"plus"} title={"Add System"}/>
       </ContextSwitcher>
       <div className={"root_content"}>
