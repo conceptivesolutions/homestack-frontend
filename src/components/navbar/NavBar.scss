@@ -6,7 +6,6 @@
   display: flex;
   flex-direction: row;
   border-bottom: 1px solid $border-color;
-  @include box_shadow_bottom(black)
 }
 
 .navbar__left-container {
