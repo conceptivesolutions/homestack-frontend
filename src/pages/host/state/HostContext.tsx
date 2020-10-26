@@ -109,7 +109,7 @@ export const ACTION_ADD_EDGE_BETWEEN = (from: string, to: string) => (dispatch: 
 {
   getState().getAccessToken()
     .then(pToken => addEdgeBetween(pToken, from, to))
-    .then(() => dispatch(ACTION_RELOAD_DEVICES))
+    .then(() => dispatch(ACTION_RELOAD_DEVICES()))
 }
 
 /**
@@ -123,19 +123,19 @@ export const ACTION_REMOVE_EDGE_BETWEEN = (from: string, to: string) => (dispatc
 {
   getState().getAccessToken()
     .then(pToken => removeEdgeBetween(pToken, from, to))
-    .then(() => dispatch(ACTION_RELOAD_DEVICES))
+    .then(() => dispatch(ACTION_RELOAD_DEVICES()))
 }
 
 /**
  * Reloads the current available devices
  */
-export const ACTION_RELOAD_DEVICES = (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+export const ACTION_RELOAD_DEVICES = (hostID?: string) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
 {
   dispatch({type: EHostStateActions.RELOAD_DEVICES_STARTED})
   getState().getAccessToken()
 
     // get all devices
-    .then(pToken => getAllDevices(pToken, getState().id)
+    .then(pToken => getAllDevices(pToken, hostID || getState().id)
 
       // enrich devices with metrics and edges
       .then(pDevices => Promise.all(pDevices.map(pDevice => getMetrics(pToken, pDevice.id)
@@ -183,7 +183,7 @@ export function HostProvider({id, children}: { id: string, children?: React.Reac
   });
 
   // initial
-  useEffect(() => dispatch(ACTION_RELOAD_DEVICES), [dispatch])
+  useEffect(() => dispatch(ACTION_RELOAD_DEVICES(id)), [dispatch, id])
 
   return <HostContext.Provider value={{state, dispatch}}>
     {children}

@@ -10,7 +10,7 @@ export default () =>
   const {state, dispatch} = useContext(HostContext)
   const {start, pause, isRunning} = useTimer({
     initialTime: 0,
-    onTimeUpdate: () => dispatch(ACTION_RELOAD_DEVICES),
+    onTimeUpdate: () => dispatch(ACTION_RELOAD_DEVICES()),
     interval: 1000,
   })
 
