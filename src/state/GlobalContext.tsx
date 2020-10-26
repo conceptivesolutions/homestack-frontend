@@ -21,6 +21,7 @@ interface IInternalGlobalState extends IGlobalState
 export enum EGlobalStateActions
 {
   SET_HOSTS,
+  SET_USER,
 }
 
 export type GlobalDispatch = Dispatch<Action | Thunk<IInternalGlobalState, Action>>
@@ -103,6 +104,12 @@ const reducer = (state: IInternalGlobalState, action: Action) =>
         hosts: action.payload
       };
 
+    case EGlobalStateActions.SET_USER:
+      return {
+        ...state,
+        user: action.payload,
+      }
+
     default:
       return state;
   }
@@ -110,13 +117,15 @@ const reducer = (state: IInternalGlobalState, action: Action) =>
 
 export function GlobalProvider({children}: { children?: React.ReactNode })
 {
-  const {getAccessTokenSilently: getAccessToken} = useAuth0();
+  const {getAccessTokenSilently: getAccessToken, user} = useAuth0();
   const [state, dispatch] = useThunkReducer(reducer, {
     getAccessToken,
+    user,
   });
 
   // initial
   useEffect(() => dispatch(ACTION_RELOAD_HOSTS), [dispatch])
+  useEffect(() => dispatch({type: EGlobalStateActions.SET_USER, payload: user}), [user, dispatch])
 
   return <GlobalContext.Provider value={{state, dispatch}}>
     {children}
