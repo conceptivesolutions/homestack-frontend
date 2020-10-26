@@ -1,8 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import "./DeviceInspectionDialogContent.scss"
-import {getMetrics} from "../../../rest/MetricsClient";
-import {IDevice, IMetric} from "../../../types/model";
-import {useAuth0} from "@auth0/auth0-react";
+import {IDevice} from "../../../types/model";
 import SimpleGridDialogContent from "../../../components/dialogs/SimpleGridDialogContent";
 
 /**
@@ -14,16 +12,6 @@ import SimpleGridDialogContent from "../../../components/dialogs/SimpleGridDialo
  */
 export default ({device, onPropChange}: { device: IDevice, onPropChange: (propName: string, propVal: string) => void }) =>
 {
-  const [metrics, setMetrics] = useState<IMetric[]>([])
-  const {getAccessTokenSilently} = useAuth0();
-
-  useEffect(() =>
-  {
-    getAccessTokenSilently()
-      .then(pToken => getMetrics(pToken, device.id))
-      .then(setMetrics)
-  }, [device.id, getAccessTokenSilently])
-
   return (
     <SimpleGridDialogContent>
       <span>ID</span>
@@ -31,7 +19,7 @@ export default ({device, onPropChange}: { device: IDevice, onPropChange: (propNa
       <span>Address</span>
       <input onChange={(e) => onPropChange("address", e.target.value)} defaultValue={device.address}/>
       <span>Metrics</span>
-      <pre className={"device-inspection-dialog-content__metrics"}>{JSON.stringify(metrics, null, " ")}</pre>
+      <pre className={"device-inspection-dialog-content__metrics"}>{JSON.stringify(device.metrics, null, " ")}</pre>
     </SimpleGridDialogContent>
   );
 }
