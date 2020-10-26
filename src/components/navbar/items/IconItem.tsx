@@ -10,7 +10,7 @@ interface IIconItem
 }
 
 export default (props: IIconItem) => (
-  <NavBarItem alignment={props.alignment}>
+  <NavBarItem onClick={props.onClick} alignment={props.alignment}>
     <span className={"iconitem fa fa-" + props.iconName}/>
   </NavBarItem>
 )
