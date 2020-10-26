@@ -1,3 +1,5 @@
+@import "src/css/material";
+
 .profileitem__container {
 }
 
@@ -6,8 +8,10 @@
   flex-direction: row;
   align-items: center;
 
-  img {
+  .profileitem__icon {
+    width: 30px;
     height: 30px;
+    background: $border-color;
     border-radius: 100%;
   }
 }

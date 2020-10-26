@@ -11,7 +11,9 @@ interface IProfileItem
 export default (props: IProfileItem) => (
   <NavBarItem className={"profileitem__container"} alignment={props.alignment}>
     <div className={"profileitem__innercontainer"}>
-      <img src={props.iconSrc} alt={"avatar"}/>
+      {props.iconSrc ?
+        <img className={"profileitem__icon"} src={props.iconSrc} alt={"avatar"}/> :
+        <div className={"profileitem__icon"}/>}
       <span className={"profileitem__dropdown-arrow fa fa-chevron-down"}/>
     </div>
   </NavBarItem>
