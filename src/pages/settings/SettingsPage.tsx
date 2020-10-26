@@ -2,6 +2,7 @@ import React from "react";
 import "./SettingsPage.scss"
 import {SettingsProvider} from "./state/SettingsContext";
 import HostsTable from "./hosts/HostsTable";
+import PageContainer from "../../components/page/PageContainer";
 
 /**
  * Page: Settings
@@ -9,9 +10,11 @@ import HostsTable from "./hosts/HostsTable";
 export default () =>
 {
   return <SettingsProvider>
-    <div className={"settings-page__container"}>
-      <div>Hosts</div>
-      <HostsTable/>
-    </div>
+    <PageContainer>
+      <div className={"settings-page__container"}>
+        <div>Hosts</div>
+        <HostsTable/>
+      </div>
+    </PageContainer>
   </SettingsProvider>
 }
