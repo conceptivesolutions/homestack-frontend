@@ -30,7 +30,11 @@ const App = () =>
                                                                                          title={pHost.displayName || ""}
                                                                                          active={location.pathname.startsWith("/hosts/" + pHost.id)}
                                                                                          iconColor={"white"}
-                                                                                         color={randomColor({seed: pHost.id, luminosity: "dark"})}
+                                                                                         color={randomColor({
+                                                                                           hue: "blue",
+                                                                                           seed: pHost.id,
+                                                                                           luminosity: "bright"
+                                                                                         })}
                                                                                          onClick={() => history.push("/hosts/" + pHost.id)}/>)}
         <ContextSwitcherEntry alignment={"bottom"} iconName={"plus"} title={"Add System"}/>
       </ContextSwitcher>
