@@ -114,7 +114,7 @@ export function SettingsProvider({children}: { children?: React.ReactNode })
   });
 
   // initial
-  useEffect(() => dispatch(ACTION_RELOAD_HOSTS), [])
+  useEffect(() => dispatch(ACTION_RELOAD_HOSTS), [dispatch])
 
   return <SettingsContext.Provider value={{state, dispatch}}>
     {children}
