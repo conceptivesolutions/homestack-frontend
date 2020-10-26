@@ -71,7 +71,7 @@ function _upsertHost(pShowDialogFn: (dialog: any) => void, pDispatchFn: (action:
       if (pResult === "Save")
       {
         if (pHost)
-          pDispatchFn(ACTION_UPDATE_HOST(pHost))
+          pDispatchFn(ACTION_UPDATE_HOST(changes))
         else
           pDispatchFn(ACTION_CREATE_HOST(pHost))
       }
