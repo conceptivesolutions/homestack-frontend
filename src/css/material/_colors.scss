@@ -5,3 +5,8 @@ $border-color: #e7e7e7;
 $font-color: rgba(#000000, 0.87);
 $font-color-medium: rgba(#000000, 0.60);
 $font-color-disabled: rgba(#000000, 0.38);
+
+/** Function to generate a hover color */
+@function hoverColor($color) {
+  @return darken($color, 6%);
+}
