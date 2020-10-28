@@ -3,10 +3,12 @@
 
 body {
   color: $font-color;
+  text-decoration: none;
 }
 
 * {
   color: inherit;
+  text-decoration: inherit;
   font-family: 'Roboto', sans-serif;
   -webkit-font-smoothing: subpixel-antialiased;
   -moz-osx-font-smoothing: grayscale;
