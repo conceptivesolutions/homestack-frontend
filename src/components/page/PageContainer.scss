@@ -31,6 +31,13 @@
 .pagecontent__edge {
   border-bottom: 1px solid $border-color;
   grid-area: edge;
+
+  // Logo
+  background-image: url("/300.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-origin: content-box;
+  padding: $title-padding;
 }
 
 .pagecontent__content {
