@@ -8,6 +8,15 @@
   align-items: center;
   font-size: 0.8rem;
   padding: 5px 0;
+  cursor: default;
+}
+
+.component-tree__node-selected {
+  text-decoration: underline;
+}
+
+.component-tree__node-selectable {
+  cursor: pointer;
 }
 
 .component-tree__node-root {
@@ -20,6 +29,7 @@
 .component-tree__node-arrow {
   color: $secondary-color;
   padding-left: 10px;
+  cursor: pointer;
 }
 
 .component-tree__node-icon {
