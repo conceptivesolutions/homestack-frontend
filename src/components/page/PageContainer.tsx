@@ -30,7 +30,6 @@ export default (props: IPageContent) =>
   return (
     <div className={classNames("pagecontent__container", {"pagecontent__container_with-navigator": !!props.navigator})}>
       <ContextSwitcher className={"pagecontent__switcher"}>
-        <ContextSwitcherEntry active={location.pathname === "/"} alignment={"top"} iconName={"home"} title={"Home"}/>
         {_createHostSwitcherEntries(hosts, location.pathname, hostID => history.push("/hosts/" + hostID))}
         <ContextSwitcherEntry alignment={"bottom"} iconName={"plus"} title={"Add System"}/>
       </ContextSwitcher>
@@ -40,7 +39,7 @@ export default (props: IPageContent) =>
         <IconItem alignment={"right"} iconName={"bell"}/>
         <ProfileItem alignment={"right"} iconSrc={user?.picture}/>
       </NavBar>
-      <div className={"pagecontent__edge"}>
+      <div className={"pagecontent__edge"} onClick={() => history.push("/")}>
         {props.edge}
       </div>
       {<div className={"pagecontent__navigator"}>
