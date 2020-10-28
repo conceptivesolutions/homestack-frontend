@@ -116,6 +116,13 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
     {
       if (ctx.nodes !== undefined && ctx.nodes.length > 0 && !!onDragStart)
         onDragStart();
+
+      // Selection Workaround
+      if (!!onSelectionChanged)
+      {
+        const {nodes, edges} = network.current?.getSelection() || {}
+        onSelectionChanged(nodes as string[], edges as string[]);
+      }
     });
 
     // noinspection JSUnresolvedFunction
