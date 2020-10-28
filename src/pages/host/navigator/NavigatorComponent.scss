@@ -1,16 +1,19 @@
 @import "src/css/material";
 
-$container_padding: 10px;
-
 .navigator__container {
   border-right: 1px solid $border-color;
-  padding: 20px;
-  overflow: auto;
   display: flex;
   flex-direction: column;
   background: $tertiary-color;
+}
 
-  & > * {
-    flex-grow: 1;
-  }
+.navigator__tree {
+  padding: $content-padding;
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.navigator__actions {
+  flex-grow: 0;
+  padding: 0 $content-padding $content-padding;
 }

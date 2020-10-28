@@ -33,7 +33,8 @@ export enum EHostStateActions
   RELOAD_DEVICES_FINISHED,
   SET_DEVICES,
   SET_AUTOREFRESH,
-  SET_SELECTION
+  SET_SELECTION,
+  SET_ID,
 }
 
 /**
@@ -109,7 +110,7 @@ export const ACTION_ADD_EDGE_BETWEEN = (from: string, to: string) => (dispatch: 
 {
   getState().getAccessToken()
     .then(pToken => addEdgeBetween(pToken, from, to))
-    .then(() => dispatch(ACTION_RELOAD_DEVICES()))
+    .then(() => dispatch(ACTION_RELOAD_DEVICES))
 }
 
 /**
@@ -123,20 +124,21 @@ export const ACTION_REMOVE_EDGE_BETWEEN = (from: string, to: string) => (dispatc
 {
   getState().getAccessToken()
     .then(pToken => removeEdgeBetween(pToken, from, to))
-    .then(() => dispatch(ACTION_RELOAD_DEVICES()))
+    .then(() => dispatch(ACTION_RELOAD_DEVICES))
     .then(() => dispatch(ACTION_VALIDATE_SELECTION))
 }
 
 /**
  * Reloads the current available devices
  */
-export const ACTION_RELOAD_DEVICES = (hostID?: string) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+export const ACTION_RELOAD_DEVICES = (dispatch: HostDispatch, getState: () => IInternalHostState) =>
 {
+  const triggeredForID = getState().id;
   dispatch({type: EHostStateActions.RELOAD_DEVICES_STARTED})
   getState().getAccessToken()
 
     // get all devices
-    .then(pToken => getAllDevices(pToken, hostID || getState().id)
+    .then(pToken => getAllDevices(pToken, triggeredForID)
 
       // enrich devices with metrics and edges
       .then(pDevices => Promise.all(pDevices.map(pDevice => getMetrics(pToken, pDevice.id)
@@ -146,10 +148,18 @@ export const ACTION_RELOAD_DEVICES = (hostID?: string) => (dispatch: HostDispatc
         .then(() => pDevice)))))
 
     // set devices
-    .then((pDevices) => dispatch({type: EHostStateActions.SET_DEVICES, payload: pDevices}))
+    .then((pDevices) =>
+    {
+      // Are we still using this devices?
+      if (getState().id !== triggeredForID)
+        return;
 
-    // update selection
-    .then(() => dispatch(ACTION_VALIDATE_SELECTION))
+      dispatch({type: EHostStateActions.SET_DEVICES, payload: pDevices});
+
+      // update selection
+      dispatch(ACTION_VALIDATE_SELECTION);
+    })
+
     .finally(() => dispatch({type: EHostStateActions.RELOAD_DEVICES_FINISHED}))
 }
 
@@ -198,6 +208,14 @@ const reducer = (state: IInternalHostState, action: Action) =>
         },
       }
 
+    case EHostStateActions.SET_ID:
+      return {
+        ...state,
+        id: action.payload,
+        devices: undefined,
+        selection: undefined
+      }
+
     default:
       return state;
   }
@@ -215,8 +233,24 @@ export function HostProvider({id, children}: { id: string, children?: React.Reac
     autoRefresh: false
   });
 
-  // initial
-  useEffect(() => dispatch(ACTION_RELOAD_DEVICES(id)), [dispatch, id])
+  // initial and on ID change
+  useEffect(() =>
+  {
+    dispatch({type: EHostStateActions.SET_ID, payload: id})
+    dispatch({type: EHostStateActions.SET_AUTOREFRESH, payload: true})
+    dispatch(ACTION_RELOAD_DEVICES);
+  }, [dispatch, id])
+
+  /**
+   * Auto-Refresh Timer
+   */
+  useEffect(() =>
+  {
+    if (!state.autoRefresh)
+      return;
+    const interval = setInterval(() => dispatch(ACTION_RELOAD_DEVICES), 1000)
+    return () => clearInterval(interval);
+  }, [state.id, state.autoRefresh, dispatch])
 
   return <HostContext.Provider value={{state, dispatch}}>
     {children}

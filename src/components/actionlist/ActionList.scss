@@ -1,0 +1,29 @@
+@import "src/css/material";
+
+.actionlist__container {
+
+}
+
+.actionlist__item {
+  padding-top: 10px;
+  color: $primary-color;
+  cursor: pointer;
+  font-size: small;
+
+  &:hover {
+    color: hoverColor($primary-color);
+  }
+}
+
+.actionlist__item-disabled {
+  color: $font-color-disabled;
+  cursor: default;
+
+  &:hover {
+    color: $font-color-disabled;
+  }
+}
+
+.actionlist__item-icon {
+  margin-right: 10px;
+}
