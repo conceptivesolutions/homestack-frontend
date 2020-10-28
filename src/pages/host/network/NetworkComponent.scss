@@ -1,4 +1,4 @@
 .graph-container {
-  height: calc(100vh - 45px);
-  position: relative; // necessary for toolbar placement (absolute position)
+  height: 100%;
+  position: relative; // necessary for canvas placement (absolute position)
 }
