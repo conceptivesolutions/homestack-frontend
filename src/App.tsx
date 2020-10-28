@@ -9,6 +9,7 @@ import HostPage from "./pages/host/HostPage";
 import SettingsPage from "./pages/settings/SettingsPage";
 import HelpPage from "./pages/help/HelpPage";
 import LoadingIndicator from "./components/loader/LoadingIndicator";
+import HomePage from "./pages/home/HomePage";
 
 const App = () =>
 {
@@ -19,6 +20,7 @@ const App = () =>
         <Route exact path={"/hosts/:hostID"} component={HostPage}/>
         <Route exact path={"/settings"} component={SettingsPage}/>
         <Route exact path={"/help"} component={HelpPage}/>
+        <Route path={"/"} component={HomePage}/>
       </Switch>
       <DialogContainer/>
     </GlobalHooksProvider>
