@@ -17,6 +17,7 @@ import SelectionDetailsComponent from "../details/SelectionDetailsComponent";
 import _ from "lodash";
 import {useCallbackNoRefresh} from "../../../helpers/Utility";
 import {getStateColor} from "../../../helpers/NodeHelper";
+import classNames from "classnames";
 
 /**
  * Component that will render the netplan chart as a network diagram
@@ -107,7 +108,7 @@ export default ({className, hostID}: { className?: string, hostID: string }) =>
   ), [setSelectedNodes, dispatch, onDoubleClickRef]);
 
   return (
-    <div className={(className || "") + " graph-container"}>
+    <div className={classNames(className, "graph-container")}>
       <ToolbarComponent>
         <AutoRefreshComponent/>
         <AddComponent enabled={true}

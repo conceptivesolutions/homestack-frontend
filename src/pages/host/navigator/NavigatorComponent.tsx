@@ -5,6 +5,7 @@ import {useTreeState} from "react-hyper-tree";
 import _ from "lodash";
 import NavigationTree, {ITreeNode} from "../../../components/tree/NavigationTree";
 import {getStateColor} from "../../../helpers/NodeHelper";
+import classNames from "classnames";
 
 /**
  * Simple Navigator
@@ -44,7 +45,7 @@ export default ({className}: { className: string }) =>
   }, [handlers])
 
   return (
-    <div className={(className || "") + " navigator__container"}>
+    <div className={classNames(className, "navigator__container")}>
       <NavigationTree required={required} handlers={handlers}/>
     </div>
   );

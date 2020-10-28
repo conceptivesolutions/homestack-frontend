@@ -6,6 +6,7 @@ import IconItem from "../navbar/items/IconItem";
 import ProfileItem from "../navbar/items/ProfileItem";
 import {useHistory} from "react-router";
 import {GlobalContext} from "../../state/GlobalContext";
+import classNames from "classnames";
 
 export interface IPageContent
 {
@@ -21,7 +22,7 @@ export default (props: IPageContent) =>
   const {state: {user}} = useContext(GlobalContext);
 
   return (
-    <div className={"pagecontent__container " + (props.navigator ? "pagecontent__container_with-navigator" : "")}>
+    <div className={classNames("pagecontent__container", {"pagecontent__container_with-navigator": !!props.navigator})}>
       <NavBar className={"pagecontent__navbar"}>
         {props.navbarItems?.map(pItem => <NavBarItem key={JSON.stringify(pItem.children)} {...pItem}/>)}
         <IconItem alignment={"right"} iconName={"cog"} active={history.location.pathname.startsWith("/settings")} onClick={() => history.push("/settings")}/>

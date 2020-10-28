@@ -1,6 +1,7 @@
 import React, {Children} from "react";
 import "./NavBar.scss";
 import {INavBarItem} from "./NavBarItem";
+import classNames from "classnames";
 
 export interface INavBar
 {
@@ -15,7 +16,7 @@ export interface INavBar
  * @param children
  */
 export default ({className = "", children}: INavBar) => (
-  <div className={className + " navbar__container"}>
+  <div className={classNames(className, "navbar__container")}>
     <div className={"navbar__left-container"}>
       {Children.toArray(children).filter(pChild => ((pChild as React.Component).props as INavBarItem).alignment === 'left')}
     </div>
