@@ -7,6 +7,7 @@ export interface INavigationTree
 {
   required: any,
   handlers: any,
+  className?: string,
 }
 
 export interface ITreeNode
@@ -19,7 +20,7 @@ export interface ITreeNode
 }
 
 export default (props: INavigationTree) => (
-  <div className={"component-tree__container"}>
+  <div className={classNames("component-tree__container", props.className)}>
     <Tree
       {...props.required}
       {...props.handlers}
