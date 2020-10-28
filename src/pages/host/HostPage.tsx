@@ -1,35 +1,33 @@
-import React from "react";
+import React, {useContext} from "react";
 import "./HostPage.scss";
 import NetworkComponent from "./network/NetworkComponent";
 import {useParams} from "react-router";
 import NavigatorComponent from "./navigator/NavigatorComponent";
 import PageContainer from "../../components/page/PageContainer";
 import {HostProvider} from "./state/HostContext";
+import {GlobalContext} from "../../state/GlobalContext";
+import _ from "lodash";
 
 /**
  * Creates an "Host"-Page and loads the host with the ID from the url
  */
 export default () =>
 {
+  const {state: {hosts}} = useContext(GlobalContext)
   const {hostID} = useParams();
-  if (!hostID)
+  if (!hostID || _.isEmpty(hosts))
+    return <></>;
+
+  const currentHost = _.find(hosts, pHost => pHost.id === hostID);
+  if (!currentHost)
     return <></>;
 
   return <HostProvider id={hostID}>
     <PageContainer navigator={(<NavigatorComponent className={"host__navigator"}/>)}
                    navbarItems={[{
                      alignment: "left",
-                     children: "View Network"
-                   }, {
-                     alignment: "left",
-                     children: "Manage",
+                     children: currentHost.displayName || currentHost.id,
                      active: true,
-                   }, {
-                     alignment: "left",
-                     children: "Devices"
-                   }, {
-                     alignment: "left",
-                     children: "Settings"
                    }]}>
       <NetworkComponent hostID={hostID}/>
     </PageContainer>
