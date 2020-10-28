@@ -15,8 +15,8 @@ export interface IHostState
   devices?: IDevice[],
   autoRefresh: boolean,
   selection?: {
-    devices: string[],
-    edges: string[]
+    devices?: string[],
+    edges?: string[]
   },
 }
 
@@ -175,8 +175,8 @@ export const ACTION_VALIDATE_SELECTION = (dispatch: HostDispatch, getState: () =
   dispatch({
     type: EHostStateActions.SET_SELECTION,
     payload: {
-      devices: selection.devices.filter(pDeviceID => _.findIndex(getState().devices, pValidDevice => pValidDevice.id === pDeviceID) > -1),
-      edges: selection.edges.filter(pEdgeID => _.findIndex(getState().devices?.flatMap(pDevice => pDevice.edges || []),
+      devices: selection.devices?.filter(pDeviceID => _.findIndex(getState().devices, pValidDevice => pValidDevice.id === pDeviceID) > -1),
+      edges: selection.edges?.filter(pEdgeID => _.findIndex(getState().devices?.flatMap(pDevice => pDevice.edges || []),
         pValidEdge => pValidEdge.id === pEdgeID) > -1)
     }
   })
