@@ -34,14 +34,13 @@ export enum EHostStateActions
 /**
  * Action: Create a new device within the given host
  *
- * @param hostID ID of the host to create a new device in
  * @param id ID of the device to be created - null creates a new uuid
  * @constructor
  */
-export const ACTION_CREATE_DEVICE = (hostID: string, id?: string) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+export const ACTION_CREATE_DEVICE = (id?: string) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
 {
   getState().getAccessToken()
-    .then(pToken => createDevice(pToken, id || uuidv4(), hostID))
+    .then(pToken => createDevice(pToken, id || uuidv4(), getState().id))
     .then(pDevice => dispatch({
       type: EHostStateActions.SET_DEVICES,
       payload: [
