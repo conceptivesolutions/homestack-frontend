@@ -1,20 +1,14 @@
-import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useContext, useEffect, useMemo, useRef} from 'react';
 import './NetworkComponent.scss'
 import {deviceToNode, edgeToEdge, NetworkGraph} from "./NetworkGraph";
 import {useGlobalHook} from "@devhammed/use-global-hook";
 import {DataSet} from "vis-network/standalone/esm/vis-network";
-import ToolbarComponent from "../toolbar/NetworkToolbarComponent";
 import DeviceInspectionDialogContent from "../dialogs/DeviceInspectionDialogContent";
-import AddComponent from "../toolbar/AddComponent";
 import {IDialogStore} from "../../../types/dialog";
 import {DataSetEdges, DataSetNodes, Edge, Node} from "vis-network/dist/types";
 import {Position} from "vis-network/declarations/network/Network";
 import {IDevice} from "../../../types/model";
-import RemoveComponent from "../toolbar/RemoveComponent";
-import {ACTION_ADD_EDGE_BETWEEN, ACTION_CREATE_DEVICE, ACTION_REMOVE_DEVICE, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, HostContext, HostDispatch} from "../state/HostContext";
-import AutoRefreshComponent from "../toolbar/AutoRefreshComponent";
-import SelectionDetailsComponent from "../details/SelectionDetailsComponent";
-import _ from "lodash";
+import {ACTION_ADD_EDGE_BETWEEN, ACTION_CREATE_DEVICE, ACTION_REMOVE_DEVICE, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../state/HostContext";
 import {useCallbackNoRefresh} from "../../../helpers/Utility";
 import {getStateColor} from "../../../helpers/NodeHelper";
 import classNames from "classnames";
@@ -31,8 +25,6 @@ export default ({className, hostID}: { className?: string, hostID: string }) =>
   const {showDialog} = useGlobalHook("dialogStore") as IDialogStore;
   const nodesRef = useRef<DataSetNodes>(new DataSet());
   const edgesRef = useRef<DataSetEdges>(new DataSet());
-  const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
-  const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
 
   /**
    * Function to refresh the current nodes / edges
@@ -69,7 +61,7 @@ export default ({className, hostID}: { className?: string, hostID: string }) =>
     edgesRef.current.stream()
       .filter((pEdge: Edge) => usedEdgeIDs.indexOf(pEdge.id) === -1)
       .forEach(((pEdge: Edge) => edgesRef.current.remove(pEdge.id)));
-  }, [state, dispatch, hostID]);
+  }, [state.devices, dispatch, hostID]);
 
   // Keyboard-Events
   useEffect(() =>
@@ -77,13 +69,13 @@ export default ({className, hostID}: { className?: string, hostID: string }) =>
     const listener = (event: KeyboardEvent) =>
     {
       if (event.keyCode === 46)
-        _handleDelete(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, dispatch)
+        _handleDelete(nodesRef.current, edgesRef.current, state.selection?.devices || [], state.selection?.edges || [], dispatch)
       else if (event.key === "a")
-        _handleCreate(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, hostID, dispatch)
+        _handleCreate(nodesRef.current, edgesRef.current, state.selection?.devices || [], state.selection?.edges || [], dispatch)
     };
     window.addEventListener("keydown", listener)
     return () => window.removeEventListener("keydown", listener);
-  }, [selectedNodes, selectedEdges, dispatch, hostID])
+  }, [state.selection, dispatch])
 
   // Create the double click function, but without retriggering a refresh, if it changes
   const onDoubleClickRef = useCallbackNoRefresh(() => (pNodeIDs: string[]) =>
@@ -97,27 +89,19 @@ export default ({className, hostID}: { className?: string, hostID: string }) =>
   const graph = useMemo(() => (
     <NetworkGraph nodes={nodesRef.current} edges={edgesRef.current} onMove={pPos => _nodesMoved(pPos, dispatch)}
                   onDoubleClick={pNodeIDs => onDoubleClickRef.current(pNodeIDs)}
-                  onSelectionChanged={(nodes, edges) =>
-                  {
-                    if (nodes)
-                      setSelectedNodes(nodes);
-                    if (edges)
-                      setSelectedEdges(edges)
-                  }}
+                  onSelectionChanged={(nodes, edges) => dispatch({
+                    type: EHostStateActions.SET_SELECTION,
+                    payload: {
+                      devices: nodes,
+                      edges,
+                    }
+                  })}
                   onDragStart={() => {}} onDragEnd={() => {}}/>
-  ), [setSelectedNodes, dispatch, onDoubleClickRef]);
+  ), [dispatch, onDoubleClickRef]);
 
   return (
     <div className={classNames(className, "graph-container")}>
-      <ToolbarComponent>
-        <AutoRefreshComponent/>
-        <AddComponent enabled={true}
-                      onClick={() => _handleCreate(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, hostID, dispatch)}/>
-        <RemoveComponent enabled={(selectedNodes.length + selectedEdges.length) > 0}
-                         onClick={() => _handleDelete(nodesRef.current, edgesRef.current, selectedNodes, selectedEdges, dispatch)}/>
-      </ToolbarComponent>
       {graph}
-      <SelectionDetailsComponent pNode={_.head(state.devices?.filter(pDevice => selectedNodes.indexOf(pDevice.id) > -1))}/>
     </div>
   );
 }
@@ -174,17 +158,16 @@ function _nodesDoubleClicked(pNodes: IDevice[], pShowDialogFn: (dialog: any) => 
  * @param pCurrentEdges Reference to the currently used edges
  * @param pSelectedNodeIDs string-array of the selected nodes ids
  * @param pSelectedEdgeIDs string-array of the selected edge ids
- * @param pHostID ID of the host to create the device in
  * @param pDispatchFn Function to dispatch actions
  */
 function _handleCreate(pCurrentNodes: DataSetNodes, pCurrentEdges: DataSetEdges,
-                       pSelectedNodeIDs: string[], pSelectedEdgeIDs: string[], pHostID: string,
+                       pSelectedNodeIDs: string[], pSelectedEdgeIDs: string[],
                        pDispatchFn: HostDispatch)
 {
   if (pSelectedNodeIDs.length === 2)
     pDispatchFn(ACTION_ADD_EDGE_BETWEEN(pSelectedNodeIDs[0], pSelectedNodeIDs[1]))
   else if (pSelectedNodeIDs.length + pSelectedEdgeIDs.length === 0)
-    pDispatchFn(ACTION_CREATE_DEVICE(pHostID))
+    pDispatchFn(ACTION_CREATE_DEVICE())
 }
 
 /**

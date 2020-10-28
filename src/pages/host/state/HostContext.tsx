@@ -14,6 +14,10 @@ export interface IHostState
   id: string,
   devices?: IDevice[],
   autoRefresh: boolean,
+  selection?: {
+    devices: string[],
+    edges: string[]
+  },
 }
 
 export type HostDispatch = Dispatch<Action | Thunk<IInternalHostState, Action>>
@@ -29,6 +33,7 @@ export enum EHostStateActions
   RELOAD_DEVICES_FINISHED,
   SET_DEVICES,
   SET_AUTOREFRESH,
+  SET_SELECTION
 }
 
 /**
@@ -86,15 +91,11 @@ export const ACTION_REMOVE_DEVICE = (id: string) => (dispatch: HostDispatch, get
 {
   getState().getAccessToken()
     .then(pToken => deleteDevice(pToken, id))
-    .then(() =>
-    {
-      const devices = [...(getState().devices || [])];
-      _.remove(devices, pTest => pTest.id === id)
-      dispatch({
-        type: EHostStateActions.SET_DEVICES,
-        payload: devices
-      })
-    })
+    .then(() => dispatch({
+      type: EHostStateActions.SET_DEVICES,
+      payload: getState().devices?.filter(pTest => pTest.id !== id)
+    }))
+    .then(() => dispatch(ACTION_VALIDATE_SELECTION))
 }
 
 /**
@@ -123,6 +124,7 @@ export const ACTION_REMOVE_EDGE_BETWEEN = (from: string, to: string) => (dispatc
   getState().getAccessToken()
     .then(pToken => removeEdgeBetween(pToken, from, to))
     .then(() => dispatch(ACTION_RELOAD_DEVICES()))
+    .then(() => dispatch(ACTION_VALIDATE_SELECTION))
 }
 
 /**
@@ -145,7 +147,29 @@ export const ACTION_RELOAD_DEVICES = (hostID?: string) => (dispatch: HostDispatc
 
     // set devices
     .then((pDevices) => dispatch({type: EHostStateActions.SET_DEVICES, payload: pDevices}))
+
+    // update selection
+    .then(() => dispatch(ACTION_VALIDATE_SELECTION))
     .finally(() => dispatch({type: EHostStateActions.RELOAD_DEVICES_FINISHED}))
+}
+
+/**
+ * Validates the selection, so it only contains valid IDs
+ */
+export const ACTION_VALIDATE_SELECTION = (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+{
+  const selection = getState().selection;
+  if (!selection)
+    return;
+
+  dispatch({
+    type: EHostStateActions.SET_SELECTION,
+    payload: {
+      devices: selection.devices.filter(pDeviceID => _.findIndex(getState().devices, pValidDevice => pValidDevice.id === pDeviceID) > -1),
+      edges: selection.edges.filter(pEdgeID => _.findIndex(getState().devices?.flatMap(pDevice => pDevice.edges || []),
+        pValidEdge => pValidEdge.id === pEdgeID) > -1)
+    }
+  })
 }
 
 const reducer = (state: IInternalHostState, action: Action) =>
@@ -162,6 +186,16 @@ const reducer = (state: IInternalHostState, action: Action) =>
       return {
         ...state,
         autoRefresh: action.payload,
+      }
+
+    case EHostStateActions.SET_SELECTION:
+      return {
+        ...state,
+        selection: {
+          ...state,
+          devices: action.payload?.devices || state.selection?.devices,
+          edges: action.payload?.edges || state.selection?.edges,
+        },
       }
 
     default:
