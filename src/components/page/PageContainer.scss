@@ -6,14 +6,14 @@
 
   // display as grid
   display: grid;
-  grid-template-areas: "switcher edge navbar" "switcher content content";
+  grid-template-areas: "edge edge navbar" "switcher content content";
   grid-gap: 0 0;
   grid-template-rows: min-content 1fr;
   grid-template-columns: min-content 18% 1fr;
 }
 
 .pagecontent__container_with-navigator {
-  grid-template-areas: "switcher edge navbar" "switcher navigator content";
+  grid-template-areas: "edge edge navbar" "switcher navigator content";
 }
 
 .pagecontent__switcher {
