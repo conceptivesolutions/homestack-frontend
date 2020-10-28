@@ -56,7 +56,8 @@ interface INetworkGraph
   onDoubleClick: (nodeIDs: string[]) => void,
   onDragStart: () => void,
   onDragEnd: () => void,
-  onSelectionChanged: (nodes: string[], edges: string[]) => void
+  onSelectionChanged: (nodes: string[], edges: string[]) => void,
+  onNetworkChange?: (network?: Network) => void,
 }
 
 /**
@@ -69,8 +70,9 @@ interface INetworkGraph
  * @param onDragStart Function that gets called, if a drag was started
  * @param onDragEnd Function that gets called, if a drag was ended
  * @param onSelectionChanged Function that gets called, if the selection changed
+ * @param onNetworkChange Function that gets called, if the network changed
  */
-export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, onDragEnd, onSelectionChanged}: INetworkGraph) =>
+export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, onDragEnd, onSelectionChanged, onNetworkChange}: INetworkGraph) =>
 {
   const domNode = useRef<HTMLDivElement>(null);
   const network = useRef<Network | null>(null);
@@ -227,7 +229,11 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
       ctx.lineTo(0, (minGridY + gridCountY) * size);
       ctx.stroke();
     });
-  }, [domNode, network, data, options, grid, onMove, onDoubleClick, onDragStart, onDragEnd, onSelectionChanged]);
+
+    // Fire network change
+    if (!!onNetworkChange)
+      onNetworkChange(network.current);
+  }, [domNode, network, data, options, grid, onMove, onDoubleClick, onDragStart, onDragEnd, onSelectionChanged, onNetworkChange]);
 
   return (
     <div className="network-graph" ref={domNode}/>

@@ -5,7 +5,7 @@ import {useGlobalHook} from "@devhammed/use-global-hook";
 import {DataSet} from "vis-network/standalone/esm/vis-network";
 import DeviceInspectionDialogContent from "../dialogs/DeviceInspectionDialogContent";
 import {IDialogStore} from "../../../types/dialog";
-import {DataSetEdges, DataSetNodes, Edge, Node} from "vis-network/dist/types";
+import {DataSetEdges, DataSetNodes, Edge, Network, Node} from "vis-network/dist/types";
 import {Position} from "vis-network/declarations/network/Network";
 import {IDevice} from "../../../types/model";
 import {ACTION_ADD_EDGE_BETWEEN, ACTION_CREATE_DEVICE, ACTION_REMOVE_DEVICE, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../state/HostContext";
@@ -25,6 +25,7 @@ export default ({className, hostID}: { className?: string, hostID: string }) =>
   const {showDialog} = useGlobalHook("dialogStore") as IDialogStore;
   const nodesRef = useRef<DataSetNodes>(new DataSet());
   const edgesRef = useRef<DataSetEdges>(new DataSet());
+  const networkRef = useRef<Network | undefined>();
 
   /**
    * Function to refresh the current nodes / edges
@@ -77,6 +78,17 @@ export default ({className, hostID}: { className?: string, hostID: string }) =>
     return () => window.removeEventListener("keydown", listener);
   }, [state.selection, dispatch])
 
+  // Sync Selection with State
+  useEffect(() =>
+  {
+    networkRef.current?.setSelection({
+      nodes: state.selection?.devices || [],
+      edges: state.selection?.edges || []
+    }, {
+      unselectAll: true
+    })
+  }, [state.selection])
+
   // Create the double click function, but without retriggering a refresh, if it changes
   const onDoubleClickRef = useCallbackNoRefresh(() => (pNodeIDs: string[]) =>
   {
@@ -96,7 +108,8 @@ export default ({className, hostID}: { className?: string, hostID: string }) =>
                       edges,
                     }
                   })}
-                  onDragStart={() => {}} onDragEnd={() => {}}/>
+                  onDragStart={() => {}} onDragEnd={() => {}}
+                  onNetworkChange={network => networkRef.current = network}/>
   ), [dispatch, onDoubleClickRef]);
 
   return (
