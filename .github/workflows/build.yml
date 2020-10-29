@@ -11,6 +11,10 @@ jobs:
         node-version: [ 12.x ]
 
     steps:
+      # Clean Workspace
+      - name: Clean Workspace
+        uses: AutoModality/action-clean@v1
+
       # Checkout Sources
       - name: Checkout Sources
         uses: actions/checkout@v2
