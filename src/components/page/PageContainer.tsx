@@ -12,6 +12,8 @@ import _ from "lodash";
 import randomColor from "randomcolor";
 import ContextSwitcher from "../contextswitcher/ContextSwitcher";
 import {IHost} from "../../types/model";
+import PopupItem from "../navbar/PopupItem";
+import {useAuth0} from "@auth0/auth0-react";
 
 export interface IPageContent
 {
@@ -23,6 +25,7 @@ export interface IPageContent
 
 export default (props: IPageContent) =>
 {
+  const {logout} = useAuth0();
   const history = useHistory();
   const location = useLocation();
   const {state: {user, hosts}} = useContext(GlobalContext);
@@ -37,7 +40,10 @@ export default (props: IPageContent) =>
         {props.navbarItems?.map(pItem => <NavBarItem key={JSON.stringify(pItem.children)} {...pItem}/>)}
         <IconItem alignment={"right"} iconName={"cog"} active={history.location.pathname.startsWith("/settings")} onClick={() => history.push("/settings")}/>
         <IconItem alignment={"right"} iconName={"bell"}/>
-        <ProfileItem alignment={"right"} iconSrc={user?.picture}/>
+        <ProfileItem alignment={"right"} iconSrc={user?.picture} popupItems={(<>
+          <PopupItem iconName={"user"}>My Profile</PopupItem>
+          <PopupItem iconName={"sign-out-alt"} separatorTop onClick={() => logout()}>Logout</PopupItem>
+        </>)}/>
       </NavBar>
       <div className={"pagecontent__edge"} onClick={() => history.push("/")}>
         {props.edge}
