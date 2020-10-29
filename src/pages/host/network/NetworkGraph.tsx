@@ -258,7 +258,7 @@ function _renderNode(pSize: number)
       drawNode()
       {
         // Font
-        ctx.font = (pSize * 0.7) + 'px "Font Awesome 5 Free"';
+        ctx.font = "900 " + (pSize * 0.7) + 'px "Font Awesome 5 Free"';
         ctx.textBaseline = "middle";
         ctx.textAlign = "center";
 
@@ -279,7 +279,7 @@ function _renderNode(pSize: number)
         ctx.textBaseline = "top";
         ctx.textAlign = "right";
         ctx.fillStyle = (selected ? "#007bff" : "#dedede");
-        ctx.font = '12pt "Font Awesome 5 Free"';
+        ctx.font = '400 12pt "Font Awesome 5 Free"';
         ctx.fillText(selected ? "\uf14a" : "\uf0c8", x + (pSize / 2), y - (pSize / 2))
       },
       // above arrows

@@ -1,4 +1,5 @@
 @import "src/css/_variables.scss";
+@import "src/css/material";
 
 .dialog-container {
   z-index: 6000;
@@ -47,10 +48,10 @@
     }
 
     .dialog-control {
-      font-weight: normal;
+      font-weight: $fa-regular;
 
       &:active {
-        font-weight: bold;
+        font-weight: $fa-solid;
       }
     }
   }
