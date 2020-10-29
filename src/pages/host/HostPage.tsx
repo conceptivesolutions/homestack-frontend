@@ -28,6 +28,10 @@ export default () =>
                      alignment: "left",
                      children: currentHost.displayName || currentHost.id,
                      active: true,
+                   }, {
+                     alignment: "left",
+                     children: "+",
+                     disabled: true,
                    }]}>
       <NetworkComponent hostID={hostID}/>
     </PageContainer>

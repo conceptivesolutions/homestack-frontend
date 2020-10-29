@@ -37,3 +37,12 @@
     color: $font-color;
   }
 }
+
+.navbar-item__container-disabled {
+  cursor: default;
+  color: $font-color-disabled;
+
+  &:hover {
+    color: $font-color-disabled;
+  }
+}
