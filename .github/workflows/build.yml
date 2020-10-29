@@ -11,10 +11,6 @@ jobs:
         node-version: [ 12.x ]
 
     steps:
-      # Clean Workspace
-      - name: Clean Workspace
-        uses: AutoModality/action-clean@v1
-
       # Checkout Sources
       - name: Checkout Sources
         uses: actions/checkout@v2
@@ -27,11 +23,11 @@ jobs:
 
       # Install Packages
       - name: Install Packages
-        run: yarn install
+        run: npm install
 
       # Build Page
       - name: Build page
-        run: yarn run build
+        run: npm run build
 
       # Login to Nexus
       - uses: azure/docker-login@v1
