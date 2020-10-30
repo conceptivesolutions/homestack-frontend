@@ -1,5 +1,5 @@
 import React from "react";
-import "./NavBarItem.scss";
+import styles from "./NavBarItem.module.scss";
 import classNames from "classnames";
 
 export interface INavBarItem
@@ -14,12 +14,12 @@ export interface INavBarItem
 
 export default (props: INavBarItem) => (
   <div
-    className={classNames(props.className, "navbar-item__container", {
-      "navbar-item__container-active": props.active,
-      "navbar-item__container-disabled": props.disabled,
+    className={classNames(props.className, styles.container, {
+      [styles.containerActive]: props.active,
+      [styles.containerDisabled]: props.disabled,
     })}
     onClick={props.onClick}>
-    <div className={"navbar-item__container-inner"}>
+    <div className={styles.containerInner}>
       {props.children}
     </div>
   </div>

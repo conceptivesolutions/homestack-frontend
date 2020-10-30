@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import "./ProfileItem.scss";
+import styles from "./ProfileItem.module.scss";
 import NavBarItem from "../NavBarItem";
 import Popup from "../Popup";
 import classNames from "classnames";
@@ -26,12 +26,12 @@ export default (props: IProfileItem) =>
   }, [popupOpen, setPopupOpen])
 
   return (
-    <NavBarItem key={"profileitem"} className={"profileitem__container"} alignment={props.alignment} onClick={() => setPopupOpen(pV => !pV)}>
-      <div className={"profileitem__innercontainer"}>
+    <NavBarItem key={"profileitem"} className={styles.container} alignment={props.alignment} onClick={() => setPopupOpen(pV => !pV)}>
+      <div className={styles.innerContainer}>
         {props.iconSrc ?
-          <img className={"profileitem__icon"} src={props.iconSrc} alt={"avatar"}/> :
-          <div className={"profileitem__icon"}/>}
-        <span className={classNames("profileitem__dropdown-arrow", "fa", {
+          <img className={styles.icon} src={props.iconSrc} alt={"avatar"}/> :
+          <div className={styles.icon}/>}
+        <span className={classNames(styles.dropdownArrow, "fa", {
           "fa-chevron-down": !popupOpen,
           "fa-chevron-up": popupOpen,
         })}/>

@@ -1,5 +1,5 @@
 import React, {ReactNode} from "react";
-import "./SimpleGridDialogContent.scss"
+import styles from "./SimpleGridDialogContent.module.scss"
 
 /**
  * Describes a simple dialog that will display its children
@@ -8,7 +8,7 @@ import "./SimpleGridDialogContent.scss"
  * @param children
  */
 export default ({children}: { children?: ReactNode }) => (
-  <div className={"simple-grid-dialog__container"}>
+  <div className={styles.container}>
     {children}
   </div>
 )

@@ -1,6 +1,6 @@
 @import "src/css/material";
 
-.navbar-item__container {
+.container {
   color: $font-color-disabled;
   font-weight: normal;
   display: flex;
@@ -23,12 +23,12 @@
   }
 }
 
-.navbar-item__container-inner {
+.containerInner {
   font-size: 1rem;
   letter-spacing: 0.05em;
 }
 
-.navbar-item__container-active {
+.containerActive {
   border-bottom-color: $primary-color;
   color: $font-color;
   font-weight: bold;
@@ -38,7 +38,7 @@
   }
 }
 
-.navbar-item__container-disabled {
+.containerDisabled {
   cursor: default;
   color: $font-color-disabled;
 

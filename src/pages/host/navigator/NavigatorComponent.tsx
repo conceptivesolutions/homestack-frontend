@@ -1,5 +1,5 @@
 import React, {useContext, useEffect} from "react";
-import "./NavigatorComponent.scss";
+import styles from "./NavigatorComponent.module.scss";
 import {ACTION_CREATE_DEVICE, ACTION_REMOVE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../state/HostContext";
 import {useTreeState} from "react-hyper-tree";
 import _ from "lodash";
@@ -57,9 +57,9 @@ export default ({className}: { className: string }) =>
   }, [state.selection, instance, handlers])
 
   return (
-    <div className={classNames(className, "navigator__container")}>
-      <NavigationTree className={"navigator__tree"} required={required} instance={instance} handlers={handlers}/>
-      <ActionList className={"navigator__actions"}>
+    <div className={classNames(className, styles.container)}>
+      <NavigationTree className={styles.tree} required={required} instance={instance} handlers={handlers}/>
+      <ActionList className={styles.actions}>
         <ActionListItem name={"Add Device"} iconName={"plus-circle"} onClick={() => dispatch(ACTION_CREATE_DEVICE())}/>
         <ActionListItem disabled={_.isEmpty(state.selection?.devices)} name={"Remove Device"} iconName={"minus-circle"}
                         color={"red"} onClick={() => state.selection?.devices?.forEach(pDevID => dispatch(ACTION_REMOVE_DEVICE(pDevID)))}/>

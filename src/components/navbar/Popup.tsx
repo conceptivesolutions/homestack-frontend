@@ -1,5 +1,5 @@
 import React from "react";
-import "./Popup.scss";
+import styles from "./Popup.module.scss";
 import classNames from "classnames";
 
 export interface IPopup
@@ -21,7 +21,10 @@ export default (props: IPopup) =>
   const alignment = props.alignment || "left";
 
   return (
-    <div className={classNames(props.className, "popup__container", "popup__container-" + alignment)}>
+    <div className={classNames(props.className, styles.container, {
+      [styles.containerLeft]: alignment === "left",
+      [styles.containerRight]: alignment === "right",
+    })}>
       {props.children}
     </div>
   );

@@ -1,5 +1,5 @@
 import React, {useContext} from "react";
-import "./HostsTable.scss"
+import styles from "./HostsTable.module.scss"
 import _ from "lodash";
 import {ACTION_CREATE_HOST, ACTION_REMOVE_HOST, ACTION_UPDATE_HOST, GlobalContext} from "../../../state/GlobalContext";
 import {IHost} from "../../../types/model";
@@ -15,7 +15,7 @@ export default () =>
 
   return (
     <>
-      <table className={"settings-page__hosts-table"}>
+      <table className={styles.hostsTable}>
         <thead>
         <tr>
           <th>ID</th>
@@ -25,9 +25,9 @@ export default () =>
         </thead>
         <tbody>
         {_.sortBy(state.hosts, ['displayName', 'id']).map(pHost => <tr key={pHost.id}>
-          <td className={"settings-page__hosts-table__id"}>{pHost.id}</td>
-          <td className={"settings-page__hosts-table__name"}>{pHost.displayName}</td>
-          <td className={"settings-page__hosts-table__actions"}>
+          <td>{pHost.id}</td>
+          <td className={styles.hostsTable__name}>{pHost.displayName}</td>
+          <td>
             <button className={"fa fa-cog"} onClick={() => _upsertHost(showDialog, dispatch, pHost)}/>
             <button className={"fa fa-trash"} onClick={() => dispatch(ACTION_REMOVE_HOST(pHost.id))}/>
           </td>

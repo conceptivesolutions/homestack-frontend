@@ -1,6 +1,6 @@
 @import "src/css/material";
 
-.navbar__container {
+.container {
   padding: 0 $title-padding;
   height: 48px;
   display: flex;
@@ -8,16 +8,16 @@
   border-bottom: 1px solid $border-color;
 }
 
-.navbar__left-container {
+.leftContainer {
   display: flex;
   flex-direction: row;
 }
 
-.navbar__middle-container {
+.middleContainer {
   flex-grow: 1;
 }
 
-.navbar__right-container {
+.rightContainer {
   display: flex;
   flex-direction: row;
 }

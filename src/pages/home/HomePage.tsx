@@ -4,6 +4,4 @@ import PageContainer from "../../components/page/PageContainer";
 /**
  * Page: Home
  */
-export default () => (
-  <PageContainer/>
-)
+export default () => <PageContainer/>

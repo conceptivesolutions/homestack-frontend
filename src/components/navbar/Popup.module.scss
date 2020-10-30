@@ -1,6 +1,6 @@
 @import "src/css/material";
 
-.popup__container {
+.container {
   position: absolute;
   z-index: 1000;
   top: 100%;
@@ -19,11 +19,11 @@
   }
 }
 
-.popup__container-left {
+.containerLeft {
   left: 0;
 }
 
-.popup__container-right {
+.containerRight {
   right: 0;
 }
 
@@ -42,6 +42,6 @@
   padding-right: $title-padding;
 }
 
-.popupitem__container-separator-top {
+.popupitem__containerSeparatorTop {
   border-top: 1px solid $border-color;
 }

@@ -1,10 +1,10 @@
 import React from "react";
-import "./LoadingIndicator.scss"
+import styles from "./LoadingIndicator.module.scss"
 
 export default () => (
-  <div className="loading-indicator__container">
-    <div className="loadingio-spinner-eclipse-gd2eyl6rmc9">
-      <div className="ldio-gvx5s1ne94g">
+  <div className={styles.container}>
+    <div className={styles.loadingioSpinner}>
+      <div className={styles.loading}>
         <div/>
       </div>
     </div>

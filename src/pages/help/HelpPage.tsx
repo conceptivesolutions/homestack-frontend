@@ -1,4 +1,7 @@
 import React from "react";
-import "./HelpPage.scss"
+import PageContainer from "../../components/page/PageContainer";
 
-export default () => <div className={"help__container"}/>
+/**
+ * Page: Help
+ */
+export default () => <PageContainer/>

@@ -1,5 +1,5 @@
 import React from "react";
-import "./IconItem.scss";
+import styles from "./IconItem.module.scss";
 import NavBarItem from "../NavBarItem";
 
 interface IIconItem
@@ -12,6 +12,6 @@ interface IIconItem
 
 export default (props: IIconItem) => (
   <NavBarItem onClick={props.onClick} active={props.active} alignment={props.alignment}>
-    <span className={"iconitem fa fa-" + props.iconName}/>
+    <span className={styles.iconitem + " fa fa-" + props.iconName}/>
   </NavBarItem>
 )

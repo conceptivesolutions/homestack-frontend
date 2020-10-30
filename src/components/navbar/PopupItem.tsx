@@ -1,5 +1,6 @@
 import React from "react";
 import classNames from "classnames";
+import styles from "./Popup.module.scss"
 
 interface IPopupItem
 {
@@ -10,10 +11,10 @@ interface IPopupItem
 }
 
 export default (props: IPopupItem) => (
-  <div className={classNames("popupitem__container", {
-    "popupitem__container-separator-top": props.separatorTop
+  <div className={classNames(styles.popupitem__container, {
+    [styles.popupitem__containerSeparatorTop]: props.separatorTop
   })} onClick={props.onClick}>
-    {!!props.iconName && <span className={"popupitem__icon fa fa-" + props.iconName}/>}
+    {!!props.iconName && <span className={styles.popupitem__icon + " fa fa-" + props.iconName}/>}
     <span className={"popupitem__text"}>{props.children}</span>
   </div>
 )

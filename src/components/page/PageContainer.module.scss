@@ -1,6 +1,6 @@
 @import "src/css/material";
 
-.pagecontent__container {
+.container {
   width: 100%;
   height: 100%;
 
@@ -12,23 +12,23 @@
   grid-template-columns: min-content 18% 1fr;
 }
 
-.pagecontent__container_with-navigator {
+.container__withNavigator {
   grid-template-areas: "edge edge navbar" "switcher navigator content";
 }
 
-.pagecontent__switcher {
+.switcher {
   grid-area: switcher;
 }
 
-.pagecontent__navigator {
+.navigator {
   grid-area: navigator;
 }
 
-.pagecontent__navbar {
+.navbar {
   grid-area: navbar;
 }
 
-.pagecontent__edge {
+.edge {
   border-bottom: 1px solid $border-color;
   grid-area: edge;
 
@@ -41,6 +41,6 @@
   cursor: pointer;
 }
 
-.pagecontent__content {
+.content {
   grid-area: content;
 }

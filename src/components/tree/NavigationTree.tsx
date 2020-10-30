@@ -1,5 +1,5 @@
 import React from "react";
-import "./NavigationTree.scss";
+import styles from "./NavigationTree.module.scss";
 import Tree, {DefaultNodeProps, Loader} from "react-hyper-tree";
 import classNames from "classnames";
 import {TreeView} from "react-hyper-tree/dist/helpers/node";
@@ -24,7 +24,7 @@ export interface ITreeNode
 }
 
 export default (props: INavigationTree) => (
-  <div className={classNames("component-tree__container", props.className)}>
+  <div className={classNames(styles.container, props.className)}>
     <Tree
       {...props.required}
       {...props.handlers}
@@ -60,10 +60,10 @@ export default (props: INavigationTree) => (
  */
 function _renderNode(instance: TreeView, {node, onSelect, onToggle}: DefaultNodeProps)
 {
-  return <div className={classNames("component-tree__node", {
-    "component-tree__node-root": node.options.root,
-    "component-tree__node-selectable": node.data.selectable,
-    "component-tree__node-selected": node.options.selected,
+  return <div className={classNames(styles.node, {
+    [styles.root]: node.options.root,
+    [styles.nodeSelectable]: node.data.selectable,
+    [styles.nodeSelected]: node.options.selected,
   })} onClick={(e) =>
   {
     if (!node.data.selectable)
@@ -77,8 +77,8 @@ function _renderNode(instance: TreeView, {node, onSelect, onToggle}: DefaultNode
   }}>
     {_createControlNode({node, onSelect, onToggle})}
     {node.isLoading() && (<Loader/>)}
-    {node.data.iconName && <span style={{color: node.data.iconColor}} className={"component-tree__node-icon fa fa-" + node.data.iconName}/>}
-    <span className={"component-tree__node-text"}>{node.data.name}</span>
+    {node.data.iconName && <span style={{color: node.data.iconColor}} className={styles.icon + " fa fa-" + node.data.iconName}/>}
+    <span className={styles.text}>{node.data.name}</span>
   </div>;
 }
 
@@ -90,11 +90,11 @@ function _createControlNode({node, onToggle}: DefaultNodeProps)
   if (node.hasChildren() || node.options.async)
     if (!node.isLoading())
       return <span onClick={onToggle}
-                   className={classNames("component-tree__node-arrow", "fa", {
+                   className={classNames(styles.arrow, "fa", {
                      "fa-minus-square": node.isOpened() && !!node.hasChildren(),
                      "fa-plus-square": !(node.isOpened() && !!node.hasChildren())
                    })}/>;
 
   // dummy
-  return <span className={"component-tree__node-arrow"}/>
+  return <span className={styles.arrow}/>
 }

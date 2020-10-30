@@ -1,6 +1,6 @@
 @import "src/css/material";
 
-.settings-page__hosts-table {
+.hostsTable {
   width: calc(100% - 30px);
   white-space: nowrap;
   border-collapse: collapse;
@@ -31,7 +31,7 @@
     }
   }
 
-  .settings-page__hosts-table__name {
+  .hostsTable__name {
     width: 99%
   }
 

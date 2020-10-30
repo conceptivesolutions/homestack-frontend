@@ -1,5 +1,4 @@
 import React from "react";
-import "./ActionList.scss";
 
 /**
  * List of actions, displayed like a list

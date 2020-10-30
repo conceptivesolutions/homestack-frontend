@@ -1,5 +1,5 @@
 import React from "react";
-import "./DeviceInspectionDialogContent.scss"
+import styles from "./DeviceInspectionDialogContent.module.scss"
 import {IDevice} from "../../../types/model";
 import SimpleGridDialogContent from "../../../components/dialogs/SimpleGridDialogContent";
 
@@ -19,7 +19,7 @@ export default ({device, onPropChange}: { device: IDevice, onPropChange: (propNa
       <span>Address</span>
       <input onChange={(e) => onPropChange("address", e.target.value)} defaultValue={device.address}/>
       <span>Metrics</span>
-      <pre className={"device-inspection-dialog-content__metrics"}>{JSON.stringify(device.metrics, null, " ")}</pre>
+      <pre className={styles.metrics}>{JSON.stringify(device.metrics, null, " ")}</pre>
     </SimpleGridDialogContent>
   );
 }

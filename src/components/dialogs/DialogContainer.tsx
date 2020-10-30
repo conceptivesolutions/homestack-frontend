@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect} from 'react';
-import "./DialogContainer.scss"
+import styles from "./DialogContainer.module.scss"
 import {createGlobalHook, useGlobalHook} from "@devhammed/use-global-hook";
 import {IDialogStore} from "../../types/dialog";
 
@@ -76,21 +76,21 @@ export default () =>
     return <React.Fragment/>;
 
   return (
-    <div className={"dialog-container"} onClick={() => closeOnOutsideClick && fOnResult(null)()}>
-      <div className={"dialog-frame"} onClick={evt => evt.stopPropagation()}>
-        <div className={"dialog-titlebar"}>
-          <div className={"dialog-title"}>{title}</div>
-          <div className={"dialog-control fa fa-times-circle"} onClick={fOnResult(null)}/>
+    <div className={styles.container} onClick={() => closeOnOutsideClick && fOnResult(null)()}>
+      <div className={styles.frame} onClick={evt => evt.stopPropagation()}>
+        <div className={styles.titlebar}>
+          <div className={styles.title}>{title}</div>
+          <div className={styles.control + " fa fa-times-circle"} onClick={fOnResult(null)}/>
         </div>
 
-        <div className={"dialog-content"}>
+        <div className={styles.content}>
           {children}
         </div>
 
-        <div className={"dialog-buttons"}>
+        <div className={styles.buttons}>
           {additionalButtons}
           {cancelKey && <button onClick={fOnResult(cancelKey)}>{cancelKey}</button>}
-          {primaryKey && <button className={"primary"} onClick={fOnResult(primaryKey)}>{primaryKey}</button>}
+          {primaryKey && <button className={styles.primary} onClick={fOnResult(primaryKey)}>{primaryKey}</button>}
         </div>
       </div>
     </div>

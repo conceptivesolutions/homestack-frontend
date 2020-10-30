@@ -1,5 +1,5 @@
 import React, {useContext} from "react";
-import "./HostPage.scss";
+import styles from "./HostPage.module.scss";
 import NetworkComponent from "./network/NetworkComponent";
 import {useParams} from "react-router";
 import NavigatorComponent from "./navigator/NavigatorComponent";
@@ -23,7 +23,7 @@ export default () =>
     return <></>;
 
   return <HostProvider id={hostID}>
-    <PageContainer navigator={(<NavigatorComponent className={"host__navigator"}/>)}
+    <PageContainer navigator={(<NavigatorComponent className={styles.navigator}/>)}
                    navbarItems={[{
                      alignment: "left",
                      children: currentHost.displayName || currentHost.id,

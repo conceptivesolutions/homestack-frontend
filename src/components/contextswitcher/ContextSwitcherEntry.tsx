@@ -1,5 +1,5 @@
 import React from "react";
-import "./ContextSwitcherEntry.scss"
+import styles from "./ContextSwitcherEntry.module.scss"
 import classNames from "classnames";
 
 export interface IContextSwitcherEntry
@@ -15,7 +15,7 @@ export interface IContextSwitcherEntry
 
 // noinspection JSUnusedLocalSymbols
 export default ({iconName, title, alignment, active, onClick, color, iconColor}: IContextSwitcherEntry) => (
-  <button className={classNames("contextswitcher-entry__button", {"contextswitcher-entry__button-active": active})}
+  <button className={classNames(styles.button, {[styles.buttonActive]: active})}
           style={{backgroundColor: color, color: iconColor}}
           title={title} onClick={onClick}>
     <span className={"fa fa-" + iconName}/>

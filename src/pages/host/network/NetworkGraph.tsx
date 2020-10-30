@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import {Network} from "vis-network/standalone/esm/vis-network";
-import "./NetworkGraph.scss"
+import styles from "./NetworkGraph.module.scss"
 import {DataSetEdges, DataSetNodes, Edge, Node} from "vis-network/dist/types";
 import {Position} from "vis-network/declarations/network/Network";
 import {IDevice, IEdge} from "../../../types/model";
@@ -236,7 +236,7 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
   }, [domNode, network, data, options, grid, onMove, onDoubleClick, onDragStart, onDragEnd, onSelectionChanged, onNetworkChange]);
 
   return (
-    <div className="network-graph" ref={domNode}/>
+    <div className={styles.networkGraph} ref={domNode}/>
   );
 }
 

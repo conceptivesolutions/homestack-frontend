@@ -1,6 +1,6 @@
 @import "src/css/material";
 
-.dialog-container {
+.container {
   z-index: 6000;
   background: rgba(0, 0, 0, .5);
   width: 100%;
@@ -17,7 +17,7 @@
   }
 }
 
-.dialog-frame {
+.frame {
   background: white;
   border-radius: $border-radius;
   padding: 10px;
@@ -34,17 +34,17 @@
     }
   }
 
-  .dialog-titlebar {
+  .titlebar {
     display: flex;
     flex-direction: row;
     flex-shrink: 0;
 
-    .dialog-title {
+    .title {
       flex-grow: 1;
       height: 10px;
     }
 
-    .dialog-control {
+    .control {
       font-weight: $fa-regular;
 
       &:active {
@@ -53,14 +53,14 @@
     }
   }
 
-  .dialog-content {
+  .content {
     overflow: auto;
     min-width: 300px;
     max-width: 50vw;
     max-height: 50vh;
   }
 
-  .dialog-buttons {
+  .buttons {
     display: flex;
     flex-direction: row-reverse;
     flex-shrink: 0;

@@ -1,5 +1,5 @@
 import React, {useContext} from "react";
-import "./PageContainer.scss";
+import styles from "./PageContainer.module.scss";
 import NavBar from "../navbar/NavBar";
 import NavBarItem, {INavBarItem} from "../navbar/NavBarItem";
 import IconItem from "../navbar/items/IconItem";
@@ -31,12 +31,12 @@ export default (props: IPageContent) =>
   const {state: {user, hosts}} = useContext(GlobalContext);
 
   return (
-    <div className={classNames("pagecontent__container", {"pagecontent__container_with-navigator": !!props.navigator})}>
-      <ContextSwitcher className={"pagecontent__switcher"}>
+    <div className={classNames(styles.container, {[styles.container__withNavigator]: !!props.navigator})}>
+      <ContextSwitcher className={styles.switcher}>
         {_createHostSwitcherEntries(hosts, location.pathname, hostID => history.push("/hosts/" + hostID))}
         <ContextSwitcherEntry alignment={"bottom"} iconName={"plus"} title={"Add System"}/>
       </ContextSwitcher>
-      <NavBar className={"pagecontent__navbar"}>
+      <NavBar className={styles.navbar}>
         {props.navbarItems?.map(pItem => <NavBarItem key={JSON.stringify(pItem.children)} {...pItem}/>)}
         <IconItem alignment={"right"} iconName={"cog"} active={history.location.pathname.startsWith("/settings")} onClick={() => history.push("/settings")}/>
         <IconItem alignment={"right"} iconName={"bell"}/>
@@ -45,13 +45,13 @@ export default (props: IPageContent) =>
           <PopupItem iconName={"sign-out-alt"} separatorTop onClick={() => logout()}>Logout</PopupItem>
         </>)}/>
       </NavBar>
-      <div className={"pagecontent__edge"} onClick={() => history.push("/")}>
+      <div className={styles.edge} onClick={() => history.push("/")}>
         {props.edge}
       </div>
-      {<div className={"pagecontent__navigator"}>
+      {<div className={styles.navigator}>
         {props.navigator}
       </div>}
-      <div className={"pagecontent__content"}>
+      <div className={styles.content}>
         {props.children}
       </div>
     </div>

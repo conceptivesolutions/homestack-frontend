@@ -1,10 +1,10 @@
 @import "src/css/material";
 
-.actionlist__container {
+.container {
 
 }
 
-.actionlist__item {
+.item {
   padding-top: 10px;
   color: $primary-color;
   cursor: pointer;
@@ -15,7 +15,7 @@
   }
 }
 
-.actionlist__item-disabled {
+.itemDisabled {
   color: $font-color-disabled;
   cursor: default;
 
@@ -24,6 +24,6 @@
   }
 }
 
-.actionlist__item-icon {
+.itemIcon {
   margin-right: 10px;
 }

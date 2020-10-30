@@ -1,9 +1,9 @@
 @import "src/css/material";
 
-.component-tree__container {
+.container {
 }
 
-.component-tree__node {
+.node {
   display: flex;
   align-items: center;
   font-size: 0.8rem;
@@ -11,33 +11,33 @@
   cursor: default;
 }
 
-.component-tree__node-selected {
+.nodeSelected {
   text-decoration: underline;
 }
 
-.component-tree__node-selectable {
+.nodeSelectable {
   cursor: pointer;
 }
 
-.component-tree__node-root {
-  .component-tree__node-icon {
+.root {
+  .icon {
     color: $primary-color;
     padding-left: 3px;
   }
 }
 
-.component-tree__node-arrow {
+.arrow {
   color: $secondary-color;
   padding-left: 10px;
   cursor: pointer;
 }
 
-.component-tree__node-icon {
+.icon {
   padding-left: 10px;
   padding-right: 10px;
   color: $secondary-color;
 }
 
-.component-tree__node-text {
+.text {
   white-space: nowrap;
 }

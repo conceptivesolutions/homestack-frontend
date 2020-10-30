@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useMemo, useRef} from 'react';
-import './NetworkComponent.scss'
+import styles from "./NetworkComponent.module.scss";
 import {deviceToNode, edgeToEdge, NetworkGraph} from "./NetworkGraph";
 import {useGlobalHook} from "@devhammed/use-global-hook";
 import {DataSet} from "vis-network/standalone/esm/vis-network";
@@ -113,7 +113,7 @@ export default ({className, hostID}: { className?: string, hostID: string }) =>
   ), [dispatch, onDoubleClickRef]);
 
   return (
-    <div className={classNames(className, "graph-container")}>
+    <div className={classNames(className, styles.graphContainer)}>
       {graph}
     </div>
   );

@@ -1,6 +1,6 @@
 @import "contextswitcher";
 
-.contextswitcher-entry__button {
+.button {
   border-color: $border-color;
 
   span {
@@ -17,6 +17,6 @@
   }
 }
 
-.contextswitcher-entry__button-active {
+.buttonActive {
   @include glow_shadow($primary-color)
 }
