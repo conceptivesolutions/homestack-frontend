@@ -1,11 +1,11 @@
 import React, {useContext} from "react";
 import styles from "./HostsTable.module.scss"
 import _ from "lodash";
-import {ACTION_CREATE_HOST, ACTION_REMOVE_HOST, ACTION_UPDATE_HOST, GlobalContext} from "../../../state/GlobalContext";
-import {IHost} from "../../../types/model";
-import SimpleGridDialogContent from "../../../components/dialogs/SimpleGridDialogContent";
+import {ACTION_CREATE_HOST, ACTION_REMOVE_HOST, ACTION_UPDATE_HOST, GlobalContext} from "../../state/GlobalContext";
+import {IHost} from "../../types/model";
+import SimpleGridDialogContent from "../../components/dialogs/SimpleGridDialogContent";
 import {useGlobalHook} from "@devhammed/use-global-hook";
-import {IDialogStore} from "../../../types/dialog";
+import {IDialogStore} from "../../types/dialog";
 import {v4 as uuidv4} from 'uuid';
 
 export default () =>

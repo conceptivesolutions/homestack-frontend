@@ -1,5 +1,5 @@
 import React, {createContext, Dispatch} from "react";
-import {Action} from "../../../types/context";
+import {Action} from "../types/context";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
 import {useAuth0} from "@auth0/auth0-react";
 
