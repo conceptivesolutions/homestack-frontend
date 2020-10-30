@@ -2,6 +2,11 @@
   "name": "netplan-iot-frontend",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "start": "next start",
+    "build": "next build"
+  },
   "dependencies": {
     "@auth0/auth0-react": "^1.1.0",
     "@devhammed/use-global-hook": "^1.5.1",
@@ -9,16 +14,17 @@
     "classnames": "^2.2.6",
     "http-proxy-middleware": "^1.0.5",
     "lodash": "^4.17.20",
+    "next": "^10.0.0",
     "randomcolor": "^0.6.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hook-thunk-reducer": "^0.2.4",
     "react-hyper-tree": "https://github.com/conceptivesolutions/hyper-tree",
-    "react-router": "^5.2.0",
-    "react-router-dom": "^5.2.0",
     "use-timer": "^1.4.0",
     "uuid": "^8.3.1",
-    "vis-network": "^8.3.2"
+    "vis-data": "^7.1.0",
+    "vis-network": "^8.3.2",
+    "vis-util": "^4.3.4"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.10",
@@ -28,27 +34,8 @@
     "@types/randomcolor": "^0.5.5",
     "@types/react": "^16.9.52",
     "@types/react-dom": "^16.9.8",
-    "@types/react-router": "^5.1.8",
-    "@types/react-router-dom": "^5.1.6",
     "@types/uuid": "^8.3.0",
     "node-sass": "^4.14.1",
-    "react-scripts": "3.4.3",
-    "typescript": "^3.7.5"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "typescript": "^4.0.5"
   }
 }

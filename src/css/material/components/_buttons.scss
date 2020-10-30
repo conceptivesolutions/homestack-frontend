@@ -1,40 +1,24 @@
 @import "../borders";
 @import "../colors";
 
-button {
-  background: white;
-  border: 1px solid $border-color;
-  padding: 5px 30px;
-  border-radius: $border-radius;
-  cursor: pointer;
+button.primary {
+  background-color: $primary-color;
+  color: white;
 
   &:hover {
-    background-color: hoverColor(white);
+    background-color: hoverColor($primary-color);
   }
 
   &:active {
-    background-color: darken(white, 9%);
+    background-color: darken($primary-color, 9%);
   }
+}
 
-  &.primary {
-    background-color: $primary-color;
-    color: white;
+button.pressed {
+  background-color: darken(white, 9%);
+}
 
-    &:hover {
-      background-color: hoverColor($primary-color);
-    }
-
-    &:active {
-      background-color: darken($primary-color, 9%);
-    }
-  }
-
-  &.pressed {
-    background-color: darken(white, 9%);
-  }
-
-  &.disabled {
-    background-color: darken($border-color, 6%);
-    color: $font-color-disabled;
-  }
+button.disabled {
+  background-color: darken($border-color, 6%);
+  color: $font-color-disabled;
 }
