@@ -1,7 +1,7 @@
 import React, {useContext} from "react";
 import styles from "./HostsTable.module.scss"
 import _ from "lodash";
-import {ACTION_CREATE_HOST, ACTION_REMOVE_HOST, ACTION_UPDATE_HOST, GlobalContext} from "../../state/GlobalContext";
+import {ACTION_CREATE_HOST, ACTION_REMOVE_HOST, ACTION_UPDATE_HOST, GlobalContext} from "../../context/GlobalContext";
 import {IHost} from "../../types/model";
 import SimpleGridDialogContent from "../../components/dialogs/SimpleGridDialogContent";
 import {useGlobalHook} from "@devhammed/use-global-hook";

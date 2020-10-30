@@ -4,7 +4,7 @@ import NavBar from "../navbar/NavBar";
 import NavBarItem, {INavBarItem} from "../navbar/NavBarItem";
 import IconItem from "../navbar/items/IconItem";
 import ProfileItem from "../navbar/items/ProfileItem";
-import {GlobalContext} from "../../state/GlobalContext";
+import {GlobalContext} from "../../context/GlobalContext";
 import classNames from "classnames";
 import ContextSwitcherEntry from "../contextswitcher/ContextSwitcherEntry";
 import _ from "lodash";

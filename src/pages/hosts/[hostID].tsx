@@ -3,7 +3,7 @@ import styles from "./[hostID].module.scss";
 import HostNavigatorComponent from "../../widgets/navigator/HostNavigatorComponent";
 import PageContainer from "../../components/page/PageContainer";
 import {HostProvider} from "../../context/HostContext";
-import {GlobalContext} from "../../state/GlobalContext";
+import {GlobalContext} from "../../context/GlobalContext";
 import _ from "lodash";
 import {useRouter} from "next/router";
 import NetworkComponent from "../../widgets/network/NetworkComponent";
