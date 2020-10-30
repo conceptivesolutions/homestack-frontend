@@ -7,8 +7,10 @@ import styles from "./SimpleGridDialogContent.module.scss"
  *
  * @param children
  */
-export default ({children}: { children?: ReactNode }) => (
+const SimpleGridDialogContent = ({children}: { children?: ReactNode }) => (
   <div className={styles.container}>
     {children}
   </div>
-)
+);
+
+export default SimpleGridDialogContent;

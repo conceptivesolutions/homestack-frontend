@@ -4,4 +4,6 @@ import PageContainer from "../../components/page/PageContainer";
 /**
  * Page: Home
  */
-export default () => <PageContainer/>
+const HomePage = () => <PageContainer/>;
+
+export default HomePage;

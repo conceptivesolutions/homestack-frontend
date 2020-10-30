@@ -10,8 +10,10 @@ interface IIconItem
   onClick?: () => void,
 }
 
-export default (props: IIconItem) => (
+const IconItem = (props: IIconItem) => (
   <NavBarItem onClick={props.onClick} active={props.active} alignment={props.alignment}>
     <span className={styles.iconitem + " fa fa-" + props.iconName}/>
   </NavBarItem>
-)
+);
+
+export default IconItem;

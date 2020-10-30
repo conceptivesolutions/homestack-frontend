@@ -19,7 +19,7 @@ import classNames from "classnames";
  * @param className CSS classes
  * @param hostID ID of the host
  */
-export default ({className, hostID}: { className?: string, hostID: string }) =>
+const NetworkComponent = ({className, hostID}: { className?: string, hostID: string }) =>
 {
   const {state, dispatch} = useContext(HostContext);
   const {showDialog} = useGlobalHook("dialogStore") as IDialogStore;
@@ -117,7 +117,9 @@ export default ({className, hostID}: { className?: string, hostID: string }) =>
       {graph}
     </div>
   );
-}
+};
+
+export default NetworkComponent;
 
 /**
  * This method gets called, if the positions of nodes

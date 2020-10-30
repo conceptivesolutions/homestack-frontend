@@ -10,7 +10,7 @@ import SimpleGridDialogContent from "../../../components/dialogs/SimpleGridDialo
  * @param onPropChange function that gets executed, if a prop has changed
  * @returns {JSX.Element}
  */
-export default ({device, onPropChange}: { device: IDevice, onPropChange: (propName: string, propVal: string) => void }) =>
+const DeviceInspectionDialogContent = ({device, onPropChange}: { device: IDevice, onPropChange: (propName: string, propVal: string) => void }) =>
 {
   return (
     <SimpleGridDialogContent>
@@ -22,4 +22,6 @@ export default ({device, onPropChange}: { device: IDevice, onPropChange: (propNa
       <pre className={styles.metrics}>{JSON.stringify(device.metrics, null, " ")}</pre>
     </SimpleGridDialogContent>
   );
-}
+};
+
+export default DeviceInspectionDialogContent;

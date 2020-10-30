@@ -11,7 +11,7 @@ interface IProfileItem
   popupItems?: React.ReactNode,
 }
 
-export default (props: IProfileItem) =>
+const ProfileItem = (props: IProfileItem) =>
 {
   const [popupOpen, setPopupOpen] = useState<boolean>(false)
 
@@ -41,4 +41,6 @@ export default (props: IProfileItem) =>
       </Popup>
     </NavBarItem>
   );
-}
+};
+
+export default ProfileItem;

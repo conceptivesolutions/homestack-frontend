@@ -4,4 +4,6 @@ import PageContainer from "../../components/page/PageContainer";
 /**
  * Page: Help
  */
-export default () => <PageContainer/>
+const HelpPage = () => <PageContainer/>;
+
+export default HelpPage;

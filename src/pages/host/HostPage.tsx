@@ -11,7 +11,7 @@ import _ from "lodash";
 /**
  * Creates an "Host"-Page and loads the host with the ID from the url
  */
-export default () =>
+const HostPage = () =>
 {
   const {state: {hosts}} = useContext(GlobalContext)
   const {hostID} = useParams();
@@ -36,4 +36,6 @@ export default () =>
       <NetworkComponent hostID={hostID}/>
     </PageContainer>
   </HostProvider>
-}
+};
+
+export default HostPage;

@@ -23,7 +23,7 @@ export interface IPageContent
   children?: React.ReactNode,
 }
 
-export default (props: IPageContent) =>
+const PageContainer = (props: IPageContent) =>
 {
   const {logout} = useAuth0();
   const history = useHistory();
@@ -56,7 +56,9 @@ export default (props: IPageContent) =>
       </div>
     </div>
   );
-}
+};
+
+export default PageContainer;
 
 /**
  * Creates the host entries for the switcher

@@ -6,8 +6,8 @@ import React from "react";
  * @param className
  * @param children
  */
-export default ({className, children}: { className?: string, children?: React.ReactNode }) => (
-  <div className={className}>
-    {children}
-  </div>
-)
+const ActionList = ({className, children}: { className?: string, children?: React.ReactNode }) => <div className={className}>
+  {children}
+</div>;
+
+export default ActionList;

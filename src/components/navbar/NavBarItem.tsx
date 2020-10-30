@@ -12,7 +12,7 @@ export interface INavBarItem
   onClick?: () => void,
 }
 
-export default (props: INavBarItem) => (
+const NavBarItem = (props: INavBarItem) => (
   <div
     className={classNames(props.className, styles.container, {
       [styles.containerActive]: props.active,
@@ -23,4 +23,6 @@ export default (props: INavBarItem) => (
       {props.children}
     </div>
   </div>
-)
+);
+
+export default NavBarItem;

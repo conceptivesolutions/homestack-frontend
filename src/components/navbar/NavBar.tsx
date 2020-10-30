@@ -15,7 +15,7 @@ export interface INavBar
  * @param className
  * @param children
  */
-export default ({className = "", children}: INavBar) => (
+const NavBar = ({className = "", children}: INavBar) => (
   <div className={classNames(className, styles.container)}>
     <div className={styles.leftContainer}>
       {Children.toArray(children).filter(pChild => ((pChild as React.Component).props as INavBarItem).alignment === 'left')}
@@ -25,4 +25,6 @@ export default ({className = "", children}: INavBar) => (
       {Children.toArray(children).filter(pChild => ((pChild as React.Component).props as INavBarItem).alignment === 'right')}
     </div>
   </div>
-)
+);
+
+export default NavBar;

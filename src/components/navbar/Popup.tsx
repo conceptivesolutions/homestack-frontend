@@ -13,7 +13,7 @@ export interface IPopup
 /**
  * Simple Popup container
  */
-export default (props: IPopup) =>
+const Popup = (props: IPopup) =>
 {
   if (!props.open)
     return <></>
@@ -28,4 +28,6 @@ export default (props: IPopup) =>
       {props.children}
     </div>
   );
-}
+};
+
+export default Popup;

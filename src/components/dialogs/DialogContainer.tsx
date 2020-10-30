@@ -19,7 +19,7 @@ export const dialogStore = createGlobalHook('dialogStore', () =>
  *
  * @returns {JSX.Element}
  */
-export default () =>
+const DialogContainer = () =>
 {
   const {dialog, showDialog} = useGlobalHook("dialogStore") as IDialogStore;
 
@@ -96,3 +96,5 @@ export default () =>
     </div>
   );
 };
+
+export default DialogContainer;

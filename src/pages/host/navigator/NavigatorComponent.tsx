@@ -14,7 +14,7 @@ import ActionListItem from "../../../components/actionlist/ActionListItem";
  *
  * @param className
  */
-export default ({className}: { className: string }) =>
+const NavigatorComponent = ({className}: { className: string }) =>
 {
   const {state, dispatch} = useContext(HostContext)
   const root: ITreeNode = {
@@ -66,7 +66,9 @@ export default ({className}: { className: string }) =>
       </ActionList>
     </div>
   );
-}
+};
+
+export default NavigatorComponent;
 
 function _onSelect(nodeID: string, selected: boolean, dispatch: HostDispatch)
 {

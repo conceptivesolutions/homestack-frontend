@@ -13,11 +13,12 @@ export interface IContextSwitcherEntry
   color?: string,
 }
 
-// noinspection JSUnusedLocalSymbols
-export default ({iconName, title, alignment, active, onClick, color, iconColor}: IContextSwitcherEntry) => (
+const ContextSwitcherEntry = ({iconName, title, alignment, active, onClick, color, iconColor}: IContextSwitcherEntry) => (
   <button className={classNames(styles.button, {[styles.buttonActive]: active})}
           style={{backgroundColor: color, color: iconColor}}
           title={title} onClick={onClick}>
     <span className={"fa fa-" + iconName}/>
   </button>
-)
+);
+
+export default ContextSwitcherEntry;

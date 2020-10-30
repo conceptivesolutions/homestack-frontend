@@ -23,7 +23,7 @@ export interface ITreeNode
   onSelect?: (selected: boolean) => void,
 }
 
-export default (props: INavigationTree) => (
+const NavigationTree = (props: INavigationTree) => (
   <div className={classNames(styles.container, props.className)}>
     <Tree
       {...props.required}
@@ -48,7 +48,9 @@ export default (props: INavigationTree) => (
       renderNode={(renderProps) => _renderNode(props.instance, renderProps)}
     />
   </div>
-)
+);
+
+export default NavigationTree;
 
 /**
  * Renders a single node of the tree
