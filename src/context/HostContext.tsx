@@ -1,11 +1,11 @@
 import React, {createContext, Dispatch, useEffect} from "react";
-import {Action} from "../../../types/context";
-import {IDevice} from "../../../types/model";
+import {Action} from "../types/context";
+import {IDevice} from "../types/model";
 import {useAuth0} from "@auth0/auth0-react";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
-import {createDevice, deleteDevice, getAllDevices, updateDevice} from "../../../rest/DeviceClient";
-import {getMetrics} from "../../../rest/MetricsClient";
-import {addEdgeBetween, getEdges, removeEdgeBetween} from "../../../rest/EdgeClient";
+import {createDevice, deleteDevice, getAllDevices, updateDevice} from "../rest/DeviceClient";
+import {getMetrics} from "../rest/MetricsClient";
+import {addEdgeBetween, getEdges, removeEdgeBetween} from "../rest/EdgeClient";
 import {v4 as uuidv4} from 'uuid';
 import _ from "lodash";
 

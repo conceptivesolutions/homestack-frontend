@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./DeviceInspectionDialogContent.module.scss"
-import {IDevice} from "../../../types/model";
-import SimpleGridDialogContent from "../../../components/dialogs/SimpleGridDialogContent";
+import {IDevice} from "../../types/model";
+import SimpleGridDialogContent from "../../components/dialogs/SimpleGridDialogContent";
 
 /**
  * Dialog to edit a single device

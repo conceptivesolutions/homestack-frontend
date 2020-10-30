@@ -1,20 +1,21 @@
 import React, {useContext} from "react";
-import styles from "./HostPage.module.scss";
-import NetworkComponent from "./network/NetworkComponent";
-import {useParams} from "react-router";
-import NavigatorComponent from "./navigator/NavigatorComponent";
+import styles from "./[hostID].module.scss";
+import HostNavigatorComponent from "../../widgets/navigator/HostNavigatorComponent";
 import PageContainer from "../../components/page/PageContainer";
-import {HostProvider} from "./state/HostContext";
+import {HostProvider} from "../../context/HostContext";
 import {GlobalContext} from "../../state/GlobalContext";
 import _ from "lodash";
+import {useRouter} from "next/router";
+import NetworkComponent from "../../widgets/network/NetworkComponent";
 
 /**
  * Creates an "Host"-Page and loads the host with the ID from the url
  */
-const HostPage = () =>
+const HostID = () =>
 {
   const {state: {hosts}} = useContext(GlobalContext)
-  const {hostID} = useParams();
+  const {query: {hostID}} = useRouter();
+
   if (!hostID || _.isEmpty(hosts))
     return <></>;
 
@@ -22,8 +23,8 @@ const HostPage = () =>
   if (!currentHost)
     return <></>;
 
-  return <HostProvider id={hostID}>
-    <PageContainer navigator={(<NavigatorComponent className={styles.navigator}/>)}
+  return <HostProvider id={currentHost.id}>
+    <PageContainer navigator={(<HostNavigatorComponent className={styles.navigator}/>)}
                    navbarItems={[{
                      alignment: "left",
                      children: currentHost.displayName || currentHost.id,
@@ -33,9 +34,9 @@ const HostPage = () =>
                      children: "+",
                      disabled: true,
                    }]}>
-      <NetworkComponent hostID={hostID}/>
+      <NetworkComponent hostID={currentHost.id}/>
     </PageContainer>
   </HostProvider>
 };
 
-export default HostPage;
+export default HostID;

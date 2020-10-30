@@ -1,20 +1,20 @@
 import React, {useContext, useEffect} from "react";
-import styles from "./NavigatorComponent.module.scss";
-import {ACTION_CREATE_DEVICE, ACTION_REMOVE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../state/HostContext";
+import styles from "./HostNavigatorComponent.module.scss";
+import {ACTION_CREATE_DEVICE, ACTION_REMOVE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
 import {useTreeState} from "react-hyper-tree";
 import _ from "lodash";
-import NavigationTree, {ITreeNode} from "../../../components/tree/NavigationTree";
-import {getStateColor} from "../../../helpers/NodeHelper";
+import NavigationTree, {ITreeNode} from "../../components/tree/NavigationTree";
+import {getStateColor} from "../../helpers/NodeHelper";
 import classNames from "classnames";
-import ActionList from "../../../components/actionlist/ActionList";
-import ActionListItem from "../../../components/actionlist/ActionListItem";
+import ActionList from "../../components/actionlist/ActionList";
+import ActionListItem from "../../components/actionlist/ActionListItem";
 
 /**
- * Simple Navigator
+ * Simple Navigator for a single host
  *
  * @param className
  */
-const NavigatorComponent = ({className}: { className: string }) =>
+const HostNavigatorComponent = ({className}: { className: string }) =>
 {
   const {state, dispatch} = useContext(HostContext)
   const root: ITreeNode = {
@@ -68,7 +68,7 @@ const NavigatorComponent = ({className}: { className: string }) =>
   );
 };
 
-export default NavigatorComponent;
+export default HostNavigatorComponent;
 
 function _onSelect(nodeID: string, selected: boolean, dispatch: HostDispatch)
 {
