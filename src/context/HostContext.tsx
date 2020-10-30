@@ -1,13 +1,13 @@
-import React, {createContext, Dispatch, useEffect} from "react";
+import React, {createContext, Dispatch, useContext, useEffect} from "react";
 import {Action} from "../types/context";
 import {IDevice} from "../types/model";
-import {useAuth0} from "@auth0/auth0-react";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
 import {createDevice, deleteDevice, getAllDevices, updateDevice} from "../rest/DeviceClient";
 import {getMetrics} from "../rest/MetricsClient";
 import {addEdgeBetween, getEdges, removeEdgeBetween} from "../rest/EdgeClient";
 import {v4 as uuidv4} from 'uuid';
 import _ from "lodash";
+import {AuthContext} from "./AuthContext";
 
 export interface IHostState
 {
@@ -226,10 +226,10 @@ export const HostContext = createContext<{ state: IInternalHostState, dispatch: 
 
 export function HostProvider({id, children}: { id: string, children?: React.ReactNode })
 {
-  const {getAccessTokenSilently: getAccessToken} = useAuth0()
+  const {state: {accessToken}} = useContext(AuthContext)
   const [state, dispatch] = useThunkReducer(reducer, {
     id,
-    getAccessToken,
+    getAccessToken: () => Promise.resolve(accessToken || ""),
     autoRefresh: false
   });
 

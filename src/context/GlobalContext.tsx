@@ -1,15 +1,13 @@
-import React, {createContext, Dispatch, useEffect} from "react";
+import React, {createContext, Dispatch, useContext, useEffect} from "react";
 import {Action} from "../types/context";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
-import {useAuth0} from "@auth0/auth0-react";
 import {IHost} from "../types/model";
 import {createHost, deleteHost, getHosts, updateHost} from "../rest/HostClient";
 import _ from "lodash";
-import {User} from "@auth0/auth0-react/dist/auth-state";
+import {AuthContext} from "./AuthContext";
 
 export interface IGlobalState
 {
-  user?: User,
   hosts?: IHost[],
 }
 
@@ -21,7 +19,6 @@ interface IInternalGlobalState extends IGlobalState
 export enum EGlobalStateActions
 {
   SET_HOSTS,
-  SET_USER,
 }
 
 export type GlobalDispatch = Dispatch<Action | Thunk<IInternalGlobalState, Action>>
@@ -104,12 +101,6 @@ const reducer = (state: IInternalGlobalState, action: Action) =>
         hosts: action.payload
       };
 
-    case EGlobalStateActions.SET_USER:
-      return {
-        ...state,
-        user: action.payload,
-      }
-
     default:
       return state;
   }
@@ -117,24 +108,18 @@ const reducer = (state: IInternalGlobalState, action: Action) =>
 
 export function GlobalProvider({children}: { children?: React.ReactNode })
 {
-  const {getAccessTokenSilently: getAccessToken, user, isAuthenticated} = useAuth0();
+  const {state: {accessToken}} = useContext(AuthContext);
   const [state, dispatch] = useThunkReducer(reducer, {
-    getAccessToken,
-    user,
+    getAccessToken: () => Promise.resolve(accessToken || ""),
   });
 
   // initial
   useEffect(() =>
   {
-    if (isAuthenticated)
-    {
-      // set user
-      dispatch({type: EGlobalStateActions.SET_USER, payload: user});
-
+    if (!!accessToken)
       // reload hosts
       dispatch(ACTION_RELOAD_HOSTS)
-    }
-  }, [user, dispatch, isAuthenticated])
+  }, [accessToken])
 
   return <GlobalContext.Provider value={{state, dispatch}}>
     {children}

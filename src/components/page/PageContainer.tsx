@@ -12,8 +12,8 @@ import randomColor from "randomcolor";
 import ContextSwitcher from "../contextswitcher/ContextSwitcher";
 import {IHost} from "../../types/model";
 import PopupItem from "../navbar/PopupItem";
-import {useAuth0} from "@auth0/auth0-react";
 import {useRouter} from "next/router";
+import {AuthContext} from "../../context/AuthContext";
 
 export interface IPageContent
 {
@@ -25,9 +25,9 @@ export interface IPageContent
 
 const PageContainer = (props: IPageContent) =>
 {
-  const {logout} = useAuth0();
   const router = useRouter();
-  const {state: {user, hosts}} = useContext(GlobalContext);
+  const {state: {hosts}} = useContext(GlobalContext);
+  const {state: {user, logout}} = useContext(AuthContext);
 
   return (
     <div className={classNames(styles.container, {[styles.container__withNavigator]: !!props.navigator})}>

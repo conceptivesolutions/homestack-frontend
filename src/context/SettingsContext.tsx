@@ -1,7 +1,7 @@
-import React, {createContext, Dispatch} from "react";
+import React, {createContext, Dispatch, useContext} from "react";
 import {Action} from "../types/context";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
-import {useAuth0} from "@auth0/auth0-react";
+import {AuthContext} from "./AuthContext";
 
 export interface ISettingsState
 {
@@ -28,9 +28,9 @@ const reducer = (state: IInternalSettingsState, action: Action) =>
 
 export function SettingsProvider({children}: { children?: React.ReactNode })
 {
-  const {getAccessTokenSilently: getAccessToken} = useAuth0();
+  const {state: {accessToken}} = useContext(AuthContext);
   const [state, dispatch] = useThunkReducer(reducer, {
-    getAccessToken,
+    getAccessToken: () => Promise.resolve(accessToken || ""),
   });
 
   return <SettingsContext.Provider value={{state, dispatch}}>
