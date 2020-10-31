@@ -8,7 +8,7 @@ import {v4 as uuidv4} from 'uuid';
  */
 export async function getHosts(pToken: string): Promise<IHost[]>
 {
-  return fetch('/api/hosts/', {
+  return fetch('/api/hosts', {
     method: 'GET',
     headers: {
       "Authorization": "Bearer " + pToken
