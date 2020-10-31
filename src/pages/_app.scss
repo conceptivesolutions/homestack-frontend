@@ -38,28 +38,13 @@ button {
     &:active {
         background-color: darken(white, 9%);
     }
+}
 
-    &.primary {
-        background-color: $primary-color;
-        color: white;
-
-        &:hover {
-            background-color: hoverColor($primary-color);
-        }
-
-        &:active {
-            background-color: darken($primary-color, 9%);
-        }
-    }
-
-    &.pressed {
-        background-color: darken(white, 9%);
-    }
-
-    &.disabled {
-        background-color: darken($border-color, 6%);
-        color: $font-color-disabled;
-    }
+input {
+    background: white;
+    border: 1px solid $border-color;
+    padding: 5px;
+    border-radius: $border-radius;
 }
 
 #__next {
