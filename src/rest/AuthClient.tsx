@@ -20,3 +20,20 @@ export async function login(pUsername: string, pPassword: string): Promise<strin
     .then(pResult => pResult.json())
     .then(pResult => pResult.token);
 }
+
+/**
+ * Returns all information about the user with the given token
+ *
+ * @param pToken token to get information with
+ */
+export async function userinfo(pToken: string): Promise<any>
+{
+  return fetch("/api/auth/user", {
+    method: 'GET',
+    headers: {
+      "Authorization": "Bearer " + pToken
+    }
+  })
+    .then(pResult => pResult.json())
+    .then(pResult => pResult.user)
+}
