@@ -2,10 +2,9 @@ import React, {useContext, useEffect, useMemo, useRef} from 'react';
 import styles from "./NetworkComponent.module.scss";
 import {deviceToNode, edgeToEdge, NetworkGraph} from "./NetworkGraph";
 import {useGlobalHook} from "@devhammed/use-global-hook";
-import {DataSet} from "vis-network/standalone/esm/vis-network";
 import DeviceInspectionDialogContent from "../dialogs/DeviceInspectionDialogContent";
 import {IDialogStore} from "../../types/dialog";
-import {DataSetEdges, DataSetNodes, Network} from "vis-network/dist/types";
+import {DataSet, DataSetEdges, DataSetNodes, Edge, Network, Node} from "vis-network/standalone/umd/vis-network";
 import {Position} from "vis-network/declarations/network/Network";
 import {IDevice} from "../../types/model";
 import {ACTION_ADD_EDGE_BETWEEN, ACTION_CREATE_DEVICE, ACTION_REMOVE_DEVICE, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
@@ -54,14 +53,16 @@ const NetworkComponent = ({className, hostID}: { className?: string, hostID: str
     })
 
     // Remove unused nodes
-    // nodesRef.current.stream()
-    //   .filter((pNode: Node) => usedNodeIDs.indexOf(pNode.id) === -1)
-    //   .forEach(((pNode: Node) => nodesRef.current.remove(pNode.id as string)));
-    //
-    // // Remove unused edges
-    // edgesRef.current.stream()
-    //   .filter((pEdge: Edge) => usedEdgeIDs.indexOf(pEdge.id) === -1)
-    //   .forEach(((pEdge: Edge) => edgesRef.current.remove(pEdge.id as string)));
+    nodesRef.current.stream()
+      .filter((pNode: Node) => usedNodeIDs.indexOf(pNode.id) === -1)
+      .toItemArray()
+      .forEach(((pNode: Node) => nodesRef.current.remove(pNode.id as string)));
+
+    // Remove unused edges
+    edgesRef.current.stream()
+      .filter((pEdge: Edge) => usedEdgeIDs.indexOf(pEdge.id) === -1)
+      .toItemArray()
+      .forEach(((pEdge: Edge) => edgesRef.current.remove(pEdge.id as string)));
   }, [state.devices, dispatch, hostID]);
 
   // Keyboard-Events
