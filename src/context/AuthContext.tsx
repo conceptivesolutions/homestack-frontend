@@ -1,13 +1,15 @@
 import React, {createContext, Dispatch, useEffect} from "react";
 import {Action} from "../types/context";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
-import {useAuth0} from "@auth0/auth0-react";
-import LoadingIndicator from "../components/loader/LoadingIndicator";
+import _ from "lodash";
+import LoginWidget from "../widgets/login/LoginWidget";
+import {useRouter} from "next/router";
 
 export interface IAuthState
 {
   user?: IUser,
   accessToken?: string,
+  authenticated: boolean,
   logout: () => void,
 }
 
@@ -31,8 +33,14 @@ const reducer = (state: IAuthState, action: Action) =>
   switch (action.type)
   {
     case EAuthStateActions.SET_ACCESSTOKEN:
+      if (!!action.payload)
+        localStorage.setItem("token", action.payload as string);
+      else
+        localStorage.removeItem("token");
+
       return {
         ...state,
+        authenticated: !_.isEmpty(action.payload),
         accessToken: action.payload,
       }
 
@@ -43,24 +51,32 @@ const reducer = (state: IAuthState, action: Action) =>
 
 export function AuthProvider({children}: { children?: React.ReactNode })
 {
-  const {getAccessTokenSilently: getAccessToken, user, isAuthenticated, logout} = useAuth0();
+  const router = useRouter();
   const [state, dispatch] = useThunkReducer(reducer, {
-    user,
-    logout
+    authenticated: false,
+    logout: () =>
+    {
+      // Clear Token and redirect to home page
+      dispatch({type: EAuthStateActions.SET_ACCESSTOKEN, payload: undefined});
+      router.push("/");
+    },
   });
 
-  // initial
+  // todo validate token validity
+
+  // Get token from localStorage
   useEffect(() =>
   {
-    if (isAuthenticated)
-      // set accessToken
-      getAccessToken().then(pToken => dispatch({type: EAuthStateActions.SET_ACCESSTOKEN, payload: pToken}))
-  }, [user, dispatch, isAuthenticated])
+    const token = localStorage.getItem("token");
+    if (!!token)
+      dispatch({type: EAuthStateActions.SET_ACCESSTOKEN, payload: token});
+  }, [dispatch])
 
-  if (isAuthenticated)
-    return <AuthContext.Provider value={{state, dispatch}}>
-      {children}
-    </AuthContext.Provider>
-  else
-    return <LoadingIndicator/>;
+  // Force authenticated state
+  if (!state.authenticated || _.isEmpty(state.accessToken))
+    children = <LoginWidget onTokenReceived={(token) => dispatch({type: EAuthStateActions.SET_ACCESSTOKEN, payload: token})}/>
+
+  return <AuthContext.Provider value={{state, dispatch}}>
+    {children}
+  </AuthContext.Provider>;
 }
