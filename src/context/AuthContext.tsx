@@ -6,11 +6,13 @@ import LoginWidget from "../widgets/login/LoginWidget";
 import {useRouter} from "next/router";
 import {userinfo} from "../rest/AuthClient";
 import {isJWTTokenValid} from "../helpers/jwtHelper";
+import LoadingIndicator from "../components/loader/LoadingIndicator";
 
 export interface IAuthState
 {
   user?: IUser,
   authenticated: boolean,
+  loading: boolean,
   getAccessToken: () => Promise<string>,
   logout: () => void,
 }
@@ -70,6 +72,7 @@ export const ACTION_SET_ACCESSTOKEN = (token?: string) => (dispatch: AuthDispatc
   dispatch({
     type: EAuthStateActions.SET_ACCESSTOKEN, payload: {
       authenticated: !_.isEmpty(token),
+      loading: false,
       getAccessToken,
     }
   })
@@ -114,8 +117,11 @@ const reducer = (state: IAuthState, action: Action) =>
 export function AuthProvider({children}: { children?: React.ReactNode })
 {
   const router = useRouter();
+
+  // noinspection JSUnusedGlobalSymbols
   const [state, dispatch] = useThunkReducer(reducer, {
     authenticated: false,
+    loading: true,
     getAccessToken: () => Promise.reject(),
     logout: () =>
     {
@@ -133,8 +139,12 @@ export function AuthProvider({children}: { children?: React.ReactNode })
       dispatch(ACTION_SET_ACCESSTOKEN(token));
   }, [dispatch])
 
-  // Force authenticated state
-  if (!state.authenticated)
+  // Loading
+  if (state.loading)
+    children = <LoadingIndicator/>
+
+  // Not authenticated
+  else if (!state.authenticated)
     children = <LoginWidget onTokenReceived={(token) => dispatch(ACTION_SET_ACCESSTOKEN(token))}/>
 
   return <AuthContext.Provider value={{state, dispatch}}>
