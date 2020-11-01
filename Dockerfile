@@ -2,6 +2,9 @@
 # First run the build with all dependencies (including dev dependencies, used for typescript)
 FROM node:15-alpine AS build
 
+# add build stuff
+RUN apk add --no-cache python make gcc g++
+
 # set workdir, instead of using root
 RUN mkdir /app
 WORKDIR /app
@@ -24,6 +27,9 @@ RUN yarn run build
 FROM node:15-alpine
 ENV NODE_ENV production
 ENV PORT 3000
+
+# add build stuff
+RUN apk add --no-cache python make gcc g++
 
 # set workdir, instead of using root
 RUN mkdir /app
