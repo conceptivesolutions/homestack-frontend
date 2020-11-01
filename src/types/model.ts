@@ -16,7 +16,7 @@ export interface IDevice
   hostID?: string,
   address?: string,
   location?: ILocation,
-  metrics?: IMetric[],
+  metricRecords?: IMetricRecord[],
   edges?: IEdge[],
 }
 
@@ -27,18 +27,16 @@ export interface IEdge
   targetID: string,
 }
 
-export interface IMetric
+export interface IMetricRecord
 {
   deviceID: string,
   recordTime: string,
   type: string,
-  state: EMetricState,
-  stateDescription: string,
-  executeCommand: string,
-  commandResult: string,
+  state: EMetricRecordState,
+  result?: object,
 }
 
-export enum EMetricState
+export enum EMetricRecordState
 {
   FAILURE = "FAILURE",
   WARNING = "WARNING",

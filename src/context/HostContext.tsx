@@ -3,7 +3,7 @@ import {Action} from "../types/context";
 import {IDevice} from "../types/model";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
 import {createDevice, deleteDevice, getAllDevices, updateDevice} from "../rest/DeviceClient";
-import {getMetrics} from "../rest/MetricsClient";
+import {getMetricRecords} from "../rest/MetricsClient";
 import {addEdgeBetween, getEdges, removeEdgeBetween} from "../rest/EdgeClient";
 import {v4 as uuidv4} from 'uuid';
 import _ from "lodash";
@@ -140,9 +140,9 @@ export const ACTION_RELOAD_DEVICES = (dispatch: HostDispatch, getState: () => II
     // get all devices
     .then(pToken => getAllDevices(pToken, triggeredForID)
 
-      // enrich devices with metrics and edges
-      .then(pDevices => Promise.all(pDevices.map(pDevice => getMetrics(pToken, pDevice.id)
-        .then(pMetrics => pDevice.metrics = pMetrics)
+      // enrich devices with records and edges
+      .then(pDevices => Promise.all(pDevices.map(pDevice => getMetricRecords(pToken, pDevice.id)
+        .then(pRecords => pDevice.metricRecords = pRecords)
         .then(() => getEdges(pToken, pDevice.id))
         .then(pEdges => pDevice.edges = pEdges)
         .then(() => pDevice)))))

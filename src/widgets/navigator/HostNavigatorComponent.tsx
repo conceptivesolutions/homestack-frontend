@@ -25,14 +25,14 @@ const HostNavigatorComponent = ({className}: { className: string }) =>
       id: pDevice.id,
       name: pDevice.address || "unknown",
       iconName: "network-wired",
-      iconColor: getStateColor(pDevice.metrics),
+      iconColor: getStateColor(pDevice.metricRecords),
       selectable: true,
       onSelect: selected => _onSelect(pDevice.id, selected, dispatch),
-      children: (pDevice.metrics || []).map(pMetric => ({
-        id: pDevice.id + pMetric.type,
-        name: pMetric.type + " => " + pMetric.state,
+      children: (pDevice.metricRecords || []).map(pRecord => ({
+        id: pDevice.id + pRecord.type,
+        name: pRecord.type + " => " + pRecord.state,
         iconName: "chart-pie",
-        iconColor: getStateColor([pMetric]),
+        iconColor: getStateColor([pRecord]),
       }))
     }))
   };

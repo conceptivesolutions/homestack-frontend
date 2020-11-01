@@ -1,26 +1,26 @@
-import {EMetricState, IMetric} from "../types/model";
+import {EMetricRecordState, IMetricRecord} from "../types/model";
 
 
 /**
  * Returns the color for a given device state
  *
- * @param pMetrics metrics to read
+ * @param pRecords records to read
  * @returns {string} color als hex string
  */
-export function getStateColor(pMetrics?: IMetric[])
+export function getStateColor(pRecords?: IMetricRecord[])
 {
-  if (pMetrics === undefined)
+  if (pRecords === undefined)
     return "#737373";
 
   let failed = [];
   let success = [];
 
-  pMetrics.forEach(pMetric =>
+  pRecords.forEach(pRecord =>
   {
-    if (pMetric.state === EMetricState.SUCCESS)
-      success.push(pMetric);
+    if (pRecord.state === EMetricRecordState.SUCCESS)
+      success.push(pRecord);
     else
-      failed.push(pMetric);
+      failed.push(pRecord);
   })
 
   if (failed.length > 0 && success.length === 0)

@@ -18,8 +18,8 @@ const DeviceInspectionDialogContent = ({device, onPropChange}: { device: IDevice
       <span>{device.id}</span>
       <span>Address</span>
       <input onChange={(e) => onPropChange("address", e.target.value)} defaultValue={device.address}/>
-      <span>Metrics</span>
-      <pre className={styles.metrics}>{JSON.stringify(device.metrics, null, " ")}</pre>
+      <span>Records</span>
+      <pre className={styles.metricRecords}>{JSON.stringify(device.metricRecords, null, " ")}</pre>
     </SimpleGridDialogContent>
   );
 };

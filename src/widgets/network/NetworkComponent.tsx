@@ -39,7 +39,7 @@ const NetworkComponent = ({className, hostID}: { className?: string, hostID: str
     {
 
       // Update Node
-      const node = deviceToNode(pDevice, getStateColor(pDevice.metrics));
+      const node = deviceToNode(pDevice, getStateColor(pDevice.metricRecords));
       usedNodeIDs.push(node.id);
       nodesRef.current.update(node);
 
