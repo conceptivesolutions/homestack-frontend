@@ -35,6 +35,7 @@ RUN yarn install
 
 # Get the built application from the first stage
 COPY --from=build /app/.next /app/.next
+COPY --from=build /app/public /app/public
 
 # Add a nextjs user, to force running in non-root mode
 RUN addgroup -g 1001 -S nodejs
