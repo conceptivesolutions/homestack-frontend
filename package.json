@@ -19,7 +19,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hook-thunk-reducer": "^0.2.4",
-    "react-hyper-tree": "https://github.com/conceptivesolutions/hyper-tree",
+    "react-hyper-tree": "0.2.18-fix.2",
     "use-timer": "^1.4.0",
     "uuid": "^8.3.1",
     "vis-data": "^7.1.0",
