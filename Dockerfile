@@ -1,6 +1,6 @@
 # First Stage
 # First run the build with all dependencies (including dev dependencies, used for typescript)
-FROM node:12-alpine AS build
+FROM node:15-alpine AS build
 
 # set workdir, instead of using root
 RUN mkdir /app
@@ -21,7 +21,7 @@ RUN yarn run build
 
 # Second Stage
 # Runtime
-FROM node:12-alpine
+FROM node:15-alpine
 ENV NODE_ENV production
 ENV PORT 3000
 
