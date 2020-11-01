@@ -31,7 +31,7 @@ export type AuthDispatch = Dispatch<Action | Thunk<IAuthState, Action>>
 
 export enum EAuthStateActions
 {
-  SET_ACCESSTOKEN,
+  SET_AUTHENTICATED,
   SET_USER,
 }
 
@@ -55,27 +55,8 @@ export const ACTION_SET_ACCESSTOKEN = (token?: string) => (dispatch: AuthDispatc
   else
     localStorage.removeItem("token");
 
-  // function to retreive the access token
-  const getAccessToken = () => new Promise((resolve, reject) =>
-  {
-    const token = localStorage.getItem("token");
-    if (!_.isEmpty(token) && isJWTTokenValid(token!))
-      resolve(token);
-    else
-    {
-      reject();
-      dispatch(ACTION_SET_ACCESSTOKEN())
-    }
-  });
-
-  // set in state
-  dispatch({
-    type: EAuthStateActions.SET_ACCESSTOKEN, payload: {
-      authenticated: !_.isEmpty(token),
-      loading: false,
-      getAccessToken,
-    }
-  })
+  // set authentication state
+  dispatch({type: EAuthStateActions.SET_AUTHENTICATED, payload: !_.isEmpty(token)});
 
   // upate userinfo
   if (!!token)
@@ -97,10 +78,11 @@ const reducer = (state: IAuthState, action: Action) =>
 {
   switch (action.type)
   {
-    case EAuthStateActions.SET_ACCESSTOKEN:
+    case EAuthStateActions.SET_AUTHENTICATED:
       return {
         ...state,
-        ...action.payload,
+        authenticated: action.payload,
+        loading: false,
       }
 
     case EAuthStateActions.SET_USER:
@@ -122,7 +104,14 @@ export function AuthProvider({children}: { children?: React.ReactNode })
   const [state, dispatch] = useThunkReducer(reducer, {
     authenticated: false,
     loading: true,
-    getAccessToken: () => Promise.reject(),
+    getAccessToken: () => new Promise((resolve) =>
+    {
+      const token = localStorage.getItem("token");
+      if (!_.isEmpty(token) && token && isJWTTokenValid(token))
+        resolve(token);
+      else
+        state.logout();
+    }),
     logout: () =>
     {
       // Clear Token and redirect to home page
