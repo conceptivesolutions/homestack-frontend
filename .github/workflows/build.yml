@@ -10,28 +10,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [ 12.x ]
-
     steps:
       # Checkout Sources
       - name: Checkout Sources
         uses: actions/checkout@v2
-
-      # Node
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      # Install Packages
-      - name: Install Packages
-        run: npm install
-
-      # Build Page
-      - name: Build page
-        run: npm run build
 
       # Login to Nexus
       - uses: azure/docker-login@v1
@@ -40,8 +22,10 @@ jobs:
           username: ${{ secrets.nexus_user }}
           password: ${{ secrets.nexus_password }}
 
-      # Create Docker Images for Native Modules
-      - name: Create Docker Images
-        run: |
-          docker build -t images.conceptive.io/netplan.frontend:latest .
-          docker push images.conceptive.io/netplan.frontend:latest
+      # Build Docker Image
+      - name: Build
+        run: docker build -t images.conceptive.io/netplan.frontend:latest .
+
+      # Push Docker Image
+      - name: Push
+        run: docker push images.conceptive.io/netplan.frontend:latest
