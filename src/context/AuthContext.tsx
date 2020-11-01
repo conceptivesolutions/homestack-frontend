@@ -120,13 +120,8 @@ export function AuthProvider({children}: { children?: React.ReactNode })
     },
   });
 
-  // Get token from localStorage
-  useEffect(() =>
-  {
-    const token = localStorage.getItem("token");
-    if (!!token)
-      dispatch(ACTION_SET_ACCESSTOKEN(token));
-  }, [dispatch])
+  // read token from localStorage initially
+  useEffect(() => dispatch(ACTION_SET_ACCESSTOKEN(localStorage.getItem("token") || undefined)), [dispatch])
 
   // Loading
   if (state.loading)
