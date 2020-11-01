@@ -8,7 +8,7 @@ import {IMetricRecord} from "../types/model";
  */
 export async function getMetricRecords(pToken: string, pDeviceID: string): Promise<IMetricRecord[]>
 {
-  return fetch('/api/metrics/' + pDeviceID, {
+  return fetch('/api/metrics/' + pDeviceID + "/records", {
     method: 'GET',
     headers: {
       "Authorization": "Bearer " + pToken
