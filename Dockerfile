@@ -40,6 +40,7 @@ COPY --from=build /app/public /app/public
 # Add a nextjs user, to force running in non-root mode
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
+RUN chown nextjs:nodejs -R /app
 USER nextjs
 
 # Set runtime metadata
