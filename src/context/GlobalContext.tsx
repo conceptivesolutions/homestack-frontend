@@ -108,18 +108,17 @@ const reducer = (state: IInternalGlobalState, action: Action) =>
 
 export function GlobalProvider({children}: { children?: React.ReactNode })
 {
-  const {state: {accessToken}} = useContext(AuthContext);
+  const {state: {getAccessToken}} = useContext(AuthContext);
   const [state, dispatch] = useThunkReducer(reducer, {
-    getAccessToken: () => Promise.resolve(accessToken || ""),
+    getAccessToken,
   });
 
   // initial
   useEffect(() =>
   {
-    if (!!accessToken)
-      // reload hosts
-      dispatch(ACTION_RELOAD_HOSTS)
-  }, [accessToken])
+    // reload hosts
+    getAccessToken().then(() => dispatch(ACTION_RELOAD_HOSTS))
+  }, [getAccessToken])
 
   return <GlobalContext.Provider value={{state, dispatch}}>
     {children}

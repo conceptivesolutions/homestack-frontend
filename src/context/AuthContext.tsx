@@ -5,12 +5,13 @@ import _ from "lodash";
 import LoginWidget from "../widgets/login/LoginWidget";
 import {useRouter} from "next/router";
 import {userinfo} from "../rest/AuthClient";
+import {isJWTTokenValid} from "../helpers/jwtHelper";
 
 export interface IAuthState
 {
   user?: IUser,
-  accessToken?: string,
   authenticated: boolean,
+  getAccessToken: () => Promise<string>,
   logout: () => void,
 }
 
@@ -42,13 +43,36 @@ export const AuthContext = createContext<{ state: IAuthState, dispatch: AuthDisp
  */
 export const ACTION_SET_ACCESSTOKEN = (token?: string) => (dispatch: AuthDispatch, getState: () => IAuthState) =>
 {
+  // if not valid, handle it like no token was received
+  if (token && !isJWTTokenValid(token))
+    token = undefined;
+
+  // store in localStorage semi permanently
   if (!!token)
     localStorage.setItem("token", token);
   else
     localStorage.removeItem("token");
 
+  // function to retreive the access token
+  const getAccessToken = () => new Promise((resolve, reject) =>
+  {
+    const token = localStorage.getItem("token");
+    if (!_.isEmpty(token) && isJWTTokenValid(token!))
+      resolve(token);
+    else
+    {
+      reject();
+      dispatch(ACTION_SET_ACCESSTOKEN())
+    }
+  });
+
   // set in state
-  dispatch({type: EAuthStateActions.SET_ACCESSTOKEN, payload: token})
+  dispatch({
+    type: EAuthStateActions.SET_ACCESSTOKEN, payload: {
+      authenticated: !_.isEmpty(token),
+      getAccessToken,
+    }
+  })
 
   // upate userinfo
   if (!!token)
@@ -73,8 +97,7 @@ const reducer = (state: IAuthState, action: Action) =>
     case EAuthStateActions.SET_ACCESSTOKEN:
       return {
         ...state,
-        authenticated: !_.isEmpty(action.payload),
-        accessToken: action.payload,
+        ...action.payload,
       }
 
     case EAuthStateActions.SET_USER:
@@ -93,6 +116,7 @@ export function AuthProvider({children}: { children?: React.ReactNode })
   const router = useRouter();
   const [state, dispatch] = useThunkReducer(reducer, {
     authenticated: false,
+    getAccessToken: () => Promise.reject(),
     logout: () =>
     {
       // Clear Token and redirect to home page
@@ -100,8 +124,6 @@ export function AuthProvider({children}: { children?: React.ReactNode })
       router.push("/");
     },
   });
-
-  // todo validate token validity
 
   // Get token from localStorage
   useEffect(() =>
@@ -112,7 +134,7 @@ export function AuthProvider({children}: { children?: React.ReactNode })
   }, [dispatch])
 
   // Force authenticated state
-  if (!state.authenticated || _.isEmpty(state.accessToken))
+  if (!state.authenticated)
     children = <LoginWidget onTokenReceived={(token) => dispatch(ACTION_SET_ACCESSTOKEN(token))}/>
 
   return <AuthContext.Provider value={{state, dispatch}}>

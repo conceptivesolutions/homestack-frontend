@@ -28,9 +28,9 @@ const reducer = (state: IInternalSettingsState, action: Action) =>
 
 export function SettingsProvider({children}: { children?: React.ReactNode })
 {
-  const {state: {accessToken}} = useContext(AuthContext);
+  const {state: {getAccessToken}} = useContext(AuthContext);
   const [state, dispatch] = useThunkReducer(reducer, {
-    getAccessToken: () => Promise.resolve(accessToken || ""),
+    getAccessToken,
   });
 
   return <SettingsContext.Provider value={{state, dispatch}}>

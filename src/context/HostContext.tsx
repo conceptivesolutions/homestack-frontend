@@ -226,10 +226,10 @@ export const HostContext = createContext<{ state: IInternalHostState, dispatch: 
 
 export function HostProvider({id, children}: { id: string, children?: React.ReactNode })
 {
-  const {state: {accessToken}} = useContext(AuthContext)
+  const {state: {getAccessToken}} = useContext(AuthContext)
   const [state, dispatch] = useThunkReducer(reducer, {
     id,
-    getAccessToken: () => Promise.resolve(accessToken || ""),
+    getAccessToken,
     autoRefresh: false
   });
 
