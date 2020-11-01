@@ -7,6 +7,7 @@ import {useRouter} from "next/router";
 import {userinfo} from "../rest/AuthClient";
 import {isJWTTokenValid} from "../helpers/jwtHelper";
 import LoadingIndicator from "../components/loader/LoadingIndicator";
+import md5 from "md5";
 
 export interface IAuthState
 {
@@ -66,7 +67,7 @@ export const ACTION_SET_ACCESSTOKEN = (token?: string) => (dispatch: AuthDispatc
         email: pInfo.email,
         firstName: pInfo.firstName,
         lastName: pInfo.lastName,
-        picture: pInfo.picture,
+        picture: pInfo.picture || (pInfo.verified ? "https://www.gravatar.com/avatar/" + md5(pInfo.email) : undefined),
         verified: pInfo.verified,
       } as IUser))
       .then(pUser => dispatch({type: EAuthStateActions.SET_USER, payload: pUser}));
