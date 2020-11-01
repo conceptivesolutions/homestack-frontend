@@ -1,9 +1,0 @@
-{
-  "short_name": "NetPlan IoT",
-  "name": "NetPlan IoT",
-  "icons": [],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
-}
