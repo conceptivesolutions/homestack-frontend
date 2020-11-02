@@ -237,7 +237,6 @@ export function HostProvider({id, children}: { id: string, children?: React.Reac
   useEffect(() =>
   {
     dispatch({type: EHostStateActions.SET_ID, payload: id})
-    dispatch({type: EHostStateActions.SET_AUTOREFRESH, payload: true})
     dispatch(ACTION_RELOAD_DEVICES);
   }, [dispatch, id])
 
