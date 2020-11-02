@@ -12,6 +12,7 @@
     "@fortawesome/fontawesome-free": "^5.15.1",
     "classnames": "^2.2.6",
     "cors": "^2.8.5",
+    "font-awesome-icon-chars": "^2.6.0",
     "http-proxy-middleware": "^1.0.6",
     "jwt-decode": "^3.0.0",
     "lodash": "^4.17.20",

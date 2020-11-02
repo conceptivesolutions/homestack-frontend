@@ -24,7 +24,7 @@ const HostNavigatorComponent = ({className}: { className: string }) =>
     children: _.sortBy(state.devices || [], ['address', 'id']).map(pDevice => ({
       id: pDevice.id,
       name: pDevice.address || "unknown",
-      iconName: "network-wired",
+      iconName: pDevice.icon || "network-wired",
       iconColor: getStateColor(pDevice.metricRecords),
       selectable: true,
       onSelect: selected => _onSelect(pDevice.id, selected, dispatch),

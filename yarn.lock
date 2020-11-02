@@ -3021,6 +3021,11 @@ follow-redirects@^1.0.0:
   resolved "https://nexus.conceptive.io/repository/npm-group/follow-redirects/-/follow-redirects-1.13.0.tgz#b42e8d93a2a7eea5ed88633676d6597bc8e384db"
   integrity sha512-aq6gF1BEKje4a9i9+5jimNFIpq4Q1WiwBToeRK5NvZBd/TRsmW8BsJfOEGkr76TbOyPVD3OVDN910EcUNtRYEA==
 
+font-awesome-icon-chars@^2.6.0:
+  version "2.6.0"
+  resolved "https://nexus.conceptive.io/repository/npm-group/font-awesome-icon-chars/-/font-awesome-icon-chars-2.6.0.tgz#99bf9c5712db06c115f419f120ba30567963851b"
+  integrity sha512-AIPi+GRxTn2e2MhIVfKcO/HhDdbqZZEiWOojyqVyU6lUEU7sCYaMJlEYG4dvhLBss6JKcjsV5R8RIAEMOvG8NQ==
+
 for-in@^1.0.2:
   version "1.0.2"
   resolved "https://nexus.conceptive.io/repository/npm-group/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"

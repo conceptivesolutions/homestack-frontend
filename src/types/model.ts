@@ -14,6 +14,7 @@ export interface IDevice
 {
   id: string,
   hostID?: string,
+  icon?: string,
   address?: string,
   location?: ILocation,
   metricRecords?: IMetricRecord[],

@@ -3,6 +3,7 @@ import styles from "./NetworkGraph.module.scss"
 import {DataSetEdges, DataSetNodes, Edge, Network, Node, Position} from "vis-network";
 import {EMetricTypes, IDevice, IEdge} from "../../types/model";
 import {getMetricRecordByType} from "../../helpers/deviceHelper";
+import {iconNameToUnicode} from "../../helpers/iconHelper";
 
 /**
  * Converts a netplan device to the correct vis.js node
@@ -11,9 +12,12 @@ export function deviceToNode(pDevice: IDevice, pColor: string): Node
 {
   const hostName = getMetricRecordByType(pDevice, EMetricTypes.REVERSE_DNS)?.result?.name;
   const ping = getMetricRecordByType(pDevice, EMetricTypes.PING)?.result?.responseTime;
+  const iconName = pDevice.icon && iconNameToUnicode(pDevice.icon);
+
   return {
     id: pDevice.id.toString(),
     label: JSON.stringify({
+      icon: iconName ? String.fromCharCode(parseInt(iconName, 16)) : "\uf6ff",
       title: hostName || pDevice.address,
       description: hostName && ("ip: " + pDevice.address + "\nping: " + ping + "ms")
     }),
@@ -258,6 +262,8 @@ function _renderNode(pSize: number)
       // primarily meant for nodes and the labels inside of their boundaries
       drawNode()
       {
+        const {icon} = JSON.parse(label);
+
         // Font
         ctx.font = "900 " + (pSize * 0.7) + 'px "Font Awesome 5 Free"';
         ctx.textBaseline = "middle";
@@ -271,7 +277,7 @@ function _renderNode(pSize: number)
 
         // Draw Icon
         ctx.fillStyle = color
-        ctx.fillText("\uf6ff", x, y);
+        ctx.fillText(icon, x, y);
 
         // Draw Checkbox Icon
         ctx.shadowBlur = 0;
