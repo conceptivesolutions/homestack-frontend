@@ -12,7 +12,9 @@
 }
 
 .nodeSelected {
-  text-decoration: underline;
+  .text {
+    text-decoration: underline;
+  }
 }
 
 .nodeSelectable {
