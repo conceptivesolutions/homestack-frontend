@@ -71,9 +71,7 @@ function _renderNode(instance: TreeView, {node, onSelect, onToggle}: DefaultNode
     if (!node.data.selectable)
       return;
 
-    instance.unselectAll();
     onSelect(e);
-
     if (node.data.onSelect)
       node.data.onSelect(node.isSelected());
   }}>

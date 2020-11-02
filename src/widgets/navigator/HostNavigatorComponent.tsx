@@ -50,11 +50,8 @@ const HostNavigatorComponent = ({className}: { className: string }) =>
   }, [handlers])
 
   // Selection
-  useEffect(() =>
-  {
-    instance.unselectAll();
-    state.selection?.devices?.forEach(pDeviceID => handlers.setSelected(pDeviceID, true))
-  }, [state.selection, instance, handlers])
+  useEffect(() => instance.traverse((node) => handlers.setSelected(node.id, _.indexOf(state.selection?.devices, node.id as string) > -1), true),
+    [state.selection, instance, handlers])
 
   return (
     <div className={classNames(className, styles.container)}>
