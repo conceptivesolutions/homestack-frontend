@@ -72,7 +72,10 @@ export const ACTION_UPDATE_DEVICE = (id: string, pDevice: IDevice) => (dispatch:
       const devices = [...(getState().devices || [])];
       const replaceIdx = devices.findIndex(pValue => pValue.id === id)
       if (replaceIdx > -1)
-        devices[replaceIdx] = pDevice;
+        devices[replaceIdx] = {
+          ...pDevice,
+          metricRecords: devices[replaceIdx].metricRecords,
+        };
       else
         devices.push(pDevice);
       dispatch({
