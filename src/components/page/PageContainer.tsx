@@ -14,6 +14,7 @@ import {IHost} from "../../types/model";
 import PopupItem from "../navbar/PopupItem";
 import {useRouter} from "next/router";
 import {AuthContext} from "../../context/AuthContext";
+import md5 from "md5";
 
 export interface IPageContent
 {
@@ -36,7 +37,7 @@ const PageContainer = (props: IPageContent) =>
         <ContextSwitcherEntry alignment={"bottom"} iconName={"plus"} title={"Add System"}/>
       </ContextSwitcher>
       <NavBar className={styles.navbar}>
-        {props.navbarItems?.map(pItem => <NavBarItem key={JSON.stringify(pItem.children)} {...pItem}/>)}
+        {props.navbarItems?.map(pItem => <NavBarItem key={md5(JSON.stringify(pItem))} {...pItem}/>)}
         <IconItem alignment={"right"} iconName={"cog"} active={router.pathname.startsWith("/settings")} onClick={() => router.push("/settings")}/>
         <IconItem alignment={"right"} iconName={"bell"}/>
         <ProfileItem alignment={"right"} iconSrc={user?.picture} popupItems={(<>
