@@ -1,18 +1,21 @@
 import React, {useEffect, useRef} from 'react';
 import styles from "./NetworkGraph.module.scss"
 import {DataSetEdges, DataSetNodes, Edge, Network, Node, Position} from "vis-network";
-import {IDevice, IEdge} from "../../types/model";
+import {EMetricTypes, IDevice, IEdge} from "../../types/model";
+import {getMetricRecordByType} from "../../helpers/deviceHelper";
 
 /**
  * Converts a netplan device to the correct vis.js node
  */
 export function deviceToNode(pDevice: IDevice, pColor: string): Node
 {
+  const hostName = getMetricRecordByType(pDevice, EMetricTypes.REVERSE_DNS)?.result?.name;
+  const ping = getMetricRecordByType(pDevice, EMetricTypes.PING)?.result?.responseTime;
   return {
     id: pDevice.id.toString(),
     label: JSON.stringify({
-      title: pDevice.address,
-      description: "id: " + pDevice.id
+      title: hostName || pDevice.address,
+      description: hostName && ("ip: " + pDevice.address + "\nping: " + ping + "ms")
     }),
     x: pDevice.location === undefined ? 0 : pDevice.location.x,
     y: pDevice.location === undefined ? 0 : pDevice.location.y,
@@ -297,7 +300,7 @@ function _renderNode(pSize: number)
         if (description)
         {
           ctx.font = "8pt monospace"
-          ctx.fillText(description, x - (width / 2), y + (pSize / 2) + 14)
+          _drawMultilineText(ctx, description, 12, x - (width / 2), y + (pSize / 2) + 14)
         }
       },
       // node dimensions defined by node drawing
@@ -306,5 +309,18 @@ function _renderNode(pSize: number)
         height: pSize
       },
     }
+  }
+}
+
+/**
+ * Function to draw multiline text onto a context
+ */
+function _drawMultilineText(ctx: any, text: string, lineHeight: number, x: number, y: number)
+{
+  const lines = text.split("\n");
+  for (let i = 0; i < lines.length; ++i)
+  {
+    ctx.fillText(lines[i], x, y);
+    y += lineHeight;
   }
 }

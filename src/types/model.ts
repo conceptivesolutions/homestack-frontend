@@ -31,9 +31,15 @@ export interface IMetricRecord
 {
   deviceID: string,
   recordTime: string,
-  type: string,
+  type: EMetricTypes | string,
   state: EMetricRecordState,
-  result?: object,
+  result?: any,
+}
+
+export enum EMetricTypes
+{
+  PING = "ping",
+  REVERSE_DNS = "reverse-dns"
 }
 
 export enum EMetricRecordState
