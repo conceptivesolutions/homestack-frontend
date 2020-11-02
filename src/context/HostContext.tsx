@@ -205,7 +205,7 @@ const reducer = (state: IInternalHostState, action: Action) =>
       return {
         ...state,
         selection: {
-          ...state,
+          ...state.selection,
           devices: action.payload?.devices || state.selection?.devices,
           edges: action.payload?.edges || state.selection?.edges,
         },
