@@ -7,7 +7,7 @@ import {IDialogStore} from "../../types/dialog";
 import {DataSet, DataSetEdges, DataSetNodes, Edge, Network, Node} from "vis-network/standalone/umd/vis-network";
 import {Position} from "vis-network/declarations/network/Network";
 import {IDevice} from "../../types/model";
-import {ACTION_ADD_EDGE_BETWEEN, ACTION_CREATE_DEVICE, ACTION_REMOVE_DEVICE, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
+import {ACTION_ADD_EDGE_BETWEEN, ACTION_CREATE_DEVICE, ACTION_RELOAD_DEVICES, ACTION_REMOVE_DEVICE, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
 import {useCallbackNoRefresh} from "../../helpers/Utility";
 import {getStateColor} from "../../helpers/NodeHelper";
 import classNames from "classnames";
@@ -74,6 +74,8 @@ const NetworkComponent = ({className, hostID}: { className?: string, hostID: str
         _handleDelete(nodesRef.current, edgesRef.current, state.selection?.devices || [], state.selection?.edges || [], dispatch)
       else if (event.key === "a")
         _handleCreate(nodesRef.current, edgesRef.current, state.selection?.devices || [], state.selection?.edges || [], dispatch)
+      else if (event.key === "r")
+        dispatch(ACTION_RELOAD_DEVICES)
     };
     window.addEventListener("keydown", listener)
     return () => window.removeEventListener("keydown", listener);
