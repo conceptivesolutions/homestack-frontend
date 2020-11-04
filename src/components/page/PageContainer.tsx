@@ -33,7 +33,7 @@ const PageContainer = (props: IPageContent) =>
   return (
     <div className={classNames(styles.container, {[styles.container__withNavigator]: !!props.navigator})}>
       <ContextSwitcher className={styles.switcher}>
-        {_createHostSwitcherEntries(hosts, router.pathname, hostID => router.push("/hosts/" + hostID))}
+        {_createHostSwitcherEntries(hosts, router.query.hostID as string || "", hostID => router.push("/hosts/" + hostID))}
         <ContextSwitcherEntry alignment={"bottom"} iconName={"plus"} title={"Add System"}/>
       </ContextSwitcher>
       <NavBar className={styles.navbar}>
@@ -64,15 +64,15 @@ export default PageContainer;
  * Creates the host entries for the switcher
  *
  * @param hosts current hosts
- * @param currentLocation current location
+ * @param hostID ID of the currently selected host
  * @param onClick function that gets executed on click
  */
-function _createHostSwitcherEntries(hosts: IHost[] | undefined, currentLocation: string, onClick: (hostID: string) => void)
+function _createHostSwitcherEntries(hosts: IHost[] | undefined, hostID: string, onClick: (hostID: string) => void)
 {
   return _.sortBy(hosts, ['displayName', 'id'])
     .map(pHost => <ContextSwitcherEntry key={pHost.id} alignment={"top"} iconName={"server"}
                                         title={pHost.displayName || ""}
-                                        active={currentLocation.startsWith("/hosts/" + pHost.id)}
+                                        active={hostID === pHost.id}
                                         iconColor={"white"}
                                         color={randomColor({
                                           hue: "blue",
