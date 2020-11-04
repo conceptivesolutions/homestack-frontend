@@ -8,7 +8,7 @@ import {useGlobalHook} from "@devhammed/use-global-hook";
 import {IDialogStore} from "../../types/dialog";
 import {v4 as uuidv4} from 'uuid';
 
-export default () =>
+const HostsTable = () =>
 {
   const {state, dispatch} = useContext(GlobalContext);
   const {showDialog} = useGlobalHook("dialogStore") as IDialogStore;
@@ -38,6 +38,8 @@ export default () =>
     </>
   )
 }
+
+export default HostsTable;
 
 /**
  * Shows a dialog to upsert an host
