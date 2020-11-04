@@ -29,9 +29,8 @@ const NavigationTree = (props: INavigationTree) => (
       {...props.required}
       {...props.handlers}
       disableTransitions
-      depthGap={35}
-      disableLines={false}
-      disableVerticalLines={false}
+      depthGap={20}
+      disableLines={true}
       draggable={false}
       verticalLineTopOffset={-5}
       verticalLineOffset={15}
@@ -91,8 +90,8 @@ function _createControlNode({node, onToggle}: DefaultNodeProps)
     if (!node.isLoading())
       return <span onClick={onToggle}
                    className={classNames(styles.arrow, "fa", {
-                     "fa-minus-square": node.isOpened() && !!node.hasChildren(),
-                     "fa-plus-square": !(node.isOpened() && !!node.hasChildren())
+                     "fa-chevron-down": node.isOpened() && !!node.hasChildren(),
+                     "fa-chevron-right": !(node.isOpened() && !!node.hasChildren())
                    })}/>;
 
   // dummy
