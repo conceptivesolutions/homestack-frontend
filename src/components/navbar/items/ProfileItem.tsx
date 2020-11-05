@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react";
 import styles from "./ProfileItem.module.scss";
 import NavBarItem from "../NavBarItem";
 import Popup from "../Popup";
-import classNames from "classnames";
+import Icon from "@mdi/react";
+import {mdiChevronDown, mdiChevronUp} from "@mdi/js";
 
 interface IProfileItem
 {
@@ -31,10 +32,7 @@ const ProfileItem = (props: IProfileItem) =>
         {props.iconSrc ?
           <img className={styles.icon} src={props.iconSrc} alt={"avatar"}/> :
           <div className={styles.icon}/>}
-        <span className={classNames(styles.dropdownArrow, "fa", {
-          "fa-chevron-down": !popupOpen,
-          "fa-chevron-up": popupOpen,
-        })}/>
+        {<Icon path={popupOpen ? mdiChevronUp : mdiChevronDown} className={styles.dropdownArrow} size={1}/>}
       </div>
       <Popup open={popupOpen} alignment={"right"}>
         {props.popupItems}

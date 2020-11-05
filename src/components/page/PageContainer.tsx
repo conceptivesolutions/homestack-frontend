@@ -2,7 +2,6 @@ import React, {useContext} from "react";
 import styles from "./PageContainer.module.scss";
 import NavBar from "../navbar/NavBar";
 import NavBarItem, {INavBarItem} from "../navbar/NavBarItem";
-import IconItem from "../navbar/items/IconItem";
 import ProfileItem from "../navbar/items/ProfileItem";
 import {GlobalContext} from "../../context/GlobalContext";
 import classNames from "classnames";
@@ -15,6 +14,7 @@ import PopupItem from "../navbar/PopupItem";
 import {useRouter} from "next/router";
 import {AuthContext} from "../../context/AuthContext";
 import md5 from "md5";
+import {mdiAccount, mdiBellOutline, mdiCogOutline, mdiLogout, mdiPlus, mdiServerNetwork} from "@mdi/js";
 
 export interface IPageContent
 {
@@ -34,15 +34,15 @@ const PageContainer = (props: IPageContent) =>
     <div className={classNames(styles.container, {[styles.container__withNavigator]: !!props.navigator})}>
       <ContextSwitcher className={styles.switcher}>
         {_createHostSwitcherEntries(hosts, router.query.hostID as string || "", hostID => router.push("/hosts/" + hostID))}
-        <ContextSwitcherEntry alignment={"bottom"} iconName={"plus"} title={"Add System"}/>
+        <ContextSwitcherEntry alignment={"bottom"} icon={mdiPlus} title={"Add System"}/>
       </ContextSwitcher>
       <NavBar className={styles.navbar}>
         {props.navbarItems?.map(pItem => <NavBarItem key={md5(JSON.stringify(pItem))} {...pItem}/>)}
-        <IconItem alignment={"right"} iconName={"cog"} active={router.pathname.startsWith("/settings")} onClick={() => router.push("/settings")}/>
-        <IconItem alignment={"right"} iconName={"bell"}/>
+        <NavBarItem icon={mdiCogOutline} alignment={"right"} active={router.pathname.startsWith("/settings")} onClick={() => router.push("/settings")}/>
+        <NavBarItem icon={mdiBellOutline} alignment={"right"}/>
         <ProfileItem alignment={"right"} iconSrc={user?.picture} popupItems={(<>
-          <PopupItem iconName={"user"}>My Profile</PopupItem>
-          <PopupItem iconName={"sign-out-alt"} separatorTop onClick={() => logout()}>Logout</PopupItem>
+          <PopupItem icon={mdiAccount}>My Profile</PopupItem>
+          <PopupItem icon={mdiLogout} separatorTop onClick={() => logout()}>Logout</PopupItem>
         </>)}/>
       </NavBar>
       <div className={styles.edge} onClick={() => router.push("/")}>
@@ -70,7 +70,7 @@ export default PageContainer;
 function _createHostSwitcherEntries(hosts: IHost[] | undefined, hostID: string, onClick: (hostID: string) => void)
 {
   return _.sortBy(hosts, ['displayName', 'id'])
-    .map(pHost => <ContextSwitcherEntry key={pHost.id} alignment={"top"} iconName={"server"}
+    .map(pHost => <ContextSwitcherEntry key={pHost.id} alignment={"top"} icon={mdiServerNetwork}
                                         title={pHost.displayName || ""}
                                         active={hostID === pHost.id}
                                         iconColor={"white"}

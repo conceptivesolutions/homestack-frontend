@@ -2,6 +2,8 @@ import React, {useCallback, useEffect} from 'react';
 import styles from "./DialogContainer.module.scss"
 import {createGlobalHook, useGlobalHook} from "@devhammed/use-global-hook";
 import {IDialogStore} from "../../types/dialog";
+import Icon from "@mdi/react";
+import {mdiCloseCircleOutline} from "@mdi/js";
 
 /**
  * Container for the globalHook-Framework and is necessary to open dialogs
@@ -80,7 +82,9 @@ const DialogContainer = () =>
       <div className={styles.frame} onClick={evt => evt.stopPropagation()}>
         <div className={styles.titlebar}>
           <div className={styles.title}>{title}</div>
-          <div className={styles.control + " fa fa-times-circle"} onClick={fOnResult(null)}/>
+          <div onClick={fOnResult(null)}>
+            <Icon path={mdiCloseCircleOutline} size={0.8}/>
+          </div>
         </div>
 
         <div className={styles.content}>

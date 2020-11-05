@@ -1081,11 +1081,6 @@
   resolved "https://nexus.conceptive.io/repository/npm-group/@devhammed/use-global-hook/-/use-global-hook-1.5.1.tgz#0e6d8da577d81a842200a46968f549eaca5f9ca0"
   integrity sha512-LoOJ+bEs96/PundbuZywtqgf1aC3/jTdZrtLijJqrKklyCQkScmU2o3tIZCMRcH9UXO7bf40hvSIR7PIhnnWEw==
 
-"@fortawesome/fontawesome-free@^5.15.1":
-  version "5.15.1"
-  resolved "https://nexus.conceptive.io/repository/npm-group/@fortawesome/fontawesome-free/-/fontawesome-free-5.15.1.tgz#ccfef6ddbe59f8fe8f694783e1d3eb88902dc5eb"
-  integrity sha512-OEdH7SyC1suTdhBGW91/zBfR6qaIhThbcN8PUXtXilY4GYnSBbVqOntdHbC1vXwsDnX0Qix2m2+DSU1J51ybOQ==
-
 "@hapi/accept@5.0.1":
   version "5.0.1"
   resolved "https://nexus.conceptive.io/repository/npm-group/@hapi/accept/-/accept-5.0.1.tgz#068553e867f0f63225a506ed74e899441af53e10"
@@ -1105,6 +1100,21 @@
   version "9.1.0"
   resolved "https://nexus.conceptive.io/repository/npm-group/@hapi/hoek/-/hoek-9.1.0.tgz#6c9eafc78c1529248f8f4d92b0799a712b6052c6"
   integrity sha512-i9YbZPN3QgfighY/1X1Pu118VUz2Fmmhd6b2n0/O8YVgGGfw0FbUYoA97k7FkpGJ+pLCFEDLUmAPPV4D1kpeFw==
+
+"@mdi/font@^5.8.55":
+  version "5.8.55"
+  resolved "https://nexus.conceptive.io/repository/npm-group/@mdi/font/-/font-5.8.55.tgz#1464155bcbc8a6e4af6dffd611fe8e38e09af285"
+  integrity sha512-8mrwfFBsmj+D67ZiGQSe5TU/lcWCtDyli2eshQ2fvLCZGRPqFMM23YQp4+JMOTpk5yMZKTeAwNWIYfITy76OHA==
+
+"@mdi/js@^5.8.55":
+  version "5.8.55"
+  resolved "https://nexus.conceptive.io/repository/npm-group/@mdi/js/-/js-5.8.55.tgz#630bc5fafd8b1d2f6e63489a9ab170177559e41b"
+  integrity sha512-2bvln56SW6V/nSDC/0/NTu1bMF/CgSyZox8mcWbAPWElBN3UYIrukKDUckEER8ifr8X2YJl1RLKQqi7T7qLzmg==
+
+"@mdi/react@^1.4.0":
+  version "1.4.0"
+  resolved "https://nexus.conceptive.io/repository/npm-group/@mdi/react/-/react-1.4.0.tgz#7f6bad1bd8801226d0e5bad91659b215ce68a93f"
+  integrity sha512-OUH9RhfDJPhybQL3owwrSDIXz2yVKXg5lYeOZjyRCiT9wqywNK0FeYyDByOwNIZnnIQoQYmuSrMv+pOX0Uqkmw==
 
 "@next/env@10.0.0":
   version "10.0.0"
@@ -1228,6 +1238,11 @@
   version "14.14.6"
   resolved "https://nexus.conceptive.io/repository/npm-group/@types/node/-/node-14.14.6.tgz#146d3da57b3c636cc0d1769396ce1cfa8991147f"
   integrity sha512-6QlRuqsQ/Ox/aJEQWBEJG7A9+u7oSYl3mem/K8IzxXG/kAGbV1YPD9Bg9Zw3vyxC/YP+zONKwy8hGkSt1jxFMw==
+
+"@types/opentype.js@^1.3.1":
+  version "1.3.1"
+  resolved "https://nexus.conceptive.io/repository/npm-group/@types/opentype.js/-/opentype.js-1.3.1.tgz#e70c33bd3bb09b3ef22384179ccbbc479d499b7f"
+  integrity sha512-nEQiGyLqrhd5J7hEsOGmOuh/Y915xzZBWP8q1uG+JVY6lXXPzSNRQg8HZ/2yzrXbOHlCPD0HxG7jJMS8HH4xuQ==
 
 "@types/prop-types@*":
   version "15.7.3"
@@ -3020,11 +3035,6 @@ follow-redirects@^1.0.0:
   version "1.13.0"
   resolved "https://nexus.conceptive.io/repository/npm-group/follow-redirects/-/follow-redirects-1.13.0.tgz#b42e8d93a2a7eea5ed88633676d6597bc8e384db"
   integrity sha512-aq6gF1BEKje4a9i9+5jimNFIpq4Q1WiwBToeRK5NvZBd/TRsmW8BsJfOEGkr76TbOyPVD3OVDN910EcUNtRYEA==
-
-font-awesome-icon-chars@^2.6.0:
-  version "2.6.0"
-  resolved "https://nexus.conceptive.io/repository/npm-group/font-awesome-icon-chars/-/font-awesome-icon-chars-2.6.0.tgz#99bf9c5712db06c115f419f120ba30567963851b"
-  integrity sha512-AIPi+GRxTn2e2MhIVfKcO/HhDdbqZZEiWOojyqVyU6lUEU7sCYaMJlEYG4dvhLBss6JKcjsV5R8RIAEMOvG8NQ==
 
 for-in@^1.0.2:
   version "1.0.2"

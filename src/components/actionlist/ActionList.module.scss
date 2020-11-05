@@ -9,6 +9,8 @@
   color: $primary-color;
   cursor: pointer;
   font-size: small;
+  display: flex;
+  align-items: center;
 
   &:hover {
     color: hoverColor($primary-color);

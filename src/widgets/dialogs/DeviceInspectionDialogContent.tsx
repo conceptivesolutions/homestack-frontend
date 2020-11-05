@@ -2,8 +2,7 @@ import React from "react";
 import styles from "./DeviceInspectionDialogContent.module.scss"
 import {IDevice} from "../../types/model";
 import SimpleGridDialogContent from "../../components/dialogs/SimpleGridDialogContent";
-import chars from 'font-awesome-icon-chars'
-import {iconNameToUnicode} from "../../helpers/iconHelper";
+import {getIcons} from "../../helpers/iconHelper";
 
 /**
  * Dialog to edit a single device
@@ -21,9 +20,9 @@ const DeviceInspectionDialogContent = ({device, onPropChange}: { device: IDevice
       <span>Address</span>
       <input onChange={(e) => onPropChange("address", e.target.value)} defaultValue={device.address}/>
       <span>Icon</span>
-      <select onChange={(e) => onPropChange("icon", e.target.value)} defaultValue={device.icon && iconNameToUnicode(device.icon)}>
+      <select onChange={(e) => onPropChange("icon", e.target.value)} defaultValue={device.icon}>
         <option value={""}/>
-        {chars.regular.map(pIcon => <option key={pIcon.name} value={pIcon.name}>{pIcon.name}</option>)}
+        {getIcons().map(pIcon => <option key={pIcon}>{pIcon}</option>)}
       </select>
       <span>Records</span>
       <pre className={styles.metricRecords}>{JSON.stringify(device.metricRecords, null, " ")}</pre>

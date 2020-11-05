@@ -1,11 +1,12 @@
 import React from "react";
 import classNames from "classnames";
 import styles from "./Popup.module.scss"
+import Icon from "@mdi/react";
 
 interface IPopupItem
 {
   children: React.ReactNode,
-  iconName?: string,
+  icon?: string,
   onClick?: () => void,
   separatorTop?: boolean,
 }
@@ -14,8 +15,10 @@ const PopupItem = (props: IPopupItem) => (
   <div className={classNames(styles.popupitem__container, {
     [styles.popupitem__containerSeparatorTop]: props.separatorTop
   })} onClick={props.onClick}>
-    {!!props.iconName && <span className={styles.popupitem__icon + " fa fa-" + props.iconName}/>}
-    <span className={"popupitem__text"}>{props.children}</span>
+    {!!props.icon && <Icon path={props.icon} size={0.8} className={styles.popupitem__icon}/>}
+    <span>
+      {props.children}
+    </span>
   </div>
 );
 

@@ -8,6 +8,8 @@ import {getStateColor} from "../../helpers/NodeHelper";
 import classNames from "classnames";
 import ActionList from "../../components/actionlist/ActionList";
 import ActionListItem from "../../components/actionlist/ActionListItem";
+import {mdiChartBar, mdiMinusCircle, mdiMonitor, mdiPlusCircle, mdiServer} from "@mdi/js";
+import {iconToSVG} from "../../helpers/iconHelper";
 
 /**
  * Simple Navigator for a single host
@@ -20,18 +22,18 @@ const HostNavigatorComponent = ({className}: { className: string }) =>
   const root: ITreeNode = {
     id: "root",
     name: "Devices & Results",
-    iconName: "server",
+    icon: mdiServer,
     children: _.sortBy(state.devices || [], ['address', 'id']).map(pDevice => ({
       id: pDevice.id,
       name: pDevice.address || "unknown",
-      iconName: pDevice.icon || "network-wired",
+      icon: pDevice.icon && iconToSVG(pDevice.icon) || mdiMonitor,
       iconColor: getStateColor(pDevice.metricRecords),
       selectable: true,
       onSelect: selected => _onSelect(pDevice.id, selected, dispatch),
       children: (pDevice.metricRecords || []).map(pRecord => ({
         id: pDevice.id + pRecord.type,
         name: pRecord.type + " => " + pRecord.state,
-        iconName: "chart-pie",
+        icon: mdiChartBar,
         iconColor: getStateColor([pRecord]),
       }))
     }))
@@ -57,8 +59,8 @@ const HostNavigatorComponent = ({className}: { className: string }) =>
     <div className={classNames(className, styles.container)}>
       <NavigationTree className={styles.tree} required={required} instance={instance} handlers={handlers}/>
       <ActionList className={styles.actions}>
-        <ActionListItem name={"Add Device"} iconName={"plus-circle"} onClick={() => dispatch(ACTION_CREATE_DEVICE())}/>
-        <ActionListItem disabled={_.isEmpty(state.selection?.devices)} name={"Remove Device"} iconName={"minus-circle"}
+        <ActionListItem name={"Add Device"} icon={mdiPlusCircle} onClick={() => dispatch(ACTION_CREATE_DEVICE())}/>
+        <ActionListItem disabled={_.isEmpty(state.selection?.devices)} name={"Remove Device"} icon={mdiMinusCircle}
                         color={"red"} onClick={() => state.selection?.devices?.forEach(pDevID => dispatch(ACTION_REMOVE_DEVICE(pDevID)))}/>
       </ActionList>
     </div>

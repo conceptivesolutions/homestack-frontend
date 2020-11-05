@@ -8,6 +8,7 @@ import _ from "lodash";
 import {useRouter} from "next/router";
 import NetworkComponent from "../../widgets/network/NetworkComponent";
 import {IHost} from "../../types/model";
+import {mdiRefresh} from "@mdi/js";
 
 /**
  * Creates an "Host"-Page and loads the host with the ID from the url
@@ -43,7 +44,7 @@ const InnerHostPage = ({currentHost}: { currentHost: IHost }) =>
                           disabled: true,
                         }, {
                           alignment: "right",
-                          className: "fa fa-sync-alt",
+                          icon: mdiRefresh,
                           onClick: () => dispatch(ACTION_RELOAD_DEVICES)
                         }]}>
     <NetworkComponent hostID={currentHost.id}/>

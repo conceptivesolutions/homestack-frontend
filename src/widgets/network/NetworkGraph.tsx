@@ -3,7 +3,7 @@ import styles from "./NetworkGraph.module.scss"
 import {DataSetEdges, DataSetNodes, Edge, Network, Node, Position} from "vis-network";
 import {EMetricTypes, IDevice, IEdge} from "../../types/model";
 import {getMetricRecordByType} from "../../helpers/deviceHelper";
-import {iconNameToUnicode} from "../../helpers/iconHelper";
+import {iconToPath2D} from "../../helpers/iconHelper";
 
 /**
  * Converts a netplan device to the correct vis.js node
@@ -12,12 +12,11 @@ export function deviceToNode(pDevice: IDevice, pColor: string): Node
 {
   const hostName = getMetricRecordByType(pDevice, EMetricTypes.REVERSE_DNS)?.result?.name;
   const ping = getMetricRecordByType(pDevice, EMetricTypes.PING)?.result?.responseTime;
-  const iconName = pDevice.icon && iconNameToUnicode(pDevice.icon);
 
   return {
     id: pDevice.id.toString(),
     label: JSON.stringify({
-      icon: iconName ? String.fromCharCode(parseInt(iconName, 16)) : "\uf6ff",
+      iconName: pDevice.icon,
       title: hostName || pDevice.address,
       description: hostName && ("ip: " + pDevice.address + "\nping: " + ping + "ms")
     }),
@@ -262,10 +261,9 @@ function _renderNode(pSize: number)
       // primarily meant for nodes and the labels inside of their boundaries
       drawNode()
       {
-        const {icon} = JSON.parse(label);
+        const {iconName} = JSON.parse(label);
 
         // Font
-        ctx.font = "900 " + (pSize * 0.7) + 'px "Font Awesome 5 Free"';
         ctx.textBaseline = "middle";
         ctx.textAlign = "center";
 
@@ -276,18 +274,20 @@ function _renderNode(pSize: number)
         ctx.shadowOffsetY = 2;
 
         // Draw Icon
+        const oldTransform = ctx.getTransform();
         ctx.fillStyle = color
-        ctx.fillText(icon, x, y);
+        ctx.transform(2, 0, 0, 2, x - (pSize / 2), y - (pSize / 2))
+        ctx.fill(iconToPath2D(iconName))
+        ctx.setTransform(oldTransform)
 
         // Draw Checkbox Icon
         ctx.shadowBlur = 0;
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
-        ctx.textBaseline = "top";
-        ctx.textAlign = "right";
         ctx.fillStyle = (selected ? "#007bff" : "#dedede");
-        ctx.font = '400 12pt "Font Awesome 5 Free"';
-        ctx.fillText(selected ? "\uf14a" : "\uf0c8", x + (pSize / 2), y - (pSize / 2))
+        ctx.transform(0.8, 0, 0, 0.8, x + (pSize / 2) - 10, y - (pSize / 2) - 10)
+        ctx.fill(selected ? iconToPath2D("mdiCheckboxMarked") : iconToPath2D("mdiCheckboxBlankOutline"))
+        ctx.setTransform(oldTransform)
       },
       // above arrows
       // primarily meant for labels outside of the node

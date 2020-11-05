@@ -7,6 +7,8 @@ import SimpleGridDialogContent from "../../components/dialogs/SimpleGridDialogCo
 import {useGlobalHook} from "@devhammed/use-global-hook";
 import {IDialogStore} from "../../types/dialog";
 import {v4 as uuidv4} from 'uuid';
+import Icon from "@mdi/react";
+import {mdiCogOutline, mdiPlus, mdiTrashCanOutline} from "@mdi/js";
 
 const HostsTable = () =>
 {
@@ -28,13 +30,19 @@ const HostsTable = () =>
           <td>{pHost.id}</td>
           <td className={styles.hostsTable__name}>{pHost.displayName}</td>
           <td>
-            <button className={"fa fa-cog"} onClick={() => _upsertHost(showDialog, dispatch, pHost)}/>
-            <button className={"fa fa-trash"} onClick={() => dispatch(ACTION_REMOVE_HOST(pHost.id))}/>
+            <button onClick={() => _upsertHost(showDialog, dispatch, pHost)}>
+              <Icon path={mdiCogOutline} size={0.8}/>
+            </button>
+            <button onClick={() => dispatch(ACTION_REMOVE_HOST(pHost.id))}>
+              <Icon path={mdiTrashCanOutline} size={0.8}/>
+            </button>
           </td>
         </tr>)}
         </tbody>
       </table>
-      <button className={"fa fa-plus"} onClick={() => _upsertHost(showDialog, dispatch)}/>
+      <button onClick={() => _upsertHost(showDialog, dispatch)}>
+        <Icon path={mdiPlus} size={0.8}/>
+      </button>
     </>
   )
 }

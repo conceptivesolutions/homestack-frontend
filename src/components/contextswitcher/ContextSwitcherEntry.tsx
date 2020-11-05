@@ -1,10 +1,11 @@
 import React from "react";
 import styles from "./ContextSwitcherEntry.module.scss"
 import classNames from "classnames";
+import Icon from "@mdi/react";
 
 export interface IContextSwitcherEntry
 {
-  iconName: string,
+  icon: string,
   iconColor?: string,
   title: string,
   alignment: 'top' | 'bottom',
@@ -13,11 +14,11 @@ export interface IContextSwitcherEntry
   color?: string,
 }
 
-const ContextSwitcherEntry = ({iconName, title, alignment, active, onClick, color, iconColor}: IContextSwitcherEntry) => (
-  <button className={classNames(styles.button, {[styles.buttonActive]: active})}
-          style={{backgroundColor: color, color: iconColor}}
-          title={title} onClick={onClick}>
-    <span className={"fa fa-" + iconName}/>
+const ContextSwitcherEntry = (props: IContextSwitcherEntry) => (
+  <button className={classNames(styles.button, {[styles.buttonActive]: props.active})}
+          style={{backgroundColor: props.color, color: props.iconColor}}
+          title={props.title} onClick={props.onClick}>
+    {<Icon path={props.icon} size={1}/>}
   </button>
 );
 

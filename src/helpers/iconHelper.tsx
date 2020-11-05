@@ -1,12 +1,34 @@
 import _ from "lodash";
-import chars from "font-awesome-icon-chars";
+import * as icons from "@mdi/js";
+
+// todo caching
+// todo not via require - use webfont instead
 
 /**
- * Converts an icon name to its unicode representation
+ * Returns a list of all available icons
+ */
+export function getIcons(): string[]
+{
+  return _.keys(icons);
+}
+
+/**
+ * Returns the given icon as a SVG string
  *
  * @param name name of the icon
  */
-export function iconNameToUnicode(name: string): string | undefined
+export function iconToSVG(name: string): string | undefined
 {
-  return _.head(chars.regular.filter(pV => pV.name === name).map(pV => pV.unicode))
+  // @ts-ignore
+  return icons[name];
+}
+
+/**
+ * Returns the given icon as a Path2D object for canvas drawing
+ *
+ * @param name name of the icon
+ */
+export function iconToPath2D(name: string): Path2D | undefined
+{
+  return new Path2D(iconToSVG(name));
 }

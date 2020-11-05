@@ -1,5 +1,14 @@
 @import "src/css/material";
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@font-face {
+    font-family: "feather-icons";
+    src: url("/fonts/feather-icons.eot");
+    src: url("/fonts/feather-icons.eot#iefix") format("embedded-opentype"),
+    url("/fonts/feather-icons.woff") format("woff"),
+    url("/fonts/feather-icons.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
 
 * {
     color: inherit;

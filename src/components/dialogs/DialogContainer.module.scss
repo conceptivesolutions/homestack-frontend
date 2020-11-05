@@ -43,14 +43,6 @@
       flex-grow: 1;
       height: 10px;
     }
-
-    .control {
-      font-weight: $fa-regular;
-
-      &:active {
-        font-weight: $fa-solid;
-      }
-    }
   }
 
   .content {

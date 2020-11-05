@@ -3,6 +3,8 @@ import styles from "./NavigationTree.module.scss";
 import Tree, {DefaultNodeProps, Loader} from "react-hyper-tree";
 import classNames from "classnames";
 import {TreeView} from "react-hyper-tree/dist/helpers/node";
+import {Icon} from "@mdi/react";
+import {mdiChevronDown, mdiChevronRight} from "@mdi/js";
 
 export interface INavigationTree
 {
@@ -16,7 +18,7 @@ export interface ITreeNode
 {
   id: string,
   name: string,
-  iconName: string,
+  icon: string,
   selectable?: boolean,
   iconColor?: string,
   children?: ITreeNode[],
@@ -76,7 +78,7 @@ function _renderNode(instance: TreeView, {node, onSelect, onToggle}: DefaultNode
   }}>
     {_createControlNode({node, onSelect, onToggle})}
     {node.isLoading() && (<Loader/>)}
-    {node.data.iconName && <span style={{color: node.data.iconColor}} className={styles.icon + " fa fa-" + node.data.iconName}/>}
+    {node.data.icon && <Icon path={node.data.icon} size={0.8} style={{color: node.data.iconColor}} className={styles.icon}/>}
     <span className={styles.text}>{node.data.name}</span>
   </div>;
 }
@@ -88,11 +90,9 @@ function _createControlNode({node, onToggle}: DefaultNodeProps)
 
   if (node.hasChildren() || node.options.async)
     if (!node.isLoading())
-      return <span onClick={onToggle}
-                   className={classNames(styles.arrow, "fa", {
-                     "fa-chevron-down": node.isOpened() && !!node.hasChildren(),
-                     "fa-chevron-right": !(node.isOpened() && !!node.hasChildren())
-                   })}/>;
+      return <div onClick={e => onToggle(e as any)}>
+        <Icon path={(node.isOpened() && !!node.hasChildren()) ? mdiChevronDown : mdiChevronRight} size={0.8}/>
+      </div>
 
   // dummy
   return <span className={styles.arrow}/>
