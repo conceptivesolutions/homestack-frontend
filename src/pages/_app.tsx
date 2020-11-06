@@ -1,5 +1,4 @@
 import React from "react";
-import '@fortawesome/fontawesome-free/css/all.min.css';
 import './_app.scss';
 import {GlobalHooksProvider} from "@devhammed/use-global-hook";
 import DialogContainer, {dialogStore} from "../components/dialogs/DialogContainer";
