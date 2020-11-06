@@ -16,7 +16,7 @@ export function deviceToNode(pDevice: IDevice, pColor: string): Node
   return {
     id: pDevice.id.toString(),
     label: JSON.stringify({
-      iconName: pDevice.icon,
+      icon: pDevice.icon,
       title: hostName || pDevice.address,
       description: hostName && ("ip: " + pDevice.address + "\nping: " + ping + "ms")
     }),
@@ -30,10 +30,13 @@ export function deviceToNode(pDevice: IDevice, pColor: string): Node
       x: 2,
       y: 2,
       size: 5,
+
+      // @ts-ignore
+      test: 5,
     },
 
     // @ts-ignore Enforce renderer
-    ctxRenderer: _renderNode(50),
+    ctxRenderer: _renderNode(50, iconToPath2D("mdiCheckbox"), iconToPath2D("mdiCheckboxMarked")),
   };
 }
 
@@ -248,9 +251,11 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
  * Renders a single node on the given context
  *
  * @param pSize Size for the icon
+ * @param pSelectionPath Path for an unselected checkbox
+ * @param pSelectionMarkedPath Path for an selected checkbox
  * @private
  */
-function _renderNode(pSize: number)
+function _renderNode(pSize: number, pSelectionPath?: Path2D, pSelectionMarkedPath?: Path2D)
 {
   return ({ctx, x, y, state: {selected}, style: {color}, label}: { ctx: any, x: number, y: number, state: { selected: boolean }, style: any, label: string }) =>
   {
@@ -261,7 +266,7 @@ function _renderNode(pSize: number)
       // primarily meant for nodes and the labels inside of their boundaries
       drawNode()
       {
-        const {iconName} = JSON.parse(label);
+        const {icon} = JSON.parse(label);
 
         // Font
         ctx.textBaseline = "middle";
@@ -275,19 +280,25 @@ function _renderNode(pSize: number)
 
         // Draw Icon
         const oldTransform = ctx.getTransform();
-        ctx.fillStyle = color
-        ctx.transform(2, 0, 0, 2, x - (pSize / 2), y - (pSize / 2))
-        ctx.fill(iconToPath2D(iconName))
-        ctx.setTransform(oldTransform)
+        if (!!icon)
+        {
+          ctx.fillStyle = color
+          ctx.transform(2, 0, 0, 2, x - (pSize / 2), y - (pSize / 2))
+          ctx.fill(iconToPath2D(icon))
+          ctx.setTransform(oldTransform)
+        }
 
         // Draw Checkbox Icon
-        ctx.shadowBlur = 0;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
-        ctx.fillStyle = (selected ? "#007bff" : "#dedede");
-        ctx.transform(0.8, 0, 0, 0.8, x + (pSize / 2) - 10, y - (pSize / 2) - 10)
-        ctx.fill(selected ? iconToPath2D("mdiCheckboxMarked") : iconToPath2D("mdiCheckboxBlankOutline"))
-        ctx.setTransform(oldTransform)
+        if (!!pSelectionMarkedPath && !!pSelectionPath)
+        {
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+          ctx.fillStyle = (selected ? "#007bff" : "#dedede");
+          ctx.transform(0.8, 0, 0, 0.8, x + (pSize / 2) - 10, y - (pSize / 2) - 10)
+          ctx.fill(selected ? pSelectionMarkedPath : pSelectionPath)
+          ctx.setTransform(oldTransform)
+        }
       },
       // above arrows
       // primarily meant for labels outside of the node
