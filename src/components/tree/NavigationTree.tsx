@@ -23,6 +23,8 @@ export interface ITreeNode
   iconColor?: string,
   children?: ITreeNode[],
   onSelect?: (selected: boolean) => void,
+  hoverIcon?: string,
+  hoverIconClick?: () => void,
 }
 
 const NavigationTree = (props: INavigationTree) => (
@@ -80,6 +82,13 @@ function _renderNode(instance: TreeView, {node, onSelect, onToggle}: DefaultNode
     {node.isLoading() && (<Loader/>)}
     {node.data.icon && <Icon path={node.data.icon} size={0.8} style={{color: node.data.iconColor}} className={styles.icon}/>}
     <span className={styles.text}>{node.data.name}</span>
+    {node.data.hoverIcon && <div className={styles.hovericon} onClick={(e) =>
+    {
+      e.preventDefault();
+      node.data.hoverIconClick();
+    }}>
+      <Icon path={node.data.hoverIcon} size={0.8}/>
+    </div>}
   </div>;
 }
 

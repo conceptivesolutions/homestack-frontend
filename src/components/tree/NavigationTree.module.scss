@@ -8,6 +8,10 @@
   align-items: center;
   padding: 5px 0;
   cursor: default;
+
+  &:hover .hovericon {
+    opacity: 100%;
+  }
 }
 
 .nodeSelected {
@@ -42,4 +46,16 @@
 
 .text {
   white-space: nowrap;
+}
+
+.hovericon {
+  opacity: 0;
+  transition: opacity 100ms ease;
+  color: $gray-font-color-disabled;
+  padding-left: 5px;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(50%);
+  }
 }
