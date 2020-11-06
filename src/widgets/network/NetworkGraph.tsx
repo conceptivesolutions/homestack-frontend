@@ -110,9 +110,9 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
   const grid = {
     spacing: 10,
     countBoldLines: 5,
-    color: '#eeeeee',
-    boldColor: '#d0d0d0',
-    coordinateSystemColor: '#c0c0c0'
+    color: '#f0f0f0',
+    boldColor: '#e2e2e2',
+    coordinateSystemColor: undefined,
   }
 
   useEffect(() =>
@@ -226,15 +226,18 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
       }
 
       // draw x and y coordinate system lines
-      ctx.strokeStyle = coordinateSystemColor;
-      ctx.beginPath();
-      ctx.moveTo(minGridX * size, 0);
-      ctx.lineTo((minGridX + gridCountX) * size, 0);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, minGridY * size);
-      ctx.lineTo(0, (minGridY + gridCountY) * size);
-      ctx.stroke();
+      if (!!coordinateSystemColor)
+      {
+        ctx.strokeStyle = coordinateSystemColor;
+        ctx.beginPath();
+        ctx.moveTo(minGridX * size, 0);
+        ctx.lineTo((minGridX + gridCountX) * size, 0);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, minGridY * size);
+        ctx.lineTo(0, (minGridY + gridCountY) * size);
+        ctx.stroke();
+      }
     });
 
     // Fire network change
