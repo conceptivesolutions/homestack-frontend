@@ -14,7 +14,8 @@ import PopupItem from "../navbar/PopupItem";
 import {useRouter} from "next/router";
 import {AuthContext} from "../../context/AuthContext";
 import md5 from "md5";
-import {mdiAccount, mdiBellOutline, mdiCogOutline, mdiLogout, mdiPlus, mdiServerNetwork} from "@mdi/js";
+import {mdiAccount, mdiBellOutline, mdiCogOutline, mdiHomeOutline, mdiLaptop, mdiLogout} from "@mdi/js";
+import ContextSwitcherEntryHeader from "../contextswitcher/ContextSwitcherEntryHeader";
 
 export interface IPageContent
 {
@@ -33,8 +34,10 @@ const PageContainer = (props: IPageContent) =>
   return (
     <div className={classNames(styles.container, {[styles.container__withNavigator]: !!props.navigator})}>
       <ContextSwitcher className={styles.switcher}>
+        <ContextSwitcherEntryHeader alignment={"top"} title={"Main"}/>
+        <ContextSwitcherEntry alignment={"top"} title={"Dashboard"} icon={mdiHomeOutline} color={"#14bae4"}/>
+        <ContextSwitcherEntryHeader alignment={"top"} title={"Hosts"}/>
         {_createHostSwitcherEntries(hosts, router.query.hostID as string || "", hostID => router.push("/hosts/" + hostID))}
-        <ContextSwitcherEntry alignment={"bottom"} icon={mdiPlus} title={"Add System"}/>
       </ContextSwitcher>
       <NavBar className={styles.navbar}>
         {props.navbarItems?.map(pItem => <NavBarItem key={md5(JSON.stringify(pItem))} {...pItem}/>)}
@@ -70,14 +73,12 @@ export default PageContainer;
 function _createHostSwitcherEntries(hosts: IHost[] | undefined, hostID: string, onClick: (hostID: string) => void)
 {
   return _.sortBy(hosts, ['displayName', 'id'])
-    .map(pHost => <ContextSwitcherEntry key={pHost.id} alignment={"top"} icon={mdiServerNetwork}
+    .map(pHost => <ContextSwitcherEntry key={pHost.id} alignment={"top"} icon={mdiLaptop}
                                         title={pHost.displayName || ""}
                                         active={hostID === pHost.id}
-                                        iconColor={"white"}
                                         color={randomColor({
-                                          hue: "blue",
                                           seed: pHost.id,
-                                          luminosity: "bright"
+                                          luminosity: "dark"
                                         })}
                                         onClick={() => onClick(pHost.id)}/>)
 }

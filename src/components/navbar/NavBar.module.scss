@@ -2,10 +2,10 @@
 
 .container {
   padding: 0 $title-padding;
-  height: 48px;
+  height: 60px;
   display: flex;
   flex-direction: row;
-  border-bottom: 1px solid $border-color;
+  background-color: $light-gray-background;
 }
 
 .leftContainer {

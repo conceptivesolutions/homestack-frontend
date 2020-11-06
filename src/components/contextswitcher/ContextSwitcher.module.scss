@@ -1,10 +1,11 @@
-@import "contextswitcher";
+@import "src/css/material";
 
 .container {
-  padding: $content-size / 2.5;
-  border-right: 1px solid $border-color;
+  width: 216px;
+  background-color: $gray-background;
   display: flex;
   flex-direction: column;
+  color: $gray-font-color
 }
 
 .upperContainer {
@@ -17,4 +18,60 @@
 
 .lowerContainer {
 
+}
+
+.header {
+  color: $gray-font-color-disabled;
+  padding: 16px 8px 0;
+  display: flex;
+  align-items: center;
+  cursor: default;
+  height: 24px;
+
+  .text {
+    font-size: 0.8rem;
+    flex-grow: 0;
+  }
+
+  &:hover .headerIcon {
+    display: inherit;
+  }
+}
+
+.headerIcon {
+  display: none;
+}
+
+.entry {
+  height: 40px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(85%)
+  }
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-grow: 0;
+}
+
+.text {
+  flex-grow: 1;
+  font-size: 14px;
+  margin: -2px 8px 0;
+  padding-top: 2px;
+  font-weight: normal;
+}
+
+.textActive {
+  color: $primary-color;
 }

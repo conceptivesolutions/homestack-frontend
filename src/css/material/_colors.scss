@@ -1,10 +1,19 @@
-$primary-color: #00adb5;
+$primary-color: #14bae4;
 $secondary-color: #393e46;
 $tertiary-color: #f8f9fb;
 $border-color: #eeeeee;
 $font-color: rgba(#000000, 0.87);
 $font-color-medium: rgba(#000000, 0.60);
 $font-color-disabled: rgba(#000000, 0.38);
+
+$gray-font-color: #5e676f;
+$gray-font-color-disabled: #99a0ac;
+$gray-background: #f5f5f5;
+
+$light-gray-background: #f9f9fa;
+
+$green: #31c971;
+$yellow: #f4c414;
 
 /** Function to generate a hover color */
 @function hoverColor($color) {

@@ -3,17 +3,18 @@
 .container {
   width: 100%;
   height: 100%;
+  background-color: $light-gray-background;
 
   // display as grid
   display: grid;
-  grid-template-areas: "edge edge navbar" "switcher content content";
+  grid-template-areas: "edge navbar navbar" "switcher content content";
   grid-gap: 0 0;
   grid-template-rows: min-content 1fr;
   grid-template-columns: min-content 18% 1fr;
 }
 
 .container__withNavigator {
-  grid-template-areas: "edge edge navbar" "switcher navigator content";
+  grid-template-areas: "edge navbar navbar" "switcher navigator content";
 }
 
 .switcher {
@@ -29,7 +30,6 @@
 }
 
 .edge {
-  border-bottom: 1px solid $border-color;
   grid-area: edge;
 
   // Logo
@@ -37,10 +37,12 @@
   background-repeat: no-repeat;
   background-size: contain;
   background-origin: content-box;
+  background-color: $gray-background;
   padding: $title-padding;
   cursor: pointer;
 }
 
 .content {
   grid-area: content;
+  margin: 0 $content-padding $content-padding 0;
 }

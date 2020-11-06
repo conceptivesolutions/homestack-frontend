@@ -35,14 +35,6 @@ const InnerHostPage = ({currentHost}: { currentHost: IHost }) =>
   const {dispatch} = useContext(HostContext);
   return <PageContainer navigator={<HostNavigatorComponent className={styles.navigator}/>}
                         navbarItems={[{
-                          alignment: "left",
-                          children: currentHost.displayName || currentHost.id,
-                          active: true,
-                        }, {
-                          alignment: "left",
-                          children: "+",
-                          disabled: true,
-                        }, {
                           alignment: "right",
                           icon: mdiRefresh,
                           onClick: () => dispatch(ACTION_RELOAD_DEVICES)
