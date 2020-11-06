@@ -14,6 +14,8 @@
     height: 25px;
     background: $border-color;
     border-radius: 100%;
+
+    @include box_shadow_bottom_light(black)
   }
 }
 

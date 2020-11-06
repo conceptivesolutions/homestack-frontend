@@ -5,4 +5,5 @@
   position: relative; // necessary for canvas placement (absolute position)
   border-radius: $border-radius;
   border: 1px solid $border-color;
+  @include box_shadow_bottom_light(black)
 }
