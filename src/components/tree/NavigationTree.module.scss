@@ -6,7 +6,6 @@
 .node {
   display: flex;
   align-items: center;
-  font-size: 0.8rem;
   padding: 5px 0;
   cursor: default;
 }
@@ -29,7 +28,7 @@
 }
 
 .arrow {
-  font-size: 10px;
+  font-size: 0.8rem;
   color: $secondary-color;
   padding-left: 7px;
   cursor: pointer;
