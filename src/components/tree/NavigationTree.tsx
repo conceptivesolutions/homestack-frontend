@@ -104,5 +104,5 @@ function _createControlNode({node, onToggle}: DefaultNodeProps)
       </div>
 
   // dummy
-  return <span className={styles.arrow}/>
+  return <Icon path={mdiChevronRight} size={0.8} color={"transparent"}/>
 }
