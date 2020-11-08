@@ -13,10 +13,8 @@ import {iconToSVG} from "../../helpers/iconHelper";
 
 /**
  * Simple Navigator for a single host
- *
- * @param className
  */
-const HostNavigatorComponent = ({className}: { className: string }) =>
+const HostNavigatorComponent = () =>
 {
   const {state, dispatch} = useContext(HostContext)
   const root: ITreeNode = {
@@ -56,7 +54,7 @@ const HostNavigatorComponent = ({className}: { className: string }) =>
     [state.selection, instance, handlers])
 
   return (
-    <div className={classNames(className, styles.container)}>
+    <div className={classNames(styles.container)}>
       <NavigationTree className={styles.tree} required={required} instance={instance} handlers={handlers}/>
       <ActionList className={styles.actions}>
         <ActionListItem name={"Add Device"} icon={mdiPlusCircle} onClick={() => dispatch(ACTION_CREATE_DEVICE())}/>
