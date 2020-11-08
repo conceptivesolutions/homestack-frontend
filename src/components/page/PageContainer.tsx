@@ -35,7 +35,8 @@ const PageContainer = (props: IPageContent) =>
     <div className={classNames(styles.container, {[styles.container__withNavigator]: !!props.navigator})}>
       <ContextSwitcher className={styles.switcher}>
         <ContextSwitcherEntryHeader alignment={"top"} title={"Main"}/>
-        <ContextSwitcherEntry alignment={"top"} title={"Dashboard"} icon={mdiHomeOutline} color={"#14bae4"}/>
+        <ContextSwitcherEntry alignment={"top"} title={"Dashboard"} icon={mdiHomeOutline} color={"#14bae4"} active={router.pathname === "/"}
+                              onClick={() => router.push("/")}/>
         <ContextSwitcherEntryHeader alignment={"top"} title={"Hosts"}/>
         {_createHostSwitcherEntries(hosts, router.query.hostID as string || "", hostID => router.push("/hosts/" + hostID))}
       </ContextSwitcher>
