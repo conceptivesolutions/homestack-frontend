@@ -1,0 +1,36 @@
+@import "src/css/material";
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.innerContainer {
+  flex-grow: 1;
+  max-width: 1140px;
+  padding-left: $content-padding;
+}
+
+.header {
+  padding: $content-padding 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+
+  & > div, table {
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    background-color: white;
+    @include box_shadow_bottom_light(black);
+  }
+
+  & > * {
+    margin-bottom: $content-padding;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
