@@ -8,15 +8,21 @@ import {AuthProvider} from "../context/AuthContext";
 // noinspection JSUnusedGlobalSymbols
 export default function App({Component, pageProps}: { Component: any, pageProps: any })
 {
+  const Layout = Component.Layout || EmptyLayout;
+
   return (
     <AuthProvider>
       <GlobalProvider>
         {/** @ts-ignore */}
         <GlobalHooksProvider hooks={[dialogStore]}>
-          <Component {...pageProps} />
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
           <DialogContainer/>
         </GlobalHooksProvider>
       </GlobalProvider>
     </AuthProvider>
   )
 }
+
+const EmptyLayout = ({children}: { children: React.ReactNode }) => <>{children}</>
