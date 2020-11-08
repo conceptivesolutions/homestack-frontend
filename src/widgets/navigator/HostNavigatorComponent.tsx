@@ -8,8 +8,9 @@ import {getStateColor} from "../../helpers/NodeHelper";
 import classNames from "classnames";
 import ActionList from "../../components/actionlist/ActionList";
 import ActionListItem from "../../components/actionlist/ActionListItem";
-import {mdiChartBar, mdiMinusCircle, mdiMonitor, mdiPlusCircle, mdiServer} from "@mdi/js";
+import {mdiChartBar, mdiMinusCircle, mdiMonitor, mdiPencilOutline, mdiPlusCircle, mdiServer} from "@mdi/js";
 import {iconToSVG} from "../../helpers/iconHelper";
+import {useRouter} from "next/router";
 
 /**
  * Simple Navigator for a single host
@@ -17,6 +18,7 @@ import {iconToSVG} from "../../helpers/iconHelper";
 const HostNavigatorComponent = () =>
 {
   const {state, dispatch} = useContext(HostContext)
+  const router = useRouter();
   const root: ITreeNode = {
     id: "root",
     name: "Devices & Results",
@@ -26,6 +28,8 @@ const HostNavigatorComponent = () =>
       name: pDevice.address || "unknown",
       icon: pDevice.icon && iconToSVG(pDevice.icon) || mdiMonitor,
       iconColor: getStateColor(pDevice.metricRecords),
+      hoverIcon: mdiPencilOutline,
+      hoverIconClick: () => router.push(router.asPath + "/devices/" + pDevice.id),
       selectable: true,
       onSelect: selected => _onSelect(pDevice.id, selected, dispatch),
       children: (pDevice.metricRecords || []).map(pRecord => ({
