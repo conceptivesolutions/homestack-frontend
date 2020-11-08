@@ -1,5 +1,5 @@
 import {motion} from 'framer-motion';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from "./SwitchButton.module.scss";
 
 interface ISwitchButton
@@ -12,7 +12,11 @@ interface ISwitchButton
 const SwitchButton = (props: ISwitchButton) =>
 {
   const [isOn, setIsOn] = useState<boolean>(props.value || false)
-  return <div className={styles.switch} data-isOn={isOn} onClick={() =>
+
+  // Update isOn if value changes
+  useEffect(() => setIsOn(props.value), [props.value]);
+
+  return <div className={styles.switch} data-ison={isOn} onClick={() =>
   {
     const newValue = !isOn;
     setIsOn(newValue)
