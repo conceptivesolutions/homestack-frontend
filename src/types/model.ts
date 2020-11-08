@@ -28,6 +28,14 @@ export interface IEdge
   targetID: string,
 }
 
+export interface IMetric
+{
+  deviceID: string,
+  type: EMetricTypes | string,
+  enabled: boolean,
+  settings?: any,
+}
+
 export interface IMetricRecord
 {
   deviceID: string,

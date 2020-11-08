@@ -2,15 +2,15 @@ import React, {useContext, useEffect, useMemo, useRef} from 'react';
 import styles from "./NetworkComponent.module.scss";
 import {deviceToNode, edgeToEdge, NetworkGraph} from "./NetworkGraph";
 import {useGlobalHook} from "@devhammed/use-global-hook";
-import DeviceInspectionDialogContent from "../dialogs/DeviceInspectionDialogContent";
 import {IDialogStore} from "../../types/dialog";
 import {DataSet, DataSetEdges, DataSetNodes, Edge, Network, Node} from "vis-network/standalone/umd/vis-network";
 import {Position} from "vis-network/declarations/network/Network";
-import {IDevice} from "../../types/model";
 import {ACTION_ADD_EDGE_BETWEEN, ACTION_CREATE_DEVICE, ACTION_RELOAD_DEVICES, ACTION_REMOVE_DEVICE, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
 import {useCallbackNoRefresh} from "../../helpers/Utility";
 import {getStateColor} from "../../helpers/NodeHelper";
 import classNames from "classnames";
+import {useRouter} from "next/router";
+import _ from "lodash";
 
 /**
  * Component that will render the netplan chart as a network diagram
@@ -22,6 +22,7 @@ const NetworkComponent = ({className, hostID}: { className?: string, hostID: str
 {
   const {state, dispatch} = useContext(HostContext);
   const {showDialog} = useGlobalHook("dialogStore") as IDialogStore;
+  const router = useRouter();
   const nodesRef = useRef<DataSetNodes>(new DataSet());
   const edgesRef = useRef<DataSetEdges>(new DataSet());
   const networkRef = useRef<Network | undefined>();
@@ -97,8 +98,10 @@ const NetworkComponent = ({className, hostID}: { className?: string, hostID: str
   {
     if (!state.devices)
       return;
-    _nodesDoubleClicked(state.devices.filter(pDevice => pNodeIDs.indexOf(pDevice.id) > -1), showDialog, dispatch)
-  }, [state.devices, showDialog, dispatch])
+    const selected = _.head(state.devices.filter(pDevice => pNodeIDs.indexOf(pDevice.id) > -1))
+    if (selected)
+      router.push(router.asPath + "/devices/" + selected.id);
+  }, [state.devices, router])
 
   // Create the network graph once
   const graph = useMemo(() => (
@@ -138,35 +141,6 @@ function _nodesMoved(pPositions: { [nodeID: string]: Position }, pDispatchFn: Ho
     id: pNodeID,
     location: pPositions[pNodeID],
   })));
-}
-
-/**
- * This method gets called, if nodes were double clicked
- *
- * @param pNodes Nodes that were double clicked. Mostly a single node.
- * @param pShowDialogFn Function that will show a simple dialog
- * @param pDispatchFn Function to dispatch actions
- * @private
- */
-function _nodesDoubleClicked(pNodes: IDevice[], pShowDialogFn: (dialog: any) => void, pDispatchFn: HostDispatch)
-{
-  if (pNodes.length > 1)
-    return;
-
-  const device = pNodes[0];
-  let changedProps: any = {id: device.id};
-
-  // noinspection JSUnusedGlobalSymbols
-  pShowDialogFn({
-    primaryKey: "Save",
-    title: "Modify Node '" + device.id + "'",
-    children: <DeviceInspectionDialogContent onPropChange={(prop, value) => changedProps[prop] = value} device={device}/>,
-    onResult: (pResultKey: string) =>
-    {
-      if (pResultKey === "Save")
-        pDispatchFn(ACTION_UPDATE_DEVICE(device.id, changedProps))
-    },
-  })
 }
 
 /**

@@ -28,8 +28,11 @@ const HostLayout = (props: IHostLayout) =>
     const {dispatch} = useContext(HostContext)
 
     // @ts-ignore
+    const subNavbarItems = children?.type?.Items || [];
+
+    // @ts-ignore
     return <PageContainer navigator={children?.type?.Navigator}
-                          navbarItems={[{
+                          navbarItems={[...subNavbarItems, {
                             alignment: "right",
                             icon: mdiRefresh,
                             onClick: () => dispatch(ACTION_RELOAD_DEVICES)
