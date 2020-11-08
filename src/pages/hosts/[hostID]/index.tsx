@@ -1,19 +1,19 @@
 import React, {useContext} from "react";
-import styles from "./[hostID].module.scss";
-import HostNavigatorComponent from "../../widgets/navigator/HostNavigatorComponent";
-import PageContainer from "../../components/page/PageContainer";
-import {ACTION_RELOAD_DEVICES, HostContext, HostProvider} from "../../context/HostContext";
-import {GlobalContext} from "../../context/GlobalContext";
+import styles from "./index.module.scss";
+import HostNavigatorComponent from "../../../widgets/navigator/HostNavigatorComponent";
+import PageContainer from "../../../components/page/PageContainer";
+import {ACTION_RELOAD_DEVICES, HostContext, HostProvider} from "../../../context/HostContext";
+import {GlobalContext} from "../../../context/GlobalContext";
 import _ from "lodash";
 import {useRouter} from "next/router";
-import NetworkComponent from "../../widgets/network/NetworkComponent";
-import {IHost} from "../../types/model";
+import NetworkComponent from "../../../widgets/network/NetworkComponent";
+import {IHost} from "../../../types/model";
 import {mdiRefresh} from "@mdi/js";
 
 /**
  * Creates an "Host"-Page and loads the host with the ID from the url
  */
-const HostID = () =>
+const Index = () =>
 {
   const {state: {hosts}} = useContext(GlobalContext)
   const {query: {hostID}} = useRouter();
@@ -44,4 +44,4 @@ const InnerHostPage = ({currentHost}: { currentHost: IHost }) =>
 }
 
 // noinspection JSUnusedGlobalSymbols
-export default HostID;
+export default Index;
