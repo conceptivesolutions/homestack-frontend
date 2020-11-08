@@ -1,6 +1,6 @@
 import React, {useContext, useEffect} from "react";
 import styles from "./HostNavigatorComponent.module.scss";
-import {ACTION_CREATE_DEVICE, ACTION_REMOVE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
+import {ACTION_CREATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
 import {useTreeState} from "react-hyper-tree";
 import _ from "lodash";
 import NavigationTree, {ITreeNode} from "../../components/tree/NavigationTree";
@@ -8,7 +8,7 @@ import {getStateColor} from "../../helpers/NodeHelper";
 import classNames from "classnames";
 import ActionList from "../../components/actionlist/ActionList";
 import ActionListItem from "../../components/actionlist/ActionListItem";
-import {mdiChartBar, mdiMinusCircle, mdiMonitor, mdiPencilOutline, mdiPlusCircle, mdiServer} from "@mdi/js";
+import {mdiChartBar, mdiMonitor, mdiPencilOutline, mdiPlusCircle, mdiServer} from "@mdi/js";
 import {iconToSVG} from "../../helpers/iconHelper";
 import {useRouter} from "next/router";
 
@@ -62,8 +62,6 @@ const HostNavigatorComponent = () =>
       <NavigationTree className={styles.tree} required={required} instance={instance} handlers={handlers}/>
       <ActionList className={styles.actions}>
         <ActionListItem name={"Add Device"} icon={mdiPlusCircle} onClick={() => dispatch(ACTION_CREATE_DEVICE())}/>
-        <ActionListItem disabled={_.isEmpty(state.selection?.devices)} name={"Remove Device"} icon={mdiMinusCircle}
-                        color={"red"} onClick={() => state.selection?.devices?.forEach(pDevID => dispatch(ACTION_REMOVE_DEVICE(pDevID)))}/>
       </ActionList>
     </div>
   );

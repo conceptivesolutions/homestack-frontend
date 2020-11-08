@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {ACTION_UPDATE_DEVICE, HostContext} from "../../../../../context/HostContext";
+import {ACTION_REMOVE_DEVICE, ACTION_UPDATE_DEVICE, HostContext} from "../../../../../context/HostContext";
 import {useRouter} from "next/router";
 import HostLayout from "../../../../../layouts/HostLayout";
 import {INavBarItem} from "../../../../../components/navbar/NavBarItem";
@@ -52,6 +52,13 @@ const DevicePage = () =>
         dispatch(ACTION_UPDATE_DEVICE(changedDeviceProps.id, changedDeviceProps));
         fnBack();
       }}>Save
+      </button>
+      <div className={styles.spacer}/>
+      <button className={styles.destructive} onClick={() =>
+      {
+        dispatch(ACTION_REMOVE_DEVICE(deviceID as string));
+        fnBack();
+      }}>Delete Device
       </button>
     </div>
   )

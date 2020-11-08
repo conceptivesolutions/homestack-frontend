@@ -5,7 +5,7 @@ import {useGlobalHook} from "@devhammed/use-global-hook";
 import {IDialogStore} from "../../types/dialog";
 import {DataSet, DataSetEdges, DataSetNodes, Edge, Network, Node} from "vis-network/standalone/umd/vis-network";
 import {Position} from "vis-network/declarations/network/Network";
-import {ACTION_ADD_EDGE_BETWEEN, ACTION_CREATE_DEVICE, ACTION_RELOAD_DEVICES, ACTION_REMOVE_DEVICE, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
+import {ACTION_ADD_EDGE_BETWEEN, ACTION_CREATE_DEVICE, ACTION_RELOAD_DEVICES, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
 import {useCallbackNoRefresh} from "../../helpers/Utility";
 import {getStateColor} from "../../helpers/NodeHelper";
 import classNames from "classnames";
@@ -175,14 +175,6 @@ function _handleDelete(pCurrentNodes: DataSetNodes, pCurrentEdges: DataSetEdges,
                        pSelectedNodeIDs: string[], pSelectedEdgeIDs: string[],
                        pDispatchFn: HostDispatch)
 {
-  // Remove Nodes
-  pSelectedNodeIDs.forEach(pNodeID =>
-  {
-    const node = pCurrentNodes.get(pNodeID);
-    if (node)
-      pDispatchFn(ACTION_REMOVE_DEVICE(node.id as string))
-  })
-
   // Remove Edges
   pSelectedEdgeIDs.forEach(pEdgeID =>
   {
