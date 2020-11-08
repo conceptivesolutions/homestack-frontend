@@ -46,20 +46,12 @@ const DevicePage = () =>
 
   const footer = (
     <div className={styles.footerContainer}>
-      <button className={styles.primary} onClick={() =>
-      {
-        getAccessToken().then(pToken => _.entries(changedMetrics).forEach(pMetric => updateMetric(pToken, deviceID as string, pMetric[1])))
-        dispatch(ACTION_UPDATE_DEVICE(changedDeviceProps.id, changedDeviceProps));
-        fnBack();
-      }}>Save
+      <button className={styles.primary} onClick={() => getAccessToken()
+        .then(pToken => _.entries(changedMetrics).forEach(pMetric => updateMetric(pToken, deviceID as string, pMetric[1])))
+        .then(() => dispatch(ACTION_UPDATE_DEVICE(changedDeviceProps.id, changedDeviceProps, fnBack)))}>Save
       </button>
       <div className={styles.spacer}/>
-      <button className={styles.destructive} onClick={() =>
-      {
-        dispatch(ACTION_REMOVE_DEVICE(deviceID as string));
-        fnBack();
-      }}>Delete Device
-      </button>
+      <button className={styles.destructive} onClick={() => dispatch(ACTION_REMOVE_DEVICE(deviceID as string, fnBack))}>Delete Device</button>
     </div>
   )
 

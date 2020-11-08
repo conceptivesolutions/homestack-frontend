@@ -41,12 +41,14 @@ export enum EHostStateActions
  * Action: Create a new device within the given host
  *
  * @param id ID of the device to be created - null creates a new uuid
+ * @param onCreation function that gets executed, if the device was created
  * @constructor
  */
-export const ACTION_CREATE_DEVICE = (id?: string) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+export const ACTION_CREATE_DEVICE = (id?: string, onCreation?: (id: string) => void) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
 {
+  const newID = id || uuidv4();
   getState().getAccessToken()
-    .then(pToken => createDevice(pToken, id || uuidv4(), getState().id))
+    .then(pToken => createDevice(pToken, newID, getState().id))
     .then(pDevice => dispatch({
       type: EHostStateActions.SET_DEVICES,
       payload: [
@@ -54,6 +56,7 @@ export const ACTION_CREATE_DEVICE = (id?: string) => (dispatch: HostDispatch, ge
         pDevice,
       ]
     }))
+    .then(() => onCreation && onCreation(newID))
 }
 
 /**
@@ -61,9 +64,10 @@ export const ACTION_CREATE_DEVICE = (id?: string) => (dispatch: HostDispatch, ge
  *
  * @param id ID of the device to update
  * @param pDevice Device that contains the data to change
+ * @param onUpdate function that gets executed, if the update was executed
  * @constructor
  */
-export const ACTION_UPDATE_DEVICE = (id: string, pDevice: IDevice) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+export const ACTION_UPDATE_DEVICE = (id: string, pDevice: IDevice, onUpdate?: (id: string) => void) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
 {
   getState().getAccessToken()
     .then(pToken => updateDevice(pToken, id, pDevice))
@@ -83,15 +87,17 @@ export const ACTION_UPDATE_DEVICE = (id: string, pDevice: IDevice) => (dispatch:
         payload: devices
       })
     })
+    .then(() => onUpdate && onUpdate(id));
 }
 
 /**
  * Removes a single device with the given id
  *
  * @param id ID of the device to remove
+ * @param onDeletion function that gets executed, if the device was removed
  * @constructor
  */
-export const ACTION_REMOVE_DEVICE = (id: string) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+export const ACTION_REMOVE_DEVICE = (id: string, onDeletion?: (id: string) => void) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
 {
   getState().getAccessToken()
     .then(pToken => deleteDevice(pToken, id))
@@ -100,6 +106,7 @@ export const ACTION_REMOVE_DEVICE = (id: string) => (dispatch: HostDispatch, get
       payload: getState().devices?.filter(pTest => pTest.id !== id)
     }))
     .then(() => dispatch(ACTION_VALIDATE_SELECTION))
+    .then(() => onDeletion && onDeletion(id));
 }
 
 /**

@@ -62,12 +62,8 @@ const HostNavigatorComponent = () =>
     <div className={classNames(styles.container)}>
       <NavigationTree className={styles.tree} required={required} instance={instance} handlers={handlers}/>
       <ActionList className={styles.actions}>
-        <ActionListItem name={"Add Device"} icon={mdiPlusCircle} onClick={() =>
-        {
-          const uuid = uuidv4();
-          dispatch(ACTION_CREATE_DEVICE(uuid));
-          router.push(router.asPath + "/devices/" + uuid);
-        }}/>
+        <ActionListItem name={"Add Device"} icon={mdiPlusCircle}
+                        onClick={() => dispatch(ACTION_CREATE_DEVICE(uuidv4(), (pID) => router.push(router.asPath + "/devices/" + pID)))}/>
       </ActionList>
     </div>
   );
