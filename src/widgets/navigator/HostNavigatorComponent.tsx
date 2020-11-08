@@ -11,6 +11,7 @@ import ActionListItem from "../../components/actionlist/ActionListItem";
 import {mdiChartBar, mdiMonitor, mdiPencilOutline, mdiPlusCircle, mdiServer} from "@mdi/js";
 import {iconToSVG} from "../../helpers/iconHelper";
 import {useRouter} from "next/router";
+import {v4 as uuidv4} from 'uuid';
 
 /**
  * Simple Navigator for a single host
@@ -61,7 +62,12 @@ const HostNavigatorComponent = () =>
     <div className={classNames(styles.container)}>
       <NavigationTree className={styles.tree} required={required} instance={instance} handlers={handlers}/>
       <ActionList className={styles.actions}>
-        <ActionListItem name={"Add Device"} icon={mdiPlusCircle} onClick={() => dispatch(ACTION_CREATE_DEVICE())}/>
+        <ActionListItem name={"Add Device"} icon={mdiPlusCircle} onClick={() =>
+        {
+          const uuid = uuidv4();
+          dispatch(ACTION_CREATE_DEVICE(uuid));
+          router.push(router.asPath + "/devices/" + uuid);
+        }}/>
       </ActionList>
     </div>
   );

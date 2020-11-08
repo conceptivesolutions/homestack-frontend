@@ -5,7 +5,7 @@ import {useGlobalHook} from "@devhammed/use-global-hook";
 import {IDialogStore} from "../../types/dialog";
 import {DataSet, DataSetEdges, DataSetNodes, Edge, Network, Node} from "vis-network/standalone/umd/vis-network";
 import {Position} from "vis-network/declarations/network/Network";
-import {ACTION_ADD_EDGE_BETWEEN, ACTION_CREATE_DEVICE, ACTION_RELOAD_DEVICES, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
+import {ACTION_ADD_EDGE_BETWEEN, ACTION_RELOAD_DEVICES, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
 import {useCallbackNoRefresh} from "../../helpers/Utility";
 import {getStateColor} from "../../helpers/NodeHelper";
 import classNames from "classnames";
@@ -158,8 +158,6 @@ function _handleCreate(pCurrentNodes: DataSetNodes, pCurrentEdges: DataSetEdges,
 {
   if (pSelectedNodeIDs.length === 2)
     pDispatchFn(ACTION_ADD_EDGE_BETWEEN(pSelectedNodeIDs[0], pSelectedNodeIDs[1]))
-  else if (pSelectedNodeIDs.length + pSelectedEdgeIDs.length === 0)
-    pDispatchFn(ACTION_CREATE_DEVICE())
 }
 
 /**
