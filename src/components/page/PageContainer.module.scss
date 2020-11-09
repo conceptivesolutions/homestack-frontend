@@ -44,5 +44,6 @@
 
 .content {
   grid-area: content;
-  margin: 0 $content-padding $content-padding 0;
+  padding: 0 $content-padding $content-padding 0;
+  overflow-y: auto;
 }

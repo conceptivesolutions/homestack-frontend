@@ -1,7 +1,7 @@
 @import "src/css/material";
 
 .graphContainer {
-  height: 100%;
+  height: calc(100% - 2px);
   position: relative; // necessary for canvas placement (absolute position)
   border-radius: $border-radius;
   border: 1px solid $border-color;
