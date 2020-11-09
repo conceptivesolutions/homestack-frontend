@@ -1,8 +1,6 @@
 import React, {useContext, useEffect, useMemo, useRef} from 'react';
 import styles from "./NetworkComponent.module.scss";
 import {deviceToNode, edgeToEdge, NetworkGraph} from "./NetworkGraph";
-import {useGlobalHook} from "@devhammed/use-global-hook";
-import {IDialogStore} from "../../types/dialog";
 import {DataSet, DataSetEdges, DataSetNodes, Edge, Network, Node} from "vis-network/standalone/umd/vis-network";
 import {Position} from "vis-network/declarations/network/Network";
 import {ACTION_ADD_EDGE_BETWEEN, ACTION_RELOAD_DEVICES, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
@@ -21,7 +19,6 @@ import _ from "lodash";
 const NetworkComponent = ({className, hostID}: { className?: string, hostID: string }) =>
 {
   const {state, dispatch} = useContext(HostContext);
-  const {showDialog} = useGlobalHook("dialogStore") as IDialogStore;
   const router = useRouter();
   const nodesRef = useRef<DataSetNodes>(new DataSet());
   const edgesRef = useRef<DataSetEdges>(new DataSet());

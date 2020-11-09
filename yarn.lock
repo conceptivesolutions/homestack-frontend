@@ -1099,11 +1099,6 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@devhammed/use-global-hook@^1.5.1":
-  version "1.5.1"
-  resolved "https://nexus.conceptive.io/repository/npm-group/@devhammed/use-global-hook/-/use-global-hook-1.5.1.tgz#0e6d8da577d81a842200a46968f549eaca5f9ca0"
-  integrity sha512-LoOJ+bEs96/PundbuZywtqgf1aC3/jTdZrtLijJqrKklyCQkScmU2o3tIZCMRcH9UXO7bf40hvSIR7PIhnnWEw==
-
 "@emotion/cache@^10.0.27", "@emotion/cache@^10.0.9":
   version "10.0.29"
   resolved "https://nexus.conceptive.io/repository/npm-group/@emotion/cache/-/cache-10.0.29.tgz#87e7e64f412c060102d589fe7c6dc042e6f9d1e0"

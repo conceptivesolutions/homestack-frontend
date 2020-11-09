@@ -1,8 +1,6 @@
 import React from "react";
 import './_app.scss';
 import 'nprogress/nprogress.css';
-import {GlobalHooksProvider} from "@devhammed/use-global-hook";
-import DialogContainer, {dialogStore} from "../components/dialogs/DialogContainer";
 import {GlobalProvider} from "../context/GlobalContext";
 import {AuthProvider} from "../context/AuthContext";
 import {Router} from "next/router";
@@ -21,13 +19,9 @@ export default function App({Component, pageProps}: { Component: any, pageProps:
   return (
     <AuthProvider>
       <GlobalProvider>
-        {/** @ts-ignore */}
-        <GlobalHooksProvider hooks={[dialogStore]}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-          <DialogContainer/>
-        </GlobalHooksProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </GlobalProvider>
     </AuthProvider>
   )
