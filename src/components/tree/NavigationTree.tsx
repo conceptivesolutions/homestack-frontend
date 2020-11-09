@@ -100,9 +100,9 @@ function _createControlNode({node, onToggle}: DefaultNodeProps)
   if (node.hasChildren() || node.options.async)
     if (!node.isLoading())
       return <div onClick={e => onToggle(e as any)}>
-        <Icon path={(node.isOpened() && !!node.hasChildren()) ? mdiChevronDown : mdiChevronRight} size={0.8}/>
+        <Icon className={styles.arrow} path={(node.isOpened() && !!node.hasChildren()) ? mdiChevronDown : mdiChevronRight} size={0.8}/>
       </div>
 
   // dummy
-  return <Icon path={mdiChevronRight} size={0.8} color={"transparent"}/>
+  return <Icon className={styles.arrow} path={mdiChevronRight} size={0.8} color={"transparent"}/>
 }

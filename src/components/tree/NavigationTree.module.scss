@@ -31,9 +31,13 @@
 }
 
 .icon {
-  padding-left: 7px;
-  padding-right: 7px;
+  flex-shrink: 0;
+  padding: 0 5px;
   color: $secondary-color;
+}
+
+.arrow {
+  flex-shrink: 0;
 }
 
 .text {
