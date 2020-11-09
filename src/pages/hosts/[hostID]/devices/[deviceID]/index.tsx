@@ -13,6 +13,7 @@ import {AuthContext} from "../../../../../context/AuthContext";
 import {getMetrics, updateMetric} from "../../../../../rest/MetricsClient";
 import {getIcons} from "../../../../../helpers/iconHelper";
 import {getMetricRecordByType} from "../../../../../helpers/deviceHelper";
+import Select from "react-select";
 
 const DevicePage = () =>
 {
@@ -69,10 +70,13 @@ const DevicePage = () =>
       <tr>
         <td>Icon</td>
         <td>
-          <select defaultValue={device?.icon} onChange={(e) => changedDeviceProps.icon = e.target.value}>
-            <option value={""}/>
-            {getIcons().map(pIcon => <option key={pIcon}>{pIcon}</option>)}
-          </select>
+          <Select options={getIcons().map(pIcon => ({value: pIcon, label: pIcon}))}
+                  defaultValue={{value: device?.icon, label: device?.icon}}
+                  onChange={(e) =>
+                  {
+                    // @ts-ignore
+                    changedDeviceProps.icon = e?.value
+                  }}/>
         </td>
       </tr>
       </tbody>

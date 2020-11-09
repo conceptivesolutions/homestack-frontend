@@ -26,6 +26,7 @@
     "react-dom": "^17.0.1",
     "react-hook-thunk-reducer": "^0.2.4",
     "react-hyper-tree": "0.2.18-fix.2",
+    "react-select": "^3.1.0",
     "use-timer": "^2.0.1",
     "uuid": "^8.3.1",
     "vis-data": "^7.1.0",
@@ -43,6 +44,7 @@
     "@types/randomcolor": "^0.5.5",
     "@types/react": "^16.9.52",
     "@types/react-dom": "^16.9.8",
+    "@types/react-select": "^3.0.23",
     "@types/uuid": "^8.3.0",
     "node-sass": "^4.14.1",
     "typescript": "^4.0.5"
