@@ -1,15 +1,12 @@
 import _ from "lodash";
-import * as icons from "@mdi/js";
-
-// todo caching
-// todo not via require - use webfont instead
+import {homeAutomationIcons, networkIcons} from "./iconPack";
 
 /**
  * Returns a list of all available icons
  */
 export function getIcons(): string[]
 {
-  return _.keys(icons);
+  return _.sortBy(_.concat(_.keys(homeAutomationIcons), _.keys(networkIcons)));
 }
 
 /**
@@ -19,8 +16,7 @@ export function getIcons(): string[]
  */
 export function iconToSVG(name: string): string | undefined
 {
-  // @ts-ignore
-  return icons[name];
+  return homeAutomationIcons[name] || networkIcons[name];
 }
 
 /**
