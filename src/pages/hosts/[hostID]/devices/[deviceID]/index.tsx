@@ -12,6 +12,7 @@ import SwitchButton from "../../../../../components/button/SwitchButton";
 import {AuthContext} from "../../../../../context/AuthContext";
 import {getMetrics, updateMetric} from "../../../../../rest/MetricsClient";
 import {getIcons} from "../../../../../helpers/iconHelper";
+import {getMetricRecordByType} from "../../../../../helpers/deviceHelper";
 
 const DevicePage = () =>
 {
@@ -37,9 +38,10 @@ const DevicePage = () =>
   // Back to Host - Action
   DevicePage.Items[0].onClick = fnBack;
 
+  const deviceDNSName = device && (getMetricRecordByType(device, EMetricTypes.REVERSE_DNS)?.result?.name);
   const header = (
     <div className={styles.headerContainer}>
-      <h1 className={styles.heading}>{device?.address || deviceID}</h1>
+      <h1 className={styles.heading}>{deviceDNSName || device?.address || deviceID}</h1>
       <span className={styles.heading}>{device?.id}</span>
     </div>
   )
