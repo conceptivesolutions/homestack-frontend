@@ -6,7 +6,7 @@ import {getMetricRecordByType} from "../../helpers/deviceHelper";
 import {iconToPath2D} from "../../helpers/iconHelper";
 
 /**
- * Converts a netplan device to the correct vis.js node
+ * Converts a homestack device to the correct vis.js node
  */
 export function deviceToNode(pDevice: IDevice, pColor: string): Node
 {
@@ -41,7 +41,7 @@ export function deviceToNode(pDevice: IDevice, pColor: string): Node
 }
 
 /**
- * Extracts vis.js edges from netplan edge
+ * Extracts vis.js edges from homestack edge
  */
 export function edgeToEdge(pEdge: IEdge): Edge
 {

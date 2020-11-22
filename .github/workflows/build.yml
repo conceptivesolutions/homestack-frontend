@@ -24,8 +24,8 @@ jobs:
 
       # Build Docker Image
       - name: Build
-        run: docker build -t images.conceptive.io/netplan.frontend:latest .
+        run: docker build -t images.conceptive.io/homestack.frontend:latest .
 
       # Push Docker Image
       - name: Push
-        run: docker push images.conceptive.io/netplan.frontend:latest
+        run: docker push images.conceptive.io/homestack.frontend:latest

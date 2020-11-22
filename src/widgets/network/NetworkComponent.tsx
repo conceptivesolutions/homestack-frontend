@@ -11,7 +11,7 @@ import {useRouter} from "next/router";
 import _ from "lodash";
 
 /**
- * Component that will render the netplan chart as a network diagram
+ * Component that will render the homestack chart as a network diagram
  *
  * @param className CSS classes
  * @param hostID ID of the host

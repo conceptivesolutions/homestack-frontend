@@ -1,5 +1,5 @@
 {
-  "name": "netplan-iot-frontend",
+  "name": "homestack-frontend",
   "version": "1.0.0",
   "private": true,
   "scripts": {
