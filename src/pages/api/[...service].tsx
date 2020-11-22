@@ -10,7 +10,7 @@ const cors = Cors({
 
 // Create proxy instance outside of request handler function to avoid unnecessary re-creation
 const apiProxy = createProxyMiddleware({
-  target: 'http://localhost:8080',
+  target: process.env.API_TARGET,
   pathRewrite: {
     '^/api': ''
   },
