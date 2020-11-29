@@ -1,7 +1,7 @@
 import React, {useContext} from "react";
 import styles from "./HostsTable.module.scss"
 import _ from "lodash";
-import {ACTION_REMOVE_HOST, GlobalContext} from "../../context/GlobalContext";
+import {ACTION_CREATE_HOST, ACTION_REMOVE_HOST, ACTION_UPDATE_HOST, GlobalContext} from "../../context/GlobalContext";
 import Icon from "@mdi/react";
 import {mdiCogOutline, mdiPlus, mdiTrashCanOutline} from "@mdi/js";
 
@@ -24,7 +24,15 @@ const HostsTable = () =>
           <td>{pHost.id}</td>
           <td className={styles.hostsTable__name}>{pHost.displayName}</td>
           <td>
-            <button>
+            <button onClick={() =>
+            {
+              const name = prompt("New Name:", pHost.displayName);
+              if (name && name !== pHost.displayName)
+                dispatch(ACTION_UPDATE_HOST({
+                  ...pHost,
+                  displayName: name || "",
+                }))
+            }}>
               <Icon path={mdiCogOutline} size={0.8}/>
             </button>
             <button onClick={() => dispatch(ACTION_REMOVE_HOST(pHost.id))}>
@@ -34,7 +42,7 @@ const HostsTable = () =>
         </tr>)}
         </tbody>
       </table>
-      <button>
+      <button onClick={() => dispatch(ACTION_CREATE_HOST())}>
         <Icon path={mdiPlus} size={0.8}/>
       </button>
     </>
