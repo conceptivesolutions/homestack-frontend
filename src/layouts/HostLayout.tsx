@@ -2,7 +2,7 @@ import React, {useContext} from 'react';
 import {GlobalContext} from "../context/GlobalContext";
 import {useRouter} from "next/router";
 import _ from "lodash";
-import {ACTION_RELOAD_DEVICES, HostContext, HostProvider} from "../context/HostContext";
+import {ACTION_RELOAD, HostContext, HostProvider} from "../context/HostContext";
 import {mdiRefresh} from "@mdi/js";
 import PageContainer from "../components/page/PageContainer";
 
@@ -35,7 +35,7 @@ const HostLayout = (props: IHostLayout) =>
                           navbarItems={[...subNavbarItems, {
                             alignment: "right",
                             icon: mdiRefresh,
-                            onClick: () => dispatch(ACTION_RELOAD_DEVICES)
+                            onClick: () => dispatch(ACTION_RELOAD)
                           }]}>
       {children}
     </PageContainer>;

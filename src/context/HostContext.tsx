@@ -29,8 +29,6 @@ interface IInternalHostState extends IHostState
 
 export enum EHostStateActions
 {
-  RELOAD_DEVICES_STARTED,
-  RELOAD_DEVICES_FINISHED,
   SET_DEVICES,
   SET_AUTOREFRESH,
   SET_SELECTION,
@@ -120,7 +118,7 @@ export const ACTION_ADD_EDGE_BETWEEN = (from: string, to: string) => (dispatch: 
 {
   getState().getAccessToken()
     .then(pToken => addEdgeBetween(pToken, from, to))
-    .then(() => dispatch(ACTION_RELOAD_DEVICES))
+    .then(() => dispatch(ACTION_RELOAD))
 }
 
 /**
@@ -134,17 +132,16 @@ export const ACTION_REMOVE_EDGE_BETWEEN = (from: string, to: string) => (dispatc
 {
   getState().getAccessToken()
     .then(pToken => removeEdgeBetween(pToken, from, to))
-    .then(() => dispatch(ACTION_RELOAD_DEVICES))
+    .then(() => dispatch(ACTION_RELOAD))
     .then(() => dispatch(ACTION_VALIDATE_SELECTION))
 }
 
 /**
  * Reloads the current available devices
  */
-export const ACTION_RELOAD_DEVICES = (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+export const ACTION_RELOAD = (dispatch: HostDispatch, getState: () => IInternalHostState) =>
 {
   const triggeredForID = getState().id;
-  dispatch({type: EHostStateActions.RELOAD_DEVICES_STARTED})
   getState().getAccessToken()
 
     // get all devices
@@ -247,7 +244,7 @@ export function HostProvider({id, children}: { id: string, children?: React.Reac
   useEffect(() =>
   {
     dispatch({type: EHostStateActions.SET_ID, payload: id})
-    dispatch(ACTION_RELOAD_DEVICES);
+    dispatch(ACTION_RELOAD);
   }, [dispatch, id])
 
   /**
@@ -257,7 +254,7 @@ export function HostProvider({id, children}: { id: string, children?: React.Reac
   {
     if (!state.autoRefresh)
       return;
-    const interval = setInterval(() => dispatch(ACTION_RELOAD_DEVICES), 1000)
+    const interval = setInterval(() => dispatch(ACTION_RELOAD), 1000)
     return () => clearInterval(interval);
   }, [state.id, state.autoRefresh, dispatch])
 

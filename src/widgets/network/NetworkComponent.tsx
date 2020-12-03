@@ -3,7 +3,7 @@ import styles from "./NetworkComponent.module.scss";
 import {deviceToNode, edgeToEdge, NetworkGraph} from "./NetworkGraph";
 import {DataSet, DataSetEdges, DataSetNodes, Edge, Network, Node} from "vis-network/standalone/umd/vis-network";
 import {Position} from "vis-network/declarations/network/Network";
-import {ACTION_ADD_EDGE_BETWEEN, ACTION_RELOAD_DEVICES, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
+import {ACTION_ADD_EDGE_BETWEEN, ACTION_RELOAD, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
 import {useCallbackNoRefresh} from "../../helpers/Utility";
 import {getStateColor} from "../../helpers/NodeHelper";
 import classNames from "classnames";
@@ -73,7 +73,7 @@ const NetworkComponent = ({className, hostID}: { className?: string, hostID: str
       else if (event.key === "a")
         _handleCreate(nodesRef.current, edgesRef.current, state.selection?.devices || [], state.selection?.edges || [], dispatch)
       else if (event.key === "r")
-        dispatch(ACTION_RELOAD_DEVICES)
+        dispatch(ACTION_RELOAD)
     };
     window.addEventListener("keydown", listener)
     return () => window.removeEventListener("keydown", listener);
