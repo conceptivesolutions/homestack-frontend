@@ -1,18 +1,5 @@
 @import "src/css/material";
 
-.headerContainer {
-  display: flex;
-  flex-direction: column;
-
-  h1 {
-    margin-bottom: 0;
-  }
-}
-
-.heading {
-  color: $gray-font-color;
-}
-
 .contentTable {
   border-collapse: collapse;
   width: 100%;
@@ -30,11 +17,6 @@
     height: 60px;
     padding: 0 $content-padding;
   }
-}
-
-.footerContainer {
-  display: flex;
-  flex-direction: row-reverse;
 }
 
 .spacer {

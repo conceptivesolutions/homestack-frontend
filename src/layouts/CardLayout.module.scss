@@ -34,3 +34,21 @@
     }
   }
 }
+
+.headerContainer {
+  display: flex;
+  flex-direction: column;
+
+  h1 {
+    margin-bottom: 0;
+  }
+
+  & > * {
+    color: $gray-font-color;
+  }
+}
+
+.footerContainer {
+  display: flex;
+  flex-direction: row-reverse;
+}

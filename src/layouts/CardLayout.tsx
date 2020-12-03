@@ -22,4 +22,16 @@ const CardLayout = (props: ICardLayout) => (
   </div>
 );
 
+export const CardLayoutHeader = ({children}: { children?: React.ReactNode }) => (
+  <div className={styles.headerContainer}>
+    {children}
+  </div>
+)
+
+export const CardLayoutFooter = ({children}: { children?: React.ReactNode }) => (
+  <div className={styles.footerContainer}>
+    {children}
+  </div>
+)
+
 export default CardLayout;

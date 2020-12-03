@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import HostLayout from "../../../../../layouts/HostLayout";
 import {INavBarItem} from "../../../../../components/navbar/NavBarItem";
 import {mdiArrowLeft} from "@mdi/js";
-import CardLayout from "../../../../../layouts/CardLayout";
+import CardLayout, {CardLayoutFooter, CardLayoutHeader} from "../../../../../layouts/CardLayout";
 import styles from "./index.module.scss";
 import _ from "lodash";
 import {EMetricTypes, IDevice, IMetric} from "../../../../../types/model";
@@ -41,21 +41,21 @@ const DevicePage = () =>
 
   const deviceDNSName = device && (getMetricRecordByType(device, EMetricTypes.REVERSE_DNS)?.result?.name);
   const header = (
-    <div className={styles.headerContainer}>
-      <h1 className={styles.heading}>{deviceDNSName || device?.address || deviceID}</h1>
-      <span className={styles.heading}>{device?.id}</span>
-    </div>
+    <CardLayoutHeader>
+      <h1>{deviceDNSName || device?.address || deviceID}</h1>
+      <span>{device?.id}</span>
+    </CardLayoutHeader>
   )
 
   const footer = (
-    <div className={styles.footerContainer}>
+    <CardLayoutFooter>
       <button className={styles.primary} onClick={() => getAccessToken()
         .then(pToken => _.entries(changedMetrics).forEach(pMetric => updateMetric(pToken, deviceID as string, pMetric[1])))
         .then(() => dispatch(ACTION_UPDATE_DEVICE(changedDeviceProps.id, changedDeviceProps, fnBack)))}>Save
       </button>
       <div className={styles.spacer}/>
       <button className={styles.destructive} onClick={() => dispatch(ACTION_REMOVE_DEVICE(deviceID as string, fnBack))}>Delete Device</button>
-    </div>
+    </CardLayoutFooter>
   )
 
   return <CardLayout header={header} footer={footer}>
