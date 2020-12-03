@@ -1,0 +1,15 @@
+@import "src/css/material";
+
+.spacer {
+  flex-grow: 1;
+}
+
+.leaseContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.leaseID {
+  flex-grow: 1;
+}
