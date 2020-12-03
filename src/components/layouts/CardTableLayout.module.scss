@@ -1,0 +1,19 @@
+@import "src/css/material";
+
+.layoutContainer {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  grid-auto-rows: 60px;
+
+  & > *:nth-child(odd) {
+    white-space: nowrap;
+    justify-self: end;
+    color: $font-color-disabled;
+  }
+
+  & > * {
+    padding: 0 $content-padding;
+    align-self: center;
+  }
+
+}
