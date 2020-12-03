@@ -8,7 +8,7 @@ import {getStateColor} from "../../helpers/NodeHelper";
 import classNames from "classnames";
 import ActionList from "../../components/actionlist/ActionList";
 import ActionListItem from "../../components/actionlist/ActionListItem";
-import {mdiChartBar, mdiMonitor, mdiPencilOutline, mdiPlusCircle, mdiServer} from "@mdi/js";
+import {mdiChartBar, mdiDevices, mdiMonitor, mdiPencilOutline, mdiPlusCircle, mdiSatellite, mdiSatelliteUplink} from "@mdi/js";
 import {iconToSVG} from "../../helpers/iconHelper";
 import {useRouter} from "next/router";
 import {v4 as uuidv4} from 'uuid';
@@ -20,10 +20,21 @@ const HostNavigatorComponent = () =>
 {
   const {state, dispatch} = useContext(HostContext)
   const router = useRouter();
-  const root: ITreeNode = {
+  const root: ITreeNode[] = [{
+    id: "satellites",
+    name: "Satellites",
+    icon: mdiSatellite,
+    children: _.sortBy(state.satellites || [], ['id']).map(pSatellite => ({
+      id: pSatellite.id,
+      name: pSatellite.id,
+      icon: mdiSatelliteUplink,
+      hoverIcon: mdiPencilOutline,
+      hoverIconClick: () => router.push(router.asPath + "/satellites/" + pSatellite.id)
+    }))
+  }, {
     id: "root",
-    name: "Devices & Results",
-    icon: mdiServer,
+    name: "Devices",
+    icon: mdiDevices,
     children: _.sortBy(state.devices || [], ['address', 'id']).map(pDevice => ({
       id: pDevice.id,
       name: pDevice.address || "unknown",
@@ -40,7 +51,7 @@ const HostNavigatorComponent = () =>
         iconColor: getStateColor([pRecord]),
       }))
     }))
-  };
+  }];
 
   const {required, instance, handlers} = useTreeState({
     id: "deviceTree",
@@ -51,6 +62,7 @@ const HostNavigatorComponent = () =>
   // Always open root
   useEffect(() =>
   {
+    handlers.setOpen("satellites")
     handlers.setOpen("root")
   }, [handlers])
 

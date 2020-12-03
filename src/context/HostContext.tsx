@@ -1,6 +1,6 @@
 import React, {createContext, Dispatch, useContext, useEffect} from "react";
 import {Action} from "../types/context";
-import {IDevice} from "../types/model";
+import {IDevice, ISatellite} from "../types/model";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
 import {createDevice, deleteDevice, getAllDevices, updateDevice} from "../rest/DeviceClient";
 import {getMetricRecords} from "../rest/MetricsClient";
@@ -8,11 +8,13 @@ import {addEdgeBetween, getEdges, removeEdgeBetween} from "../rest/EdgeClient";
 import {v4 as uuidv4} from 'uuid';
 import _ from "lodash";
 import {AuthContext} from "./AuthContext";
+import {getSatellites} from "../rest/SatelliteClient";
 
 export interface IHostState
 {
   id: string,
   devices?: IDevice[],
+  satellites?: ISatellite[],
   autoRefresh: boolean,
   selection?: {
     devices?: string[],
@@ -30,6 +32,7 @@ interface IInternalHostState extends IHostState
 export enum EHostStateActions
 {
   SET_DEVICES,
+  SET_SATELLITES,
   SET_AUTOREFRESH,
   SET_SELECTION,
   SET_ID,
@@ -137,7 +140,7 @@ export const ACTION_REMOVE_EDGE_BETWEEN = (from: string, to: string) => (dispatc
 }
 
 /**
- * Reloads the current available devices
+ * Reloads the current available devices and satellites
  */
 export const ACTION_RELOAD = (dispatch: HostDispatch, getState: () => IInternalHostState) =>
 {
@@ -152,22 +155,33 @@ export const ACTION_RELOAD = (dispatch: HostDispatch, getState: () => IInternalH
         .then(pRecords => pDevice.metricRecords = pRecords)
         .then(() => getEdges(pToken, pDevice.id))
         .then(pEdges => pDevice.edges = pEdges)
-        .then(() => pDevice)))))
+        .then(() => pDevice))))
 
-    // set devices
-    .then((pDevices) =>
-    {
-      // Are we still using this devices?
-      if (getState().id !== triggeredForID)
-        return;
+      // set devices
+      .then((pDevices) =>
+      {
+        // Are we still using this host?
+        if (getState().id !== triggeredForID)
+          return;
 
-      dispatch({type: EHostStateActions.SET_DEVICES, payload: pDevices});
+        dispatch({type: EHostStateActions.SET_DEVICES, payload: pDevices});
 
-      // update selection
-      dispatch(ACTION_VALIDATE_SELECTION);
-    })
+        // update selection
+        dispatch(ACTION_VALIDATE_SELECTION);
+      })
 
-    .finally(() => dispatch({type: EHostStateActions.RELOAD_DEVICES_FINISHED}))
+      // update satellites
+      .then(() => getSatellites(pToken, triggeredForID))
+
+      // set satellites
+      .then(pSatellites =>
+      {
+        // Are we still using this host?
+        if (getState().id !== triggeredForID)
+          return;
+
+        dispatch({type: EHostStateActions.SET_SATELLITES, payload: pSatellites});
+      }));
 }
 
 /**
@@ -197,6 +211,12 @@ const reducer = (state: IInternalHostState, action: Action) =>
       return {
         ...state,
         devices: action.payload,
+      }
+
+    case EHostStateActions.SET_SATELLITES:
+      return {
+        ...state,
+        satellites: action.payload,
       }
 
     case EHostStateActions.SET_AUTOREFRESH:

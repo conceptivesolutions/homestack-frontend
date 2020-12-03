@@ -4,6 +4,22 @@ export interface IHost
   displayName?: string,
 }
 
+export interface ISatellite
+{
+  id: string,
+  hostID?: string,
+  location?: ILocation,
+}
+
+export interface ISatelliteLease
+{
+  id: string,
+  satelliteID?: string,
+  userID?: string,
+  token?: string,
+  revokedDate: string,
+}
+
 export interface ILocation
 {
   x: number,
