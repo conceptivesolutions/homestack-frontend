@@ -3,7 +3,7 @@ import {Action} from "../types/context";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
 import {AuthContext} from "./AuthContext";
 import {ISatelliteLease} from "../types/model";
-import {generateLease, getLeases, revokeLease} from "../rest/SatelliteClient";
+import {DELETE, GET, PUT} from "../helpers/fetchHelper";
 
 export interface ISatelliteState
 {
@@ -27,7 +27,8 @@ export enum ESatelliteStateActions
 export const ACTION_RELOAD_LEASES = (dispatch: SatelliteDispatch, getState: () => IInternalSatelliteState) =>
 {
   getState().getAccessToken()
-    .then(pToken => getLeases(pToken, getState().id))
+    .then(pToken => GET("/api/satellites/" + getState().id + "/leases", pToken))
+    .then(pResponse => pResponse.json())
     .then(pLeases => dispatch({type: ESatelliteStateActions.SET_LEASES, payload: pLeases}))
 }
 
@@ -37,7 +38,8 @@ export const ACTION_RELOAD_LEASES = (dispatch: SatelliteDispatch, getState: () =
 export const ACTION_GENERATE_LEASE = (onCreate: (pLease: ISatelliteLease) => void) => (dispatch: SatelliteDispatch, getState: () => IInternalSatelliteState) =>
 {
   getState().getAccessToken()
-    .then(pToken => generateLease(pToken, getState().id))
+    .then(pToken => PUT("/api/satellites/" + getState().id + "/leases", pToken))
+    .then(pResult => pResult.json())
     .then(pLease => onCreate(pLease))
     .then(() => dispatch(ACTION_RELOAD_LEASES))
 }
@@ -48,7 +50,7 @@ export const ACTION_GENERATE_LEASE = (onCreate: (pLease: ISatelliteLease) => voi
 export const ACTION_REVOKE_LEASE = (pLeaseID: string) => (dispatch: SatelliteDispatch, getState: () => IInternalSatelliteState) =>
 {
   getState().getAccessToken()
-    .then(pToken => revokeLease(pToken, getState().id, pLeaseID))
+    .then(pToken => DELETE("/api/satellites/" + getState().id + "/leases/" + pLeaseID, pToken))
     .then(() => dispatch(ACTION_RELOAD_LEASES))
 }
 

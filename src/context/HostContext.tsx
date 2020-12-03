@@ -1,14 +1,11 @@
 import React, {createContext, Dispatch, useContext, useEffect} from "react";
 import {Action} from "../types/context";
-import {IDevice, ISatellite} from "../types/model";
+import {IDevice, IEdge, IMetricRecord, ISatellite} from "../types/model";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
-import {createDevice, deleteDevice, getAllDevices, updateDevice} from "../rest/DeviceClient";
-import {getMetricRecords} from "../rest/MetricsClient";
-import {addEdgeBetween, getEdges, removeEdgeBetween} from "../rest/EdgeClient";
 import {v4 as uuidv4} from 'uuid';
 import _ from "lodash";
 import {AuthContext} from "./AuthContext";
-import {getSatellites} from "../rest/SatelliteClient";
+import {DELETE, GET, PATCH, POST, PUT} from "../helpers/fetchHelper";
 
 export interface IHostState
 {
@@ -49,7 +46,11 @@ export const ACTION_CREATE_DEVICE = (id?: string, onCreation?: (id: string) => v
 {
   const newID = id || uuidv4();
   getState().getAccessToken()
-    .then(pToken => createDevice(pToken, newID, getState().id))
+    .then(pToken => PUT('/api/devices/' + newID, pToken, JSON.stringify({
+      id: newID,
+      hostID: getState().id,
+    })))
+    .then(res => res.json())
     .then(pDevice => dispatch({
       type: EHostStateActions.SET_DEVICES,
       payload: [
@@ -71,7 +72,8 @@ export const ACTION_CREATE_DEVICE = (id?: string, onCreation?: (id: string) => v
 export const ACTION_UPDATE_DEVICE = (id: string, pDevice: IDevice, onUpdate?: (id: string) => void) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
 {
   getState().getAccessToken()
-    .then(pToken => updateDevice(pToken, id, pDevice))
+    .then(pToken => PATCH('/api/devices/' + id, pToken, JSON.stringify(pDevice)))
+    .then(response => response.json())
     .then(pDevice =>
     {
       const devices = [...(getState().devices || [])];
@@ -101,7 +103,7 @@ export const ACTION_UPDATE_DEVICE = (id: string, pDevice: IDevice, onUpdate?: (i
 export const ACTION_REMOVE_DEVICE = (id: string, onDeletion?: (id: string) => void) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
 {
   getState().getAccessToken()
-    .then(pToken => deleteDevice(pToken, id))
+    .then(pToken => DELETE('/api/devices/' + id, pToken))
     .then(() => dispatch({
       type: EHostStateActions.SET_DEVICES,
       payload: getState().devices?.filter(pTest => pTest.id !== id)
@@ -120,7 +122,7 @@ export const ACTION_REMOVE_DEVICE = (id: string, onDeletion?: (id: string) => vo
 export const ACTION_ADD_EDGE_BETWEEN = (from: string, to: string) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
 {
   getState().getAccessToken()
-    .then(pToken => addEdgeBetween(pToken, from, to))
+    .then(pToken => POST('/api/devices/' + from + '/edges', pToken, to))
     .then(() => dispatch(ACTION_RELOAD))
 }
 
@@ -134,7 +136,7 @@ export const ACTION_ADD_EDGE_BETWEEN = (from: string, to: string) => (dispatch: 
 export const ACTION_REMOVE_EDGE_BETWEEN = (from: string, to: string) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
 {
   getState().getAccessToken()
-    .then(pToken => removeEdgeBetween(pToken, from, to))
+    .then(pToken => DELETE('/api/devices/' + from + '/edges/' + to, pToken))
     .then(() => dispatch(ACTION_RELOAD))
     .then(() => dispatch(ACTION_VALIDATE_SELECTION))
 }
@@ -148,12 +150,15 @@ export const ACTION_RELOAD = (dispatch: HostDispatch, getState: () => IInternalH
   getState().getAccessToken()
 
     // get all devices
-    .then(pToken => getAllDevices(pToken, triggeredForID)
+    .then(pToken => GET('/api/devices?host=' + triggeredForID, pToken)
+      .then(res => res.json() as Promise<IDevice[]>)
 
       // enrich devices with records and edges
-      .then(pDevices => Promise.all(pDevices.map(pDevice => getMetricRecords(pToken, pDevice.id)
+      .then(pDevices => Promise.all(pDevices.map(pDevice => GET('/api/metrics/' + pDevice.id + "/records", pToken)
+        .then(pResult => pResult.json() as Promise<IMetricRecord[]>)
         .then(pRecords => pDevice.metricRecords = pRecords)
-        .then(() => getEdges(pToken, pDevice.id))
+        .then(() => GET('/api/devices/' + pDevice.id + '/edges', pToken))
+        .then(res => res.json() as Promise<IEdge[]>)
         .then(pEdges => pDevice.edges = pEdges)
         .then(() => pDevice))))
 
@@ -171,7 +176,8 @@ export const ACTION_RELOAD = (dispatch: HostDispatch, getState: () => IInternalH
       })
 
       // update satellites
-      .then(() => getSatellites(pToken, triggeredForID))
+      .then(() => GET("/api/satellites?host=" + triggeredForID, pToken))
+      .then(pResponse => pResponse.json())
 
       // set satellites
       .then(pSatellites =>

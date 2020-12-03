@@ -2,9 +2,10 @@ import React, {createContext, Dispatch, useContext, useEffect} from "react";
 import {Action} from "../types/context";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
 import {IHost} from "../types/model";
-import {createHost, deleteHost, getHosts, updateHost} from "../rest/HostClient";
 import _ from "lodash";
 import {AuthContext} from "./AuthContext";
+import {DELETE, GET, PATCH, PUT} from "../helpers/fetchHelper";
+import {v4 as uuidv4} from "uuid";
 
 export interface IGlobalState
 {
@@ -33,7 +34,8 @@ export type GlobalDispatch = Dispatch<Action | Thunk<IInternalGlobalState, Actio
 export const ACTION_RELOAD_HOSTS = (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
 {
   getState().getAccessToken()
-    .then(getHosts)
+    .then(pToken => GET('/api/hosts', pToken))
+    .then(pResponse => pResponse.json())
     .then(pHosts => dispatch({
       type: EGlobalStateActions.SET_HOSTS,
       payload: pHosts
@@ -50,7 +52,13 @@ export const ACTION_RELOAD_HOSTS = (dispatch: GlobalDispatch, getState: () => II
 export const ACTION_CREATE_HOST = (id?: string, host?: IHost) => (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
 {
   getState().getAccessToken()
-    .then(pToken => createHost(pToken, host))
+    .then(pToken =>
+    {
+      const hostTmp = host || {
+        id: uuidv4(),
+      };
+      return PUT('/api/hosts/' + hostTmp.id, pToken, JSON.stringify(hostTmp));
+    })
     .then(() => dispatch(ACTION_RELOAD_HOSTS))
 }
 
@@ -63,7 +71,7 @@ export const ACTION_CREATE_HOST = (id?: string, host?: IHost) => (dispatch: Glob
 export const ACTION_UPDATE_HOST = (host: IHost) => (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
 {
   getState().getAccessToken()
-    .then(pToken => updateHost(pToken, host))
+    .then(pToken => PATCH('/api/hosts/' + host.id, pToken, JSON.stringify(host)))
     .then(() => dispatch(ACTION_RELOAD_HOSTS))
 }
 
@@ -76,7 +84,7 @@ export const ACTION_UPDATE_HOST = (host: IHost) => (dispatch: GlobalDispatch, ge
 export const ACTION_REMOVE_HOST = (id: string) => (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
 {
   getState().getAccessToken()
-    .then(pToken => deleteHost(pToken, id))
+    .then(pToken => DELETE('/api/hosts/' + id, pToken))
     .then(() =>
     {
       const hosts = getState().hosts || [];

@@ -4,10 +4,10 @@ import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
 import _ from "lodash";
 import LoginWidget from "../widgets/login/LoginWidget";
 import {useRouter} from "next/router";
-import {userinfo} from "../rest/AuthClient";
 import {isJWTTokenValid} from "../helpers/jwtHelper";
 import LoadingIndicator from "../components/loader/LoadingIndicator";
 import md5 from "md5";
+import {GET} from "../helpers/fetchHelper";
 
 export interface IAuthState
 {
@@ -61,7 +61,9 @@ export const ACTION_SET_ACCESSTOKEN = (token?: string) => (dispatch: AuthDispatc
 
   // upate userinfo
   if (!!token)
-    userinfo(token)
+    GET("/api/auth/user", token)
+      .then(pResult => pResult.json())
+      .then(pResult => pResult.user)
       .then(pInfo => ({
         username: pInfo.username,
         email: pInfo.email,

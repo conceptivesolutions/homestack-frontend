@@ -10,10 +10,10 @@ import _ from "lodash";
 import {EMetricTypes, IDevice, IMetric} from "../../../../../types/model";
 import SwitchButton from "../../../../../components/button/SwitchButton";
 import {AuthContext} from "../../../../../context/AuthContext";
-import {getMetrics, updateMetric} from "../../../../../rest/MetricsClient";
 import {getIcons} from "../../../../../helpers/iconHelper";
 import {getMetricRecordByType} from "../../../../../helpers/deviceHelper";
 import Select from "react-select";
+import {GET, PUT} from "../../../../../helpers/fetchHelper";
 
 const DevicePage = () =>
 {
@@ -32,8 +32,9 @@ const DevicePage = () =>
   useEffect(() =>
   {
     getAccessToken()
-      .then(pToken => getMetrics(pToken, deviceID as string)
-        .then(pMetrics => setMetrics(pMetrics)))
+      .then(pToken => GET("/api/metrics/" + deviceID, pToken))
+      .then(pResult => pResult.json())
+      .then(pMetrics => setMetrics(pMetrics))
   }, [getAccessToken, deviceID]);
 
   // Back to Host - Action
@@ -50,7 +51,8 @@ const DevicePage = () =>
   const footer = (
     <CardLayoutFooter>
       <button className={styles.primary} onClick={() => getAccessToken()
-        .then(pToken => _.entries(changedMetrics).forEach(pMetric => updateMetric(pToken, deviceID as string, pMetric[1])))
+        .then(pToken => _.entries(changedMetrics)
+          .forEach(pMetric => PUT("/api/metrics/" + deviceID + "/" + pMetric[1].type, pToken, JSON.stringify(pMetric[1]))))
         .then(() => dispatch(ACTION_UPDATE_DEVICE(changedDeviceProps.id, changedDeviceProps, fnBack)))}>Save
       </button>
       <div className={styles.spacer}/>

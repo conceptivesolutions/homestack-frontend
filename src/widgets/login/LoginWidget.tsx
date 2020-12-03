@@ -1,15 +1,19 @@
 import React, {createRef} from "react";
 import styles from "./LoginWidget.module.scss";
-import {login} from "../../rest/AuthClient";
 import classNames from "classnames";
 import Image from "next/image";
+import {POST} from "../../helpers/fetchHelper";
 
 const LoginWidget = ({onTokenReceived}: { onTokenReceived: (token: string) => void }) =>
 {
   const usernameRef = createRef<HTMLInputElement>();
   const passwordRef = createRef<HTMLInputElement>();
-  const _executeLogin = () => login(usernameRef.current!.value, passwordRef.current!.value)
-    .then(pToken => onTokenReceived(pToken));
+  const _executeLogin = () => POST("/api/auth/login", null, JSON.stringify({
+    "loginId": usernameRef.current!.value,
+    "password": passwordRef.current!.value,
+  }))
+    .then(pResult => pResult.json())
+    .then(pResult => onTokenReceived(pResult.token));
 
   return (
     <>
