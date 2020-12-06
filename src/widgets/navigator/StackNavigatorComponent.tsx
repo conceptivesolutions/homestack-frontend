@@ -1,9 +1,9 @@
-import {mdiChartBar, mdiDevices, mdiMonitor, mdiPencilOutline, mdiPlusCircle, mdiPlusCircleOutline, mdiSatellite, mdiSatelliteUplink} from "@mdi/js";
+import {mdiChartBar, mdiDevices, mdiMonitor, mdiPlusCircle, mdiPlusCircleOutline, mdiSatellite, mdiSatelliteUplink} from "@mdi/js";
 import classNames from "classnames";
 import ActionList from "components/actionlist/ActionList";
 import ActionListItem from "components/actionlist/ActionListItem";
 import NavigationTree, {ITreeNode} from "components/tree/NavigationTree";
-import {ACTION_CREATE_DEVICE, StackContext} from "context/StackContext";
+import {ACTION_CREATE_DEVICE, ACTION_CREATE_SATELLITE, StackContext} from "context/StackContext";
 import {iconToSVG} from "helpers/iconHelper";
 import {getStateColor} from "helpers/NodeHelper";
 import _ from "lodash";
@@ -24,17 +24,20 @@ const StackNavigatorComponent = () =>
     id: "satellites",
     name: "Satellites",
     icon: mdiSatellite,
+    hoverIcon: mdiPlusCircleOutline,
+    hoverIconClick: () => dispatch(ACTION_CREATE_SATELLITE(undefined, (pID) => router.push(router.asPath + "/satellites/" + pID))),
     children: _.sortBy(state.satellites || [], ['id']).map(pSatellite => ({
       id: pSatellite.id,
       name: pSatellite.id,
       icon: mdiSatelliteUplink,
-      hoverIcon: mdiPencilOutline,
-      hoverIconClick: () => router.push(router.asPath + "/satellites/" + pSatellite.id)
+      linkTo: router.asPath + "/satellites/" + pSatellite.id,
     }))
   }, {
     id: "root",
     name: "Devices",
     icon: mdiDevices,
+    hoverIcon: mdiPlusCircleOutline,
+    hoverIconClick: () => dispatch(ACTION_CREATE_DEVICE(undefined, (pID) => router.push(router.asPath + "/devices/" + pID))),
     children: _.sortBy(state.devices || [], ['address', 'id']).map(pDevice => ({
       id: pDevice.id,
       name: pDevice.address || "unknown",

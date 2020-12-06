@@ -62,6 +62,32 @@ export const ACTION_CREATE_DEVICE = (id?: string, onCreation?: (id: string) => v
 }
 
 /**
+ * Action: Create a new satellite within the given stack
+ *
+ * @param id ID of the satellite to be created - null creates a new uuid
+ * @param onCreation function that gets executed, if the satellite was created
+ * @constructor
+ */
+export const ACTION_CREATE_SATELLITE = (id?: string, onCreation?: (id: string) => void) => (dispatch: StackDispatch, getState: () => IInternalStackState) =>
+{
+  const newID = id || uuidv4();
+  getState().getAccessToken()
+    .then(pToken => PUT('/api/satellites/' + newID, pToken, JSON.stringify({
+      id: newID,
+      stackID: getState().id,
+    })))
+    .then(res => res.json())
+    .then(pSatellite => dispatch({
+      type: EStackStateActions.SET_SATELLITES,
+      payload: [
+        ...getState().satellites || [],
+        pSatellite,
+      ]
+    }))
+    .then(() => onCreation && onCreation(newID))
+}
+
+/**
  * Action: Updates a single device with the given id
  *
  * @param id ID of the device to update
