@@ -1,5 +1,5 @@
-import {EMetricTypes, IDevice, IMetricRecord} from "../types/model";
 import _ from "lodash";
+import {EMetricTypes, IDevice, IMetricRecord} from "types/model";
 
 /**
  * Returns the record with the given type

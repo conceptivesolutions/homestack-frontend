@@ -1,4 +1,4 @@
-import {EMetricRecordState, IMetricRecord} from "../types/model";
+import {EMetricRecordState, IMetricRecord} from "types/model";
 
 
 /**
