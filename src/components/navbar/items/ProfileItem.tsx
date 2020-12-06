@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import styles from "./ProfileItem.module.scss";
-import NavBarItem from "../NavBarItem";
-import Popup from "../Popup";
+import NavBarItem from "components/navbar/NavBarItem";
+import Popup from "components/navbar/Popup";
 import Icon from "@mdi/react";
 import {mdiChevronDown, mdiChevronUp} from "@mdi/js";
 
