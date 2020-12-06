@@ -7,7 +7,7 @@ export interface IStack
 export interface ISatellite
 {
   id: string,
-  hostID?: string,
+  stackID?: string,
   location?: ILocation,
 }
 
@@ -29,7 +29,7 @@ export interface ILocation
 export interface IDevice
 {
   id: string,
-  hostID?: string,
+  stackID?: string,
   icon?: string,
   address?: string,
   location?: ILocation,
