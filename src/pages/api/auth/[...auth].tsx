@@ -1,8 +1,8 @@
 import Cors from 'cors'
-import {runMiddleware} from "../../../helpers/runMiddleware";
+import {runMiddleware} from "helpers/runMiddleware";
+import * as http from "http";
 import {createProxyMiddleware} from "http-proxy-middleware";
 import {NextApiRequest, NextApiResponse} from "next";
-import * as http from "http";
 
 // Initializing the cors middleware
 const cors = Cors({

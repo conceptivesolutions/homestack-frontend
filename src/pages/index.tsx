@@ -6,4 +6,5 @@ import PageContainer from "widgets/page/PageContainer";
  */
 const Index = () => <PageContainer/>;
 
+// noinspection JSUnusedGlobalSymbols
 export default Index;

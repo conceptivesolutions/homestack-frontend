@@ -1,28 +1,28 @@
 import {mdiArrowLeft} from "@mdi/js";
+import SwitchButton from "components/button/SwitchButton";
+import {INavBarItem} from "components/navbar/NavBarItem";
+import {AuthContext} from "context/AuthContext";
 import {ACTION_REMOVE_DEVICE, ACTION_UPDATE_DEVICE, StackContext} from "context/StackContext";
+import {getMetricRecordByType} from "helpers/deviceHelper";
+import {GET, PUT} from "helpers/fetchHelper";
+import {getIcons} from "helpers/iconHelper";
+import CardLayout, {CardLayoutFooter, CardLayoutHeader} from "layouts/CardLayout";
 import StackLayout from "layouts/StackLayout";
 import _ from "lodash";
 import {useRouter} from "next/router";
 import React, {useContext, useEffect, useState} from "react";
 import Select from "react-select";
-import SwitchButton from "../../../../../components/button/SwitchButton";
-import {INavBarItem} from "../../../../../components/navbar/NavBarItem";
-import {AuthContext} from "../../../../../context/AuthContext";
-import {getMetricRecordByType} from "../../../../../helpers/deviceHelper";
-import {GET, PUT} from "../../../../../helpers/fetchHelper";
-import {getIcons} from "../../../../../helpers/iconHelper";
-import CardLayout, {CardLayoutFooter, CardLayoutHeader} from "../../../../../layouts/CardLayout";
-import {EMetricTypes, IDevice, IMetric} from "../../../../../types/model";
+import {EMetricTypes, IDevice, IMetric} from "types/model";
 import styles from "./index.module.scss";
 
 const DevicePage = () =>
 {
-  const {push, query: {hostID, deviceID}} = useRouter()
+  const {push, query: {stackID, deviceID}} = useRouter()
   const {state: {devices}, dispatch} = useContext(StackContext);
   const {state: {getAccessToken}} = useContext(AuthContext)
   const [metrics, setMetrics] = useState<any>();
   const device = _.head(devices?.filter(pDevice => pDevice.id === deviceID));
-  const fnBack = () => push("/hosts/" + hostID);
+  const fnBack = () => push("/stacks/" + stackID);
   const changedDeviceProps: IDevice = {
     id: deviceID as string,
   };
@@ -37,7 +37,7 @@ const DevicePage = () =>
       .then(pMetrics => setMetrics(pMetrics))
   }, [getAccessToken, deviceID]);
 
-  // Back to Host - Action
+  // Back to Stack - Action
   DevicePage.Items[0].onClick = fnBack;
 
   const deviceDNSName = device && (getMetricRecordByType(device, EMetricTypes.REVERSE_DNS)?.result?.name);
@@ -115,7 +115,9 @@ function _createMetricRow(name: string, type: EMetricTypes, changedMetrics: { [t
 DevicePage.Layout = StackLayout;
 DevicePage.Items = [{
   alignment: "left",
-  children: "Back to Host",
+  children: "Back to Stack",
   icon: mdiArrowLeft,
 }] as INavBarItem[];
+
+// noinspection JSUnusedGlobalSymbols
 export default DevicePage;

@@ -1,5 +1,5 @@
 import Cors from 'cors'
-import {runMiddleware} from "../../helpers/runMiddleware";
+import {runMiddleware} from "helpers/runMiddleware";
 import {createProxyMiddleware} from "http-proxy-middleware";
 import {NextApiRequest, NextApiResponse} from "next";
 

@@ -6,4 +6,5 @@ import PageContainer from "widgets/page/PageContainer";
  */
 const Help = () => <PageContainer/>;
 
+// noinspection JSUnusedGlobalSymbols
 export default Help;

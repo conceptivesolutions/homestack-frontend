@@ -1,10 +1,10 @@
-import React from "react";
-import './_app.scss';
-import 'nprogress/nprogress.css';
-import {GlobalProvider} from "../context/GlobalContext";
-import {AuthProvider} from "../context/AuthContext";
+import {AuthProvider} from "context/AuthContext";
+import {GlobalProvider} from "context/GlobalContext";
 import {Router} from "next/router";
 import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
+import React from "react";
+import './_app.scss';
 
 //Binding events.
 Router.events.on('routeChangeStart', () => NProgress.start());

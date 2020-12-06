@@ -1,22 +1,21 @@
-import React, {useContext} from "react";
 import {mdiArrowLeft, mdiTrashCanOutline} from "@mdi/js";
-import SatelliteLayout from "../../../../../layouts/SatelliteLayout";
-import {INavBarItem} from "../../../../../components/navbar/NavBarItem";
-import {useRouter} from "next/router";
-import CardLayout, {CardLayoutFooter, CardLayoutHeader} from "../../../../../layouts/CardLayout";
-import styles from "./index.module.scss";
-import CardTableLayout from "../../../../../components/layouts/CardTableLayout";
-import {ACTION_GENERATE_LEASE, ACTION_REVOKE_LEASE, SatelliteContext} from "../../../../../context/SatelliteContext";
 import Icon from "@mdi/react";
+import CardTableLayout from "components/layouts/CardTableLayout";
+import {INavBarItem} from "components/navbar/NavBarItem";
+import {ACTION_GENERATE_LEASE, ACTION_REVOKE_LEASE, SatelliteContext} from "context/SatelliteContext";
+import CardLayout, {CardLayoutFooter, CardLayoutHeader} from "layouts/CardLayout";
+import SatelliteLayout from "layouts/SatelliteLayout";
+import {useRouter} from "next/router";
+import React, {useContext} from "react";
+import styles from "./index.module.scss";
 
 const SatellitePage = () =>
 {
-  const {push, query: {hostID, satelliteID}} = useRouter();
+  const {push, query: {stackID, satelliteID}} = useRouter();
   const {state, dispatch} = useContext(SatelliteContext);
-  const fnBack = () => push("/hosts/" + hostID);
 
-  // Back to Host - Action
-  SatellitePage.Items[0].onClick = fnBack;
+  // Back to Stack - Action
+  SatellitePage.Items[0].onClick = () => push("/stacks/" + stackID);
 
   const header = (
     <CardLayoutHeader>
@@ -56,7 +55,9 @@ const SatellitePage = () =>
 SatellitePage.Layout = SatelliteLayout;
 SatellitePage.Items = [{
   alignment: "left",
-  children: "Back to Host",
+  children: "Back to Stack",
   icon: mdiArrowLeft,
 }] as INavBarItem[];
+
+// noinspection JSUnusedGlobalSymbols
 export default SatellitePage;
