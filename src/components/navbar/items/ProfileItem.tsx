@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from "react";
-import styles from "./ProfileItem.module.scss";
+import {mdiChevronDown, mdiChevronUp} from "@mdi/js";
+import Icon from "@mdi/react";
 import NavBarItem from "components/navbar/NavBarItem";
 import Popup from "components/navbar/Popup";
-import Icon from "@mdi/react";
-import {mdiChevronDown, mdiChevronUp} from "@mdi/js";
+import React, {useEffect, useState} from "react";
+import styles from "./ProfileItem.module.scss";
 
 interface IProfileItem
 {

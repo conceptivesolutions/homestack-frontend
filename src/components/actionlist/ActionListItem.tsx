@@ -1,7 +1,7 @@
-import React from "react";
-import classNames from "classnames";
-import styles from "./ActionList.module.scss";
 import {Icon} from "@mdi/react";
+import classNames from "classnames";
+import React from "react";
+import styles from "./ActionList.module.scss";
 
 export interface IActionListItem
 {

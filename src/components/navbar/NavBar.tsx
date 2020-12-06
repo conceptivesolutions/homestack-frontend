@@ -1,7 +1,7 @@
+import classNames from "classnames";
 import React, {Children} from "react";
 import styles from "./NavBar.module.scss";
 import {INavBarItem} from "./NavBarItem";
-import classNames from "classnames";
 
 export interface INavBar
 {

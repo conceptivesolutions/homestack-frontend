@@ -1,7 +1,7 @@
+import Icon from "@mdi/react";
+import classNames from "classnames";
 import React from "react";
 import styles from "./StackSwitcher.module.scss"
-import classNames from "classnames";
-import Icon from "@mdi/react";
 
 export interface IContextSwitcherEntry
 {

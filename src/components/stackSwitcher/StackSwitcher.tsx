@@ -1,7 +1,7 @@
+import classNames from "classnames";
 import React, {Children} from "react";
 import styles from "./StackSwitcher.module.scss"
 import {IContextSwitcherEntry} from "./StackSwitcherEntry";
-import classNames from "classnames";
 
 /**
  * Component: Context Switcher
@@ -12,13 +12,13 @@ import classNames from "classnames";
  */
 const StackSwitcher = ({className, children}: { className?: string, children?: React.ReactNode }) => (
   <div className={classNames(className, styles.container)}>
-        <div className={styles.upperContainer}>
-              {Children.toArray(children).filter(pChild => ((pChild as React.Component).props as IContextSwitcherEntry).alignment === 'top')}
-        </div>
-        <div className={styles.middleContainer}/>
-        <div className={styles.lowerContainer}>
-              {Children.toArray(children).filter(pChild => ((pChild as React.Component).props as IContextSwitcherEntry).alignment === 'bottom')}
-        </div>
+          <div className={styles.upperContainer}>
+                  {Children.toArray(children).filter(pChild => ((pChild as React.Component).props as IContextSwitcherEntry).alignment === 'top')}
+          </div>
+          <div className={styles.middleContainer}/>
+          <div className={styles.lowerContainer}>
+                  {Children.toArray(children).filter(pChild => ((pChild as React.Component).props as IContextSwitcherEntry).alignment === 'bottom')}
+          </div>
   </div>
 );
 

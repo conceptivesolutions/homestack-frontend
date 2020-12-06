@@ -1,8 +1,8 @@
+import {mdiPlusCircleOutline} from "@mdi/js";
+import Icon from "@mdi/react";
+import classNames from "classnames";
 import React from "react";
 import styles from "./StackSwitcher.module.scss"
-import classNames from "classnames";
-import Icon from "@mdi/react";
-import {mdiPlusCircleOutline} from "@mdi/js";
 
 export interface IContextSwitcherEntryHeader
 {

@@ -1,7 +1,7 @@
-import React from "react";
-import classNames from "classnames";
-import styles from "./Popup.module.scss"
 import Icon from "@mdi/react";
+import classNames from "classnames";
+import React from "react";
+import styles from "./Popup.module.scss"
 
 interface IPopupItem
 {

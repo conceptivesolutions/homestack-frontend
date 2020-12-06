@@ -1,6 +1,6 @@
+import classNames from "classnames";
 import React from "react";
 import styles from "./Popup.module.scss";
-import classNames from "classnames";
 
 export interface IPopup
 {

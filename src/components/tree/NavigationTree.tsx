@@ -1,10 +1,10 @@
-import React from "react";
-import styles from "./NavigationTree.module.scss";
-import Tree, {DefaultNodeProps, Loader} from "react-hyper-tree";
-import classNames from "classnames";
-import {TreeView} from "react-hyper-tree/dist/helpers/node";
-import {Icon} from "@mdi/react";
 import {mdiChevronDown, mdiChevronRight} from "@mdi/js";
+import {Icon} from "@mdi/react";
+import classNames from "classnames";
+import React from "react";
+import Tree, {DefaultNodeProps, Loader} from "react-hyper-tree";
+import {TreeView} from "react-hyper-tree/dist/helpers/node";
+import styles from "./NavigationTree.module.scss";
 
 export interface INavigationTree
 {
