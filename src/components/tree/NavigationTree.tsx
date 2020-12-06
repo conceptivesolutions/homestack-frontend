@@ -19,6 +19,7 @@ export interface ITreeNode
   id: string,
   name: string,
   icon: string,
+  linkTo?: string,
   selectable?: boolean,
   iconColor?: string,
   children?: ITreeNode[],
@@ -65,9 +66,9 @@ export default NavigationTree;
  */
 function _renderNode(instance: TreeView, {node, onSelect, onToggle}: DefaultNodeProps)
 {
-  return <div className={classNames(styles.node, {
+  let renderedNode = <div className={classNames(styles.node, {
     [styles.root]: node.options.root,
-    [styles.nodeSelectable]: node.data.selectable,
+    [styles.nodeSelectable]: node.data.selectable || node.data.linkTo,
     [styles.nodeSelected]: node.options.selected,
   })} onClick={(e) =>
   {
@@ -90,6 +91,10 @@ function _renderNode(instance: TreeView, {node, onSelect, onToggle}: DefaultNode
       <Icon path={node.data.hoverIcon} size={0.8}/>
     </div>}
   </div>;
+
+  if (node.data.linkTo)
+    renderedNode = <a href={node.data.linkTo}>{renderedNode}</a>
+  return renderedNode;
 }
 
 function _createControlNode({node, onToggle}: DefaultNodeProps)

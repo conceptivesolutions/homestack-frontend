@@ -1,9 +1,9 @@
-import {mdiChartBar, mdiDevices, mdiMonitor, mdiPencilOutline, mdiPlusCircle, mdiSatellite, mdiSatelliteUplink} from "@mdi/js";
+import {mdiChartBar, mdiDevices, mdiMonitor, mdiPencilOutline, mdiPlusCircle, mdiPlusCircleOutline, mdiSatellite, mdiSatelliteUplink} from "@mdi/js";
 import classNames from "classnames";
 import ActionList from "components/actionlist/ActionList";
 import ActionListItem from "components/actionlist/ActionListItem";
 import NavigationTree, {ITreeNode} from "components/tree/NavigationTree";
-import {ACTION_CREATE_DEVICE, EStackStateActions, StackContext, StackDispatch} from "context/StackContext";
+import {ACTION_CREATE_DEVICE, StackContext} from "context/StackContext";
 import {iconToSVG} from "helpers/iconHelper";
 import {getStateColor} from "helpers/NodeHelper";
 import _ from "lodash";
@@ -40,10 +40,7 @@ const StackNavigatorComponent = () =>
       name: pDevice.address || "unknown",
       icon: pDevice.icon && iconToSVG(pDevice.icon) || mdiMonitor,
       iconColor: getStateColor(pDevice.metricRecords),
-      hoverIcon: mdiPencilOutline,
-      hoverIconClick: () => router.push(router.asPath + "/devices/" + pDevice.id),
-      selectable: true,
-      onSelect: selected => _onSelect(pDevice.id, selected, dispatch),
+      linkTo: router.asPath + "/devices/" + pDevice.id,
       children: (pDevice.metricRecords || []).map(pRecord => ({
         id: pDevice.id + pRecord.type,
         name: pRecord.type + " => " + pRecord.state,
@@ -82,13 +79,3 @@ const StackNavigatorComponent = () =>
 };
 
 export default StackNavigatorComponent;
-
-function _onSelect(nodeID: string, selected: boolean, dispatch: StackDispatch)
-{
-  if (selected)
-    dispatch({
-      type: EStackStateActions.SET_SELECTION, payload: {
-        devices: [nodeID]
-      }
-    });
-}
