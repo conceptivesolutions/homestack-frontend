@@ -48,7 +48,7 @@ export const ACTION_CREATE_DEVICE = (id?: string, onCreation?: (id: string) => v
   getState().getAccessToken()
     .then(pToken => PUT('/api/devices/' + newID, pToken, JSON.stringify({
       id: newID,
-      hostID: getState().id,
+      stackID: getState().id,
     })))
     .then(res => res.json())
     .then(pDevice => dispatch({
@@ -150,7 +150,7 @@ export const ACTION_RELOAD = (dispatch: StackDispatch, getState: () => IInternal
   getState().getAccessToken()
 
     // get all devices
-    .then(pToken => GET('/api/devices?host=' + triggeredForID, pToken)
+    .then(pToken => GET('/api/devices?stack=' + triggeredForID, pToken)
       .then(res => res.json() as Promise<IDevice[]>)
 
       // enrich devices with records and edges
@@ -176,7 +176,7 @@ export const ACTION_RELOAD = (dispatch: StackDispatch, getState: () => IInternal
       })
 
       // update satellites
-      .then(() => GET("/api/satellites?host=" + triggeredForID, pToken))
+      .then(() => GET("/api/satellites?stack=" + triggeredForID, pToken))
       .then(pResponse => pResponse.json())
 
       // set satellites

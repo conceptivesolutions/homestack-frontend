@@ -30,7 +30,7 @@ export type GlobalDispatch = Dispatch<Action | Thunk<IInternalGlobalState, Actio
 export const ACTION_RELOAD_STACKS = (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
 {
   getState().getAccessToken()
-    .then(pToken => GET('/api/hosts', pToken))
+    .then(pToken => GET('/api/stacks', pToken))
     .then(pResponse => pResponse.json())
     .then(pStacks => dispatch({
       type: EGlobalStateActions.SET_STACKS,
@@ -49,7 +49,7 @@ export const ACTION_CREATE_STACK = (id?: string, stack?: IStack) => (dispatch: G
       const stackTmp = stack || {
         id: uuidv4(),
       };
-      return PUT('/api/hosts/' + stackTmp.id, pToken, JSON.stringify(stackTmp));
+      return PUT('/api/stacks/' + stackTmp.id, pToken, JSON.stringify(stackTmp));
     })
     .then(() => dispatch(ACTION_RELOAD_STACKS))
 }
@@ -60,7 +60,7 @@ export const ACTION_CREATE_STACK = (id?: string, stack?: IStack) => (dispatch: G
 export const ACTION_UPDATE_STACK = (stack: IStack) => (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
 {
   getState().getAccessToken()
-    .then(pToken => PATCH('/api/hosts/' + stack.id, pToken, JSON.stringify(stack)))
+    .then(pToken => PATCH('/api/stacks/' + stack.id, pToken, JSON.stringify(stack)))
     .then(() => dispatch(ACTION_RELOAD_STACKS))
 }
 
@@ -73,7 +73,7 @@ export const ACTION_UPDATE_STACK = (stack: IStack) => (dispatch: GlobalDispatch,
 export const ACTION_REMOVE_STACK = (id: string) => (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
 {
   getState().getAccessToken()
-    .then(pToken => DELETE('/api/hosts/' + id, pToken))
+    .then(pToken => DELETE('/api/stacks/' + id, pToken))
     .then(() =>
     {
       const stacks = getState().stacks || [];
