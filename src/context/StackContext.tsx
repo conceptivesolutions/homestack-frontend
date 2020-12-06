@@ -1,4 +1,4 @@
-import {DELETE, GET, PATCH, POST, PUT} from "helpers/fetchHelper";
+import {DELETE, GET, POST, PUT} from "helpers/fetchHelper";
 import _ from "lodash";
 import React, {createContext, Dispatch, useContext, useEffect} from "react";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
@@ -69,10 +69,18 @@ export const ACTION_CREATE_DEVICE = (id?: string, onCreation?: (id: string) => v
  * @param onUpdate function that gets executed, if the update was executed
  * @constructor
  */
-export const ACTION_UPDATE_DEVICE = (id: string, pDevice: IDevice, onUpdate?: (id: string) => void) => (dispatch: StackDispatch, getState: () => IInternalStackState) =>
+export const ACTION_PATCH_DEVICE = (id: string, pDevice: IDevice, onUpdate?: (id: string) => void) => (dispatch: StackDispatch, getState: () => IInternalStackState) =>
 {
   getState().getAccessToken()
-    .then(pToken => PATCH('/api/devices/' + id, pToken, JSON.stringify(pDevice)))
+    .then(pToken =>
+    {
+      const oldDev = _.head(getState().devices?.filter(pDev => pDev.id === id));
+      return PUT('/api/devices/' + id, pToken, JSON.stringify({
+        ...oldDev,
+        ...pDevice,
+        id,
+      }))
+    })
     .then(response => response.json())
     .then(pDevice =>
     {
@@ -150,7 +158,7 @@ export const ACTION_RELOAD = (dispatch: StackDispatch, getState: () => IInternal
   getState().getAccessToken()
 
     // get all devices
-    .then(pToken => GET('/api/devices?stack=' + triggeredForID, pToken)
+    .then(pToken => GET('/api/stacks/' + triggeredForID + '/devices', pToken)
       .then(res => res.json() as Promise<IDevice[]>)
 
       // enrich devices with records and edges
@@ -176,7 +184,7 @@ export const ACTION_RELOAD = (dispatch: StackDispatch, getState: () => IInternal
       })
 
       // update satellites
-      .then(() => GET("/api/satellites?stack=" + triggeredForID, pToken))
+      .then(() => GET("/api/stacks/" + triggeredForID + "/satellites", pToken))
       .then(pResponse => pResponse.json())
 
       // set satellites

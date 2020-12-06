@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {ACTION_ADD_EDGE_BETWEEN, ACTION_RELOAD, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EStackStateActions, StackContext, StackDispatch} from "context/StackContext";
+import {ACTION_ADD_EDGE_BETWEEN, ACTION_PATCH_DEVICE, ACTION_RELOAD, ACTION_REMOVE_EDGE_BETWEEN, EStackStateActions, StackContext, StackDispatch} from "context/StackContext";
 import {getStateColor} from "helpers/NodeHelper";
 import {useCallbackNoRefresh} from "helpers/Utility";
 import _ from "lodash";
@@ -134,7 +134,7 @@ export default NetworkComponent;
  */
 function _nodesMoved(pPositions: { [nodeID: string]: Position }, pDispatchFn: StackDispatch)
 {
-  Object.keys(pPositions).forEach(pNodeID => pDispatchFn(ACTION_UPDATE_DEVICE(pNodeID, {
+  Object.keys(pPositions).forEach(pNodeID => pDispatchFn(ACTION_PATCH_DEVICE(pNodeID, {
     id: pNodeID,
     location: pPositions[pNodeID],
   })));

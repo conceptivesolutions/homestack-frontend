@@ -2,7 +2,7 @@ import {mdiArrowLeft} from "@mdi/js";
 import SwitchButton from "components/button/SwitchButton";
 import {INavBarItem} from "components/navbar/NavBarItem";
 import {AuthContext} from "context/AuthContext";
-import {ACTION_REMOVE_DEVICE, ACTION_UPDATE_DEVICE, StackContext} from "context/StackContext";
+import {ACTION_PATCH_DEVICE, ACTION_REMOVE_DEVICE, StackContext} from "context/StackContext";
 import {getMetricRecordByType} from "helpers/deviceHelper";
 import {GET, PUT} from "helpers/fetchHelper";
 import {getIcons} from "helpers/iconHelper";
@@ -53,7 +53,7 @@ const DevicePage = () =>
       <button className={styles.primary} onClick={() => getAccessToken()
         .then(pToken => _.entries(changedMetrics)
           .forEach(pMetric => PUT("/api/metrics/" + deviceID + "/" + pMetric[1].type, pToken, JSON.stringify(pMetric[1]))))
-        .then(() => dispatch(ACTION_UPDATE_DEVICE(changedDeviceProps.id, changedDeviceProps, fnBack)))}>Save
+        .then(() => dispatch(ACTION_PATCH_DEVICE(changedDeviceProps.id, changedDeviceProps, fnBack)))}>Save
       </button>
       <div className={styles.spacer}/>
       <button className={styles.destructive} onClick={() => dispatch(ACTION_REMOVE_DEVICE(deviceID as string, fnBack))}>Delete Device</button>

@@ -1,4 +1,4 @@
-import {DELETE, GET, PATCH, PUT} from "helpers/fetchHelper";
+import {DELETE, GET, PUT} from "helpers/fetchHelper";
 import _ from "lodash";
 import React, {createContext, Dispatch, useContext, useEffect} from "react";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
@@ -60,7 +60,7 @@ export const ACTION_CREATE_STACK = (id?: string, stack?: IStack) => (dispatch: G
 export const ACTION_UPDATE_STACK = (stack: IStack) => (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
 {
   getState().getAccessToken()
-    .then(pToken => PATCH('/api/stacks/' + stack.id, pToken, JSON.stringify(stack)))
+    .then(pToken => PUT('/api/stacks/' + stack.id, pToken, JSON.stringify(stack)))
     .then(() => dispatch(ACTION_RELOAD_STACKS))
 }
 
