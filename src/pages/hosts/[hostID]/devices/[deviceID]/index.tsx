@@ -1,24 +1,24 @@
-import React, {useContext, useEffect, useState} from "react";
-import {ACTION_REMOVE_DEVICE, ACTION_UPDATE_DEVICE, HostContext} from "../../../../../context/HostContext";
-import {useRouter} from "next/router";
-import HostLayout from "../../../../../layouts/HostLayout";
-import {INavBarItem} from "../../../../../components/navbar/NavBarItem";
 import {mdiArrowLeft} from "@mdi/js";
-import CardLayout, {CardLayoutFooter, CardLayoutHeader} from "../../../../../layouts/CardLayout";
-import styles from "./index.module.scss";
+import {ACTION_REMOVE_DEVICE, ACTION_UPDATE_DEVICE, StackContext} from "context/StackContext";
 import _ from "lodash";
-import {EMetricTypes, IDevice, IMetric} from "../../../../../types/model";
-import SwitchButton from "../../../../../components/button/SwitchButton";
-import {AuthContext} from "../../../../../context/AuthContext";
-import {getIcons} from "../../../../../helpers/iconHelper";
-import {getMetricRecordByType} from "../../../../../helpers/deviceHelper";
+import {useRouter} from "next/router";
+import React, {useContext, useEffect, useState} from "react";
 import Select from "react-select";
+import SwitchButton from "../../../../../components/button/SwitchButton";
+import {INavBarItem} from "../../../../../components/navbar/NavBarItem";
+import {AuthContext} from "../../../../../context/AuthContext";
+import {getMetricRecordByType} from "../../../../../helpers/deviceHelper";
 import {GET, PUT} from "../../../../../helpers/fetchHelper";
+import {getIcons} from "../../../../../helpers/iconHelper";
+import CardLayout, {CardLayoutFooter, CardLayoutHeader} from "../../../../../layouts/CardLayout";
+import HostLayout from "../../../../../layouts/HostLayout";
+import {EMetricTypes, IDevice, IMetric} from "../../../../../types/model";
+import styles from "./index.module.scss";
 
 const DevicePage = () =>
 {
   const {push, query: {hostID, deviceID}} = useRouter()
-  const {state: {devices}, dispatch} = useContext(HostContext);
+  const {state: {devices}, dispatch} = useContext(StackContext);
   const {state: {getAccessToken}} = useContext(AuthContext)
   const [metrics, setMetrics] = useState<any>();
   const device = _.head(devices?.filter(pDevice => pDevice.id === deviceID));

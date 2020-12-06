@@ -1,24 +1,24 @@
-import React, {useContext, useEffect} from "react";
-import styles from "./HostNavigatorComponent.module.scss";
-import {ACTION_CREATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
-import {useTreeState} from "react-hyper-tree";
-import _ from "lodash";
-import NavigationTree, {ITreeNode} from "../../components/tree/NavigationTree";
-import {getStateColor} from "../../helpers/NodeHelper";
+import {mdiChartBar, mdiDevices, mdiMonitor, mdiPencilOutline, mdiPlusCircle, mdiSatellite, mdiSatelliteUplink} from "@mdi/js";
 import classNames from "classnames";
+import {ACTION_CREATE_DEVICE, EStackStateActions, StackContext, StackDispatch} from "context/StackContext";
+import _ from "lodash";
+import {useRouter} from "next/router";
+import React, {useContext, useEffect} from "react";
+import {useTreeState} from "react-hyper-tree";
+import {v4 as uuidv4} from 'uuid';
 import ActionList from "../../components/actionlist/ActionList";
 import ActionListItem from "../../components/actionlist/ActionListItem";
-import {mdiChartBar, mdiDevices, mdiMonitor, mdiPencilOutline, mdiPlusCircle, mdiSatellite, mdiSatelliteUplink} from "@mdi/js";
+import NavigationTree, {ITreeNode} from "../../components/tree/NavigationTree";
 import {iconToSVG} from "../../helpers/iconHelper";
-import {useRouter} from "next/router";
-import {v4 as uuidv4} from 'uuid';
+import {getStateColor} from "../../helpers/NodeHelper";
+import styles from "./HostNavigatorComponent.module.scss";
 
 /**
  * Simple Navigator for a single host
  */
 const HostNavigatorComponent = () =>
 {
-  const {state, dispatch} = useContext(HostContext)
+  const {state, dispatch} = useContext(StackContext)
   const router = useRouter();
   const root: ITreeNode[] = [{
     id: "satellites",
@@ -83,11 +83,11 @@ const HostNavigatorComponent = () =>
 
 export default HostNavigatorComponent;
 
-function _onSelect(nodeID: string, selected: boolean, dispatch: HostDispatch)
+function _onSelect(nodeID: string, selected: boolean, dispatch: StackDispatch)
 {
   if (selected)
     dispatch({
-      type: EHostStateActions.SET_SELECTION, payload: {
+      type: EStackStateActions.SET_SELECTION, payload: {
         devices: [nodeID]
       }
     });

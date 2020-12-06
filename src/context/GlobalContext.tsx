@@ -1,15 +1,15 @@
-import React, {createContext, Dispatch, useContext, useEffect} from "react";
-import {Action} from "../types/context";
-import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
-import {IHost} from "../types/model";
+import {DELETE, GET, PATCH, PUT} from "helpers/fetchHelper";
 import _ from "lodash";
-import {AuthContext} from "./AuthContext";
-import {DELETE, GET, PATCH, PUT} from "../helpers/fetchHelper";
+import React, {createContext, Dispatch, useContext, useEffect} from "react";
+import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
+import {Action} from "types/context";
+import {IStack} from "types/model";
 import {v4 as uuidv4} from "uuid";
+import {AuthContext} from "./AuthContext";
 
 export interface IGlobalState
 {
-  hosts?: IHost[],
+  stacks?: IStack[],
 }
 
 interface IInternalGlobalState extends IGlobalState
@@ -19,79 +19,68 @@ interface IInternalGlobalState extends IGlobalState
 
 export enum EGlobalStateActions
 {
-  SET_HOSTS,
+  SET_STACKS,
 }
 
 export type GlobalDispatch = Dispatch<Action | Thunk<IInternalGlobalState, Action>>
 
 /**
- * Call to reload all hosts
- *
- * @param dispatch
- * @param getState
- * @constructor
+ * Call to reload all stacks
  */
-export const ACTION_RELOAD_HOSTS = (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
+export const ACTION_RELOAD_STACKS = (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
 {
   getState().getAccessToken()
     .then(pToken => GET('/api/hosts', pToken))
     .then(pResponse => pResponse.json())
-    .then(pHosts => dispatch({
-      type: EGlobalStateActions.SET_HOSTS,
-      payload: pHosts
+    .then(pStacks => dispatch({
+      type: EGlobalStateActions.SET_STACKS,
+      payload: pStacks
     }))
 }
 
 /**
- * Creates a new host
- *
- * @param id
- * @param host
- * @constructor
+ * Creates a new stack
  */
-export const ACTION_CREATE_HOST = (id?: string, host?: IHost) => (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
+export const ACTION_CREATE_STACK = (id?: string, stack?: IStack) => (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
 {
   getState().getAccessToken()
     .then(pToken =>
     {
-      const hostTmp = host || {
+      const stackTmp = stack || {
         id: uuidv4(),
       };
-      return PUT('/api/hosts/' + hostTmp.id, pToken, JSON.stringify(hostTmp));
+      return PUT('/api/hosts/' + stackTmp.id, pToken, JSON.stringify(stackTmp));
     })
-    .then(() => dispatch(ACTION_RELOAD_HOSTS))
+    .then(() => dispatch(ACTION_RELOAD_STACKS))
 }
 
 /**
- * Updates the given host, identified by ID
- *
- * @param host
- * @constructor
+ * Updates the given stack, identified by ID
  */
-export const ACTION_UPDATE_HOST = (host: IHost) => (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
+export const ACTION_UPDATE_STACK = (stack: IStack) => (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
 {
   getState().getAccessToken()
-    .then(pToken => PATCH('/api/hosts/' + host.id, pToken, JSON.stringify(host)))
-    .then(() => dispatch(ACTION_RELOAD_HOSTS))
+    .then(pToken => PATCH('/api/hosts/' + stack.id, pToken, JSON.stringify(stack)))
+    .then(() => dispatch(ACTION_RELOAD_STACKS))
 }
 
 /**
- * Removes the host with the given ID
+ * Removes the stack with the given ID
  *
  * @param id
  * @constructor
  */
-export const ACTION_REMOVE_HOST = (id: string) => (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
+export const ACTION_REMOVE_STACK = (id: string) => (dispatch: GlobalDispatch, getState: () => IInternalGlobalState) =>
 {
   getState().getAccessToken()
     .then(pToken => DELETE('/api/hosts/' + id, pToken))
     .then(() =>
     {
-      const hosts = getState().hosts || [];
-      _.remove(hosts, pHost => pHost.id === id);
+      const stacks = getState().stacks || [];
+      _.remove(stacks, pStack => pStack.id === id);
       dispatch({
-        type: EGlobalStateActions.SET_HOSTS,
-        payload: hosts
+        type: EGlobalStateActions.SET_STACKS,
+        payload: stacks
       })
     })
 }
@@ -103,10 +92,10 @@ const reducer = (state: IInternalGlobalState, action: Action) =>
 {
   switch (action.type)
   {
-    case EGlobalStateActions.SET_HOSTS:
+    case EGlobalStateActions.SET_STACKS:
       return {
         ...state,
-        hosts: action.payload
+        stacks: action.payload
       };
 
     default:
@@ -124,8 +113,8 @@ export function GlobalProvider({children}: { children?: React.ReactNode })
   // initial
   useEffect(() =>
   {
-    // reload hosts
-    getAccessToken().then(() => dispatch(ACTION_RELOAD_HOSTS))
+    // reload stacks
+    getAccessToken().then(() => dispatch(ACTION_RELOAD_STACKS))
   }, [getAccessToken])
 
   return <GlobalContext.Provider value={{state, dispatch}}>

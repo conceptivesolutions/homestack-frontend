@@ -14,7 +14,7 @@ import md5 from "md5";
 import {useRouter} from "next/router";
 import randomColor from "randomcolor";
 import React, {useContext} from "react";
-import {IHost} from "types/model";
+import {IStack} from "types/model";
 import styles from "./PageContainer.module.scss";
 
 export interface IPageContent
@@ -28,7 +28,7 @@ export interface IPageContent
 const PageContainer = (props: IPageContent) =>
 {
   const router = useRouter();
-  const {state: {hosts}} = useContext(GlobalContext);
+  const {state: {stacks}} = useContext(GlobalContext);
   const {state: {user, logout}} = useContext(AuthContext);
 
   return (
@@ -38,7 +38,7 @@ const PageContainer = (props: IPageContent) =>
         <StackSwitcherEntry alignment={"top"} title={"Dashboard"} icon={mdiHomeOutline} color={"#14bae4"} active={router.pathname === "/"}
                             onClick={() => router.push("/")}/>
         <StackSwitcherEntryHeader alignment={"top"} title={"Hosts"}/>
-        {_createHostSwitcherEntries(hosts, router.query.hostID as string || "", hostID => router.push("/hosts/" + hostID))}
+        {_createHostSwitcherEntries(stacks, router.query.hostID as string || "", hostID => router.push("/hosts/" + hostID))}
       </StackSwitcher>
       <NavBar className={styles.navbar}>
         {props.navbarItems?.map(pItem => <NavBarItem key={md5(JSON.stringify(pItem))} {...pItem}/>)}
@@ -71,7 +71,7 @@ export default PageContainer;
  * @param hostID ID of the currently selected host
  * @param onClick function that gets executed on click
  */
-function _createHostSwitcherEntries(hosts: IHost[] | undefined, hostID: string, onClick: (hostID: string) => void)
+function _createHostSwitcherEntries(hosts: IStack[] | undefined, hostID: string, onClick: (hostID: string) => void)
 {
   return _.sortBy(hosts, ['displayName', 'id'])
     .map(pHost => <StackSwitcherEntry key={pHost.id} alignment={"top"} icon={mdiLaptop}

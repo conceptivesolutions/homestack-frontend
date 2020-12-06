@@ -1,14 +1,14 @@
+import classNames from "classnames";
+import {ACTION_ADD_EDGE_BETWEEN, ACTION_RELOAD, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EStackStateActions, StackContext, StackDispatch} from "context/StackContext";
+import _ from "lodash";
+import {useRouter} from "next/router";
 import React, {useContext, useEffect, useMemo, useRef} from 'react';
+import {Position} from "vis-network/declarations/network/Network";
+import {DataSet, DataSetEdges, DataSetNodes, Edge, Network, Node} from "vis-network/standalone/umd/vis-network";
+import {getStateColor} from "../../helpers/NodeHelper";
+import {useCallbackNoRefresh} from "../../helpers/Utility";
 import styles from "./NetworkComponent.module.scss";
 import {deviceToNode, edgeToEdge, NetworkGraph} from "./NetworkGraph";
-import {DataSet, DataSetEdges, DataSetNodes, Edge, Network, Node} from "vis-network/standalone/umd/vis-network";
-import {Position} from "vis-network/declarations/network/Network";
-import {ACTION_ADD_EDGE_BETWEEN, ACTION_RELOAD, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EHostStateActions, HostContext, HostDispatch} from "../../context/HostContext";
-import {useCallbackNoRefresh} from "../../helpers/Utility";
-import {getStateColor} from "../../helpers/NodeHelper";
-import classNames from "classnames";
-import {useRouter} from "next/router";
-import _ from "lodash";
 
 /**
  * Component that will render the homestack chart as a network diagram
@@ -18,7 +18,7 @@ import _ from "lodash";
  */
 const NetworkComponent = ({className, hostID}: { className?: string, hostID: string }) =>
 {
-  const {state, dispatch} = useContext(HostContext);
+  const {state, dispatch} = useContext(StackContext);
   const router = useRouter();
   const nodesRef = useRef<DataSetNodes>(new DataSet());
   const edgesRef = useRef<DataSetEdges>(new DataSet());
@@ -105,7 +105,7 @@ const NetworkComponent = ({className, hostID}: { className?: string, hostID: str
     <NetworkGraph nodes={nodesRef.current} edges={edgesRef.current} onMove={pPos => _nodesMoved(pPos, dispatch)}
                   onDoubleClick={pNodeIDs => onDoubleClickRef.current(pNodeIDs)}
                   onSelectionChanged={(nodes, edges) => dispatch({
-                    type: EHostStateActions.SET_SELECTION,
+                    type: EStackStateActions.SET_SELECTION,
                     payload: {
                       devices: nodes,
                       edges,
@@ -132,7 +132,7 @@ export default NetworkComponent;
  * @param pDispatchFn Function to dispatch actions
  * @private
  */
-function _nodesMoved(pPositions: { [nodeID: string]: Position }, pDispatchFn: HostDispatch)
+function _nodesMoved(pPositions: { [nodeID: string]: Position }, pDispatchFn: StackDispatch)
 {
   Object.keys(pPositions).forEach(pNodeID => pDispatchFn(ACTION_UPDATE_DEVICE(pNodeID, {
     id: pNodeID,
@@ -151,7 +151,7 @@ function _nodesMoved(pPositions: { [nodeID: string]: Position }, pDispatchFn: Ho
  */
 function _handleCreate(pCurrentNodes: DataSetNodes, pCurrentEdges: DataSetEdges,
                        pSelectedNodeIDs: string[], pSelectedEdgeIDs: string[],
-                       pDispatchFn: HostDispatch)
+                       pDispatchFn: StackDispatch)
 {
   if (pSelectedNodeIDs.length === 2)
     pDispatchFn(ACTION_ADD_EDGE_BETWEEN(pSelectedNodeIDs[0], pSelectedNodeIDs[1]))
@@ -168,7 +168,7 @@ function _handleCreate(pCurrentNodes: DataSetNodes, pCurrentEdges: DataSetEdges,
  */
 function _handleDelete(pCurrentNodes: DataSetNodes, pCurrentEdges: DataSetEdges,
                        pSelectedNodeIDs: string[], pSelectedEdgeIDs: string[],
-                       pDispatchFn: HostDispatch)
+                       pDispatchFn: StackDispatch)
 {
   // Remove Edges
   pSelectedEdgeIDs.forEach(pEdgeID =>

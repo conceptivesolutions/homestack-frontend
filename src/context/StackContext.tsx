@@ -1,13 +1,13 @@
-import React, {createContext, Dispatch, useContext, useEffect} from "react";
-import {Action} from "../types/context";
-import {IDevice, IEdge, IMetricRecord, ISatellite} from "../types/model";
-import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
-import {v4 as uuidv4} from 'uuid';
+import {DELETE, GET, PATCH, POST, PUT} from "helpers/fetchHelper";
 import _ from "lodash";
+import React, {createContext, Dispatch, useContext, useEffect} from "react";
+import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
+import {Action} from "types/context";
+import {IDevice, IEdge, IMetricRecord, ISatellite} from "types/model";
+import {v4 as uuidv4} from 'uuid';
 import {AuthContext} from "./AuthContext";
-import {DELETE, GET, PATCH, POST, PUT} from "../helpers/fetchHelper";
 
-export interface IHostState
+export interface IStackState
 {
   id: string,
   devices?: IDevice[],
@@ -19,14 +19,14 @@ export interface IHostState
   },
 }
 
-export type HostDispatch = Dispatch<Action | Thunk<IInternalHostState, Action>>
+export type StackDispatch = Dispatch<Action | Thunk<IInternalStackState, Action>>
 
-interface IInternalHostState extends IHostState
+interface IInternalStackState extends IStackState
 {
   getAccessToken: () => Promise<string>
 }
 
-export enum EHostStateActions
+export enum EStackStateActions
 {
   SET_DEVICES,
   SET_SATELLITES,
@@ -36,13 +36,13 @@ export enum EHostStateActions
 }
 
 /**
- * Action: Create a new device within the given host
+ * Action: Create a new device within the given stack
  *
  * @param id ID of the device to be created - null creates a new uuid
  * @param onCreation function that gets executed, if the device was created
  * @constructor
  */
-export const ACTION_CREATE_DEVICE = (id?: string, onCreation?: (id: string) => void) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+export const ACTION_CREATE_DEVICE = (id?: string, onCreation?: (id: string) => void) => (dispatch: StackDispatch, getState: () => IInternalStackState) =>
 {
   const newID = id || uuidv4();
   getState().getAccessToken()
@@ -52,7 +52,7 @@ export const ACTION_CREATE_DEVICE = (id?: string, onCreation?: (id: string) => v
     })))
     .then(res => res.json())
     .then(pDevice => dispatch({
-      type: EHostStateActions.SET_DEVICES,
+      type: EStackStateActions.SET_DEVICES,
       payload: [
         ...getState().devices || [],
         pDevice,
@@ -69,7 +69,7 @@ export const ACTION_CREATE_DEVICE = (id?: string, onCreation?: (id: string) => v
  * @param onUpdate function that gets executed, if the update was executed
  * @constructor
  */
-export const ACTION_UPDATE_DEVICE = (id: string, pDevice: IDevice, onUpdate?: (id: string) => void) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+export const ACTION_UPDATE_DEVICE = (id: string, pDevice: IDevice, onUpdate?: (id: string) => void) => (dispatch: StackDispatch, getState: () => IInternalStackState) =>
 {
   getState().getAccessToken()
     .then(pToken => PATCH('/api/devices/' + id, pToken, JSON.stringify(pDevice)))
@@ -86,7 +86,7 @@ export const ACTION_UPDATE_DEVICE = (id: string, pDevice: IDevice, onUpdate?: (i
       else
         devices.push(pDevice);
       dispatch({
-        type: EHostStateActions.SET_DEVICES,
+        type: EStackStateActions.SET_DEVICES,
         payload: devices
       })
     })
@@ -100,12 +100,12 @@ export const ACTION_UPDATE_DEVICE = (id: string, pDevice: IDevice, onUpdate?: (i
  * @param onDeletion function that gets executed, if the device was removed
  * @constructor
  */
-export const ACTION_REMOVE_DEVICE = (id: string, onDeletion?: (id: string) => void) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+export const ACTION_REMOVE_DEVICE = (id: string, onDeletion?: (id: string) => void) => (dispatch: StackDispatch, getState: () => IInternalStackState) =>
 {
   getState().getAccessToken()
     .then(pToken => DELETE('/api/devices/' + id, pToken))
     .then(() => dispatch({
-      type: EHostStateActions.SET_DEVICES,
+      type: EStackStateActions.SET_DEVICES,
       payload: getState().devices?.filter(pTest => pTest.id !== id)
     }))
     .then(() => dispatch(ACTION_VALIDATE_SELECTION))
@@ -119,7 +119,7 @@ export const ACTION_REMOVE_DEVICE = (id: string, onDeletion?: (id: string) => vo
  * @param to ID of the TO-part of the edge
  * @constructor
  */
-export const ACTION_ADD_EDGE_BETWEEN = (from: string, to: string) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+export const ACTION_ADD_EDGE_BETWEEN = (from: string, to: string) => (dispatch: StackDispatch, getState: () => IInternalStackState) =>
 {
   getState().getAccessToken()
     .then(pToken => POST('/api/devices/' + from + '/edges', pToken, to))
@@ -133,7 +133,7 @@ export const ACTION_ADD_EDGE_BETWEEN = (from: string, to: string) => (dispatch: 
  * @param to ID of the TO-part of the edge
  * @constructor
  */
-export const ACTION_REMOVE_EDGE_BETWEEN = (from: string, to: string) => (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+export const ACTION_REMOVE_EDGE_BETWEEN = (from: string, to: string) => (dispatch: StackDispatch, getState: () => IInternalStackState) =>
 {
   getState().getAccessToken()
     .then(pToken => DELETE('/api/devices/' + from + '/edges/' + to, pToken))
@@ -144,7 +144,7 @@ export const ACTION_REMOVE_EDGE_BETWEEN = (from: string, to: string) => (dispatc
 /**
  * Reloads the current available devices and satellites
  */
-export const ACTION_RELOAD = (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+export const ACTION_RELOAD = (dispatch: StackDispatch, getState: () => IInternalStackState) =>
 {
   const triggeredForID = getState().id;
   getState().getAccessToken()
@@ -165,11 +165,11 @@ export const ACTION_RELOAD = (dispatch: HostDispatch, getState: () => IInternalH
       // set devices
       .then((pDevices) =>
       {
-        // Are we still using this host?
+        // Are we still using this stack?
         if (getState().id !== triggeredForID)
           return;
 
-        dispatch({type: EHostStateActions.SET_DEVICES, payload: pDevices});
+        dispatch({type: EStackStateActions.SET_DEVICES, payload: pDevices});
 
         // update selection
         dispatch(ACTION_VALIDATE_SELECTION);
@@ -182,25 +182,25 @@ export const ACTION_RELOAD = (dispatch: HostDispatch, getState: () => IInternalH
       // set satellites
       .then(pSatellites =>
       {
-        // Are we still using this host?
+        // Are we still using this stack?
         if (getState().id !== triggeredForID)
           return;
 
-        dispatch({type: EHostStateActions.SET_SATELLITES, payload: pSatellites});
+        dispatch({type: EStackStateActions.SET_SATELLITES, payload: pSatellites});
       }));
 }
 
 /**
  * Validates the selection, so it only contains valid IDs
  */
-export const ACTION_VALIDATE_SELECTION = (dispatch: HostDispatch, getState: () => IInternalHostState) =>
+export const ACTION_VALIDATE_SELECTION = (dispatch: StackDispatch, getState: () => IInternalStackState) =>
 {
   const selection = getState().selection;
   if (!selection)
     return;
 
   dispatch({
-    type: EHostStateActions.SET_SELECTION,
+    type: EStackStateActions.SET_SELECTION,
     payload: {
       devices: selection.devices?.filter(pDeviceID => _.findIndex(getState().devices, pValidDevice => pValidDevice.id === pDeviceID) > -1),
       edges: selection.edges?.filter(pEdgeID => _.findIndex(getState().devices?.flatMap(pDevice => pDevice.edges || []),
@@ -209,29 +209,29 @@ export const ACTION_VALIDATE_SELECTION = (dispatch: HostDispatch, getState: () =
   })
 }
 
-const reducer = (state: IInternalHostState, action: Action) =>
+const reducer = (state: IInternalStackState, action: Action) =>
 {
   switch (action.type)
   {
-    case EHostStateActions.SET_DEVICES:
+    case EStackStateActions.SET_DEVICES:
       return {
         ...state,
         devices: action.payload,
       }
 
-    case EHostStateActions.SET_SATELLITES:
+    case EStackStateActions.SET_SATELLITES:
       return {
         ...state,
         satellites: action.payload,
       }
 
-    case EHostStateActions.SET_AUTOREFRESH:
+    case EStackStateActions.SET_AUTOREFRESH:
       return {
         ...state,
         autoRefresh: action.payload,
       }
 
-    case EHostStateActions.SET_SELECTION:
+    case EStackStateActions.SET_SELECTION:
       return {
         ...state,
         selection: {
@@ -241,7 +241,7 @@ const reducer = (state: IInternalHostState, action: Action) =>
         },
       }
 
-    case EHostStateActions.SET_ID:
+    case EStackStateActions.SET_ID:
       return {
         ...state,
         id: action.payload,
@@ -255,9 +255,9 @@ const reducer = (state: IInternalHostState, action: Action) =>
 }
 
 // @ts-ignore just pass null to initial context, because we use a provider every time
-export const HostContext = createContext<{ state: IInternalHostState, dispatch: HostDispatch }>()
+export const StackContext = createContext<{ state: IInternalStackState, dispatch: StackDispatch }>()
 
-export function HostProvider({id, children}: { id: string, children?: React.ReactNode })
+export function StackProvider({id, children}: { id: string, children?: React.ReactNode })
 {
   const {state: {getAccessToken}} = useContext(AuthContext)
   const [state, dispatch] = useThunkReducer(reducer, {
@@ -269,7 +269,7 @@ export function HostProvider({id, children}: { id: string, children?: React.Reac
   // initial and on ID change
   useEffect(() =>
   {
-    dispatch({type: EHostStateActions.SET_ID, payload: id})
+    dispatch({type: EStackStateActions.SET_ID, payload: id})
     dispatch(ACTION_RELOAD);
   }, [dispatch, id])
 
@@ -284,7 +284,7 @@ export function HostProvider({id, children}: { id: string, children?: React.Reac
     return () => clearInterval(interval);
   }, [state.id, state.autoRefresh, dispatch])
 
-  return <HostContext.Provider value={{state, dispatch}}>
+  return <StackContext.Provider value={{state, dispatch}}>
     {children}
-  </HostContext.Provider>
+  </StackContext.Provider>
 }

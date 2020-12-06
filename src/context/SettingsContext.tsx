@@ -1,6 +1,6 @@
 import React, {createContext, Dispatch, useContext} from "react";
-import {Action} from "../types/context";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
+import {Action} from "types/context";
 import {AuthContext} from "./AuthContext";
 
 export interface ISettingsState

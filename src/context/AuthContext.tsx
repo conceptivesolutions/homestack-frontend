@@ -1,13 +1,13 @@
-import React, {createContext, Dispatch, useEffect} from "react";
-import {Action} from "../types/context";
-import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
+import {GET} from "helpers/fetchHelper";
+import {isJWTTokenValid} from "helpers/jwtHelper";
 import _ from "lodash";
-import LoginWidget from "../widgets/login/LoginWidget";
-import {useRouter} from "next/router";
-import {isJWTTokenValid} from "../helpers/jwtHelper";
-import LoadingIndicator from "../components/loader/LoadingIndicator";
 import md5 from "md5";
-import {GET} from "../helpers/fetchHelper";
+import {useRouter} from "next/router";
+import React, {createContext, Dispatch, useEffect} from "react";
+import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
+import {Action} from "types/context";
+import LoadingIndicator from "../components/loader/LoadingIndicator";
+import LoginWidget from "../widgets/login/LoginWidget";
 
 export interface IAuthState
 {

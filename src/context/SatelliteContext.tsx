@@ -1,9 +1,9 @@
+import {DELETE, GET, PUT} from "helpers/fetchHelper";
 import React, {createContext, Dispatch, useContext, useEffect} from "react";
-import {Action} from "../types/context";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
+import {Action} from "types/context";
+import {ISatelliteLease} from "types/model";
 import {AuthContext} from "./AuthContext";
-import {ISatelliteLease} from "../types/model";
-import {DELETE, GET, PUT} from "../helpers/fetchHelper";
 
 export interface ISatelliteState
 {
