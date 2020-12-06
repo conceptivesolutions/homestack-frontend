@@ -5,17 +5,17 @@ import NavBarItem, {INavBarItem} from "../navbar/NavBarItem";
 import ProfileItem from "../navbar/items/ProfileItem";
 import {GlobalContext} from "../../context/GlobalContext";
 import classNames from "classnames";
-import ContextSwitcherEntry from "../contextswitcher/ContextSwitcherEntry";
+import StackSwitcherEntry from "../stackSwitcher/StackSwitcherEntry";
 import _ from "lodash";
 import randomColor from "randomcolor";
-import ContextSwitcher from "../contextswitcher/ContextSwitcher";
+import StackSwitcher from "../stackSwitcher/StackSwitcher";
 import {IHost} from "../../types/model";
 import PopupItem from "../navbar/PopupItem";
 import {useRouter} from "next/router";
 import {AuthContext} from "../../context/AuthContext";
 import md5 from "md5";
 import {mdiAccount, mdiBellOutline, mdiCogOutline, mdiHomeOutline, mdiLaptop, mdiLogout} from "@mdi/js";
-import ContextSwitcherEntryHeader from "../contextswitcher/ContextSwitcherEntryHeader";
+import StackSwitcherEntryHeader from "../stackSwitcher/StackSwitcherEntryHeader";
 
 export interface IPageContent
 {
@@ -33,13 +33,13 @@ const PageContainer = (props: IPageContent) =>
 
   return (
     <div className={classNames(styles.container, {[styles.container__withNavigator]: !!props.navigator})}>
-      <ContextSwitcher className={styles.switcher}>
-        <ContextSwitcherEntryHeader alignment={"top"} title={"Main"}/>
-        <ContextSwitcherEntry alignment={"top"} title={"Dashboard"} icon={mdiHomeOutline} color={"#14bae4"} active={router.pathname === "/"}
-                              onClick={() => router.push("/")}/>
-        <ContextSwitcherEntryHeader alignment={"top"} title={"Hosts"}/>
+      <StackSwitcher className={styles.switcher}>
+        <StackSwitcherEntryHeader alignment={"top"} title={"Main"}/>
+        <StackSwitcherEntry alignment={"top"} title={"Dashboard"} icon={mdiHomeOutline} color={"#14bae4"} active={router.pathname === "/"}
+                            onClick={() => router.push("/")}/>
+        <StackSwitcherEntryHeader alignment={"top"} title={"Hosts"}/>
         {_createHostSwitcherEntries(hosts, router.query.hostID as string || "", hostID => router.push("/hosts/" + hostID))}
-      </ContextSwitcher>
+      </StackSwitcher>
       <NavBar className={styles.navbar}>
         {props.navbarItems?.map(pItem => <NavBarItem key={md5(JSON.stringify(pItem))} {...pItem}/>)}
         <NavBarItem icon={mdiCogOutline} alignment={"right"} active={router.pathname.startsWith("/settings")} onClick={() => router.push("/settings")}/>
@@ -74,12 +74,12 @@ export default PageContainer;
 function _createHostSwitcherEntries(hosts: IHost[] | undefined, hostID: string, onClick: (hostID: string) => void)
 {
   return _.sortBy(hosts, ['displayName', 'id'])
-    .map(pHost => <ContextSwitcherEntry key={pHost.id} alignment={"top"} icon={mdiLaptop}
-                                        title={pHost.displayName || ""}
-                                        active={hostID === pHost.id}
-                                        color={randomColor({
-                                          seed: pHost.id,
-                                          luminosity: "dark"
-                                        })}
-                                        onClick={() => onClick(pHost.id)}/>)
+    .map(pHost => <StackSwitcherEntry key={pHost.id} alignment={"top"} icon={mdiLaptop}
+                                      title={pHost.displayName || ""}
+                                      active={hostID === pHost.id}
+                                      color={randomColor({
+                                        seed: pHost.id,
+                                        luminosity: "dark"
+                                      })}
+                                      onClick={() => onClick(pHost.id)}/>)
 }

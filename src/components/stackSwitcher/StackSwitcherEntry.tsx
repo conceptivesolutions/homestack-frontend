@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./ContextSwitcher.module.scss"
+import styles from "./StackSwitcher.module.scss"
 import classNames from "classnames";
 import Icon from "@mdi/react";
 
@@ -13,7 +13,7 @@ export interface IContextSwitcherEntry
   onClick?: () => void,
 }
 
-const ContextSwitcherEntry = (props: IContextSwitcherEntry) => (
+const StackSwitcherEntry = (props: IContextSwitcherEntry) => (
   <div className={styles.entry} onClick={props.onClick}>
     <div className={styles.icon}>
       <Icon path={props.icon} color={props.color} size={0.8}/>
@@ -22,4 +22,4 @@ const ContextSwitcherEntry = (props: IContextSwitcherEntry) => (
   </div>
 );
 
-export default ContextSwitcherEntry;
+export default StackSwitcherEntry;
