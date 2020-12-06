@@ -9,7 +9,7 @@ import {EMetricRecordState, IMetricRecord} from "types/model";
  */
 export function getStateColor(pRecords?: IMetricRecord[])
 {
-  if (pRecords === undefined)
+  if (pRecords === undefined || pRecords.length === 0)
     return "#737373";
 
   let failed = [];
