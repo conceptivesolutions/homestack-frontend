@@ -1,8 +1,8 @@
+import classNames from "classnames";
+import {POST} from "helpers/fetchHelper";
+import Image from "next/image";
 import React, {createRef} from "react";
 import styles from "./LoginWidget.module.scss";
-import classNames from "classnames";
-import Image from "next/image";
-import {POST} from "../../helpers/fetchHelper";
 
 const LoginWidget = ({onTokenReceived}: { onTokenReceived: (token: string) => void }) =>
 {

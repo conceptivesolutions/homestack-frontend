@@ -1,9 +1,9 @@
+import {getMetricRecordByType} from "helpers/deviceHelper";
+import {iconToPath2D} from "helpers/iconHelper";
 import React, {useEffect, useRef} from 'react';
-import styles from "./NetworkGraph.module.scss"
+import {EMetricTypes, IDevice, IEdge} from "types/model";
 import {DataSetEdges, DataSetNodes, Edge, Network, Node, Position} from "vis-network";
-import {EMetricTypes, IDevice, IEdge} from "../../types/model";
-import {getMetricRecordByType} from "../../helpers/deviceHelper";
-import {iconToPath2D} from "../../helpers/iconHelper";
+import styles from "./NetworkGraph.module.scss"
 
 /**
  * Converts a homestack device to the correct vis.js node

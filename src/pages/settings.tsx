@@ -1,7 +1,7 @@
 import {SettingsProvider} from "context/SettingsContext";
 import React from "react";
 import PageContainer from "widgets/page/PageContainer";
-import HostsTable from "widgets/settings/HostsTable";
+import StacksTable from "widgets/settings/StacksTable";
 import styles from "./settings.module.scss"
 
 /**
@@ -13,7 +13,7 @@ const Settings = () =>
     <PageContainer>
       <div className={styles.container}>
         <div>Stacks</div>
-        <HostsTable/>
+        <StacksTable/>
       </div>
     </PageContainer>
   </SettingsProvider>

@@ -1,12 +1,12 @@
 import classNames from "classnames";
 import {ACTION_ADD_EDGE_BETWEEN, ACTION_RELOAD, ACTION_REMOVE_EDGE_BETWEEN, ACTION_UPDATE_DEVICE, EStackStateActions, StackContext, StackDispatch} from "context/StackContext";
+import {getStateColor} from "helpers/NodeHelper";
+import {useCallbackNoRefresh} from "helpers/Utility";
 import _ from "lodash";
 import {useRouter} from "next/router";
 import React, {useContext, useEffect, useMemo, useRef} from 'react';
 import {Position} from "vis-network/declarations/network/Network";
 import {DataSet, DataSetEdges, DataSetNodes, Edge, Network, Node} from "vis-network/standalone/umd/vis-network";
-import {getStateColor} from "../../helpers/NodeHelper";
-import {useCallbackNoRefresh} from "../../helpers/Utility";
 import styles from "./NetworkComponent.module.scss";
 import {deviceToNode, edgeToEdge, NetworkGraph} from "./NetworkGraph";
 
@@ -14,9 +14,9 @@ import {deviceToNode, edgeToEdge, NetworkGraph} from "./NetworkGraph";
  * Component that will render the homestack chart as a network diagram
  *
  * @param className CSS classes
- * @param hostID ID of the host
+ * @param stackID ID of the stack
  */
-const NetworkComponent = ({className, hostID}: { className?: string, hostID: string }) =>
+const NetworkComponent = ({className, stackID}: { className?: string, stackID: string }) =>
 {
   const {state, dispatch} = useContext(StackContext);
   const router = useRouter();
@@ -61,7 +61,7 @@ const NetworkComponent = ({className, hostID}: { className?: string, hostID: str
       .filter((pEdge: Edge) => usedEdgeIDs.indexOf(pEdge.id) === -1)
       .toItemArray()
       .forEach(((pEdge: Edge) => edgesRef.current.remove(pEdge.id as string)));
-  }, [state.devices, dispatch, hostID]);
+  }, [state.devices, dispatch, stackID]);
 
   // Keyboard-Events
   useEffect(() =>

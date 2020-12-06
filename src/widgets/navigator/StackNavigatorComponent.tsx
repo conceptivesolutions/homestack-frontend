@@ -1,22 +1,22 @@
 import {mdiChartBar, mdiDevices, mdiMonitor, mdiPencilOutline, mdiPlusCircle, mdiSatellite, mdiSatelliteUplink} from "@mdi/js";
 import classNames from "classnames";
+import ActionList from "components/actionlist/ActionList";
+import ActionListItem from "components/actionlist/ActionListItem";
+import NavigationTree, {ITreeNode} from "components/tree/NavigationTree";
 import {ACTION_CREATE_DEVICE, EStackStateActions, StackContext, StackDispatch} from "context/StackContext";
+import {iconToSVG} from "helpers/iconHelper";
+import {getStateColor} from "helpers/NodeHelper";
 import _ from "lodash";
 import {useRouter} from "next/router";
 import React, {useContext, useEffect} from "react";
 import {useTreeState} from "react-hyper-tree";
 import {v4 as uuidv4} from 'uuid';
-import ActionList from "../../components/actionlist/ActionList";
-import ActionListItem from "../../components/actionlist/ActionListItem";
-import NavigationTree, {ITreeNode} from "../../components/tree/NavigationTree";
-import {iconToSVG} from "../../helpers/iconHelper";
-import {getStateColor} from "../../helpers/NodeHelper";
-import styles from "./HostNavigatorComponent.module.scss";
+import styles from "widgets/navigator/StackNavigatorComponent.module.scss";
 
 /**
- * Simple Navigator for a single host
+ * Simple Navigator for a single stack
  */
-const HostNavigatorComponent = () =>
+const StackNavigatorComponent = () =>
 {
   const {state, dispatch} = useContext(StackContext)
   const router = useRouter();
@@ -81,7 +81,7 @@ const HostNavigatorComponent = () =>
   );
 };
 
-export default HostNavigatorComponent;
+export default StackNavigatorComponent;
 
 function _onSelect(nodeID: string, selected: boolean, dispatch: StackDispatch)
 {

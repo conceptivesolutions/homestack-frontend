@@ -37,8 +37,8 @@ const PageContainer = (props: IPageContent) =>
         <StackSwitcherEntryHeader alignment={"top"} title={"Main"}/>
         <StackSwitcherEntry alignment={"top"} title={"Dashboard"} icon={mdiHomeOutline} color={"#14bae4"} active={router.pathname === "/"}
                             onClick={() => router.push("/")}/>
-        <StackSwitcherEntryHeader alignment={"top"} title={"Hosts"}/>
-        {_createHostSwitcherEntries(stacks, router.query.hostID as string || "", hostID => router.push("/hosts/" + hostID))}
+        <StackSwitcherEntryHeader alignment={"top"} title={"Stacks"}/>
+        {_createStackSwitcherEntries(stacks, router.query.stackID as string || "", pStackID => router.push("/stacks/" + pStackID))}
       </StackSwitcher>
       <NavBar className={styles.navbar}>
         {props.navbarItems?.map(pItem => <NavBarItem key={md5(JSON.stringify(pItem))} {...pItem}/>)}
@@ -65,21 +65,21 @@ const PageContainer = (props: IPageContent) =>
 export default PageContainer;
 
 /**
- * Creates the host entries for the switcher
+ * Creates the stacks entries for the switcher
  *
- * @param hosts current hosts
- * @param hostID ID of the currently selected host
+ * @param stacks current stacks
+ * @param stackID ID of the currently selected stack
  * @param onClick function that gets executed on click
  */
-function _createHostSwitcherEntries(hosts: IStack[] | undefined, hostID: string, onClick: (hostID: string) => void)
+function _createStackSwitcherEntries(stacks: IStack[] | undefined, stackID: string, onClick: (stackID: string) => void)
 {
-  return _.sortBy(hosts, ['displayName', 'id'])
-    .map(pHost => <StackSwitcherEntry key={pHost.id} alignment={"top"} icon={mdiLaptop}
-                                      title={pHost.displayName || ""}
-                                      active={hostID === pHost.id}
-                                      color={randomColor({
-                                        seed: pHost.id,
-                                        luminosity: "dark"
-                                      })}
-                                      onClick={() => onClick(pHost.id)}/>)
+  return _.sortBy(stacks, ['displayName', 'id'])
+    .map(pStack => <StackSwitcherEntry key={pStack.id} alignment={"top"} icon={mdiLaptop}
+                                       title={pStack.displayName || ""}
+                                       active={stackID === pStack.id}
+                                       color={randomColor({
+                                         seed: pStack.id,
+                                         luminosity: "dark"
+                                       })}
+                                       onClick={() => onClick(pStack.id)}/>)
 }
