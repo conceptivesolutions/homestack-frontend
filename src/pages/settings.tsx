@@ -1,8 +1,8 @@
 import React from "react";
-import styles from "./settings.module.scss"
+import PageContainer from "widgets/page/PageContainer";
 import {SettingsProvider} from "../context/SettingsContext";
 import HostsTable from "../widgets/settings/HostsTable";
-import PageContainer from "../components/page/PageContainer";
+import styles from "./settings.module.scss"
 
 /**
  * Page: Settings

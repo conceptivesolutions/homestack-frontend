@@ -1,10 +1,10 @@
-import React, {useContext} from 'react';
-import {GlobalContext} from "../context/GlobalContext";
-import {useRouter} from "next/router";
-import _ from "lodash";
-import {ACTION_RELOAD, HostContext, HostProvider} from "../context/HostContext";
 import {mdiRefresh} from "@mdi/js";
-import PageContainer from "../components/page/PageContainer";
+import _ from "lodash";
+import {useRouter} from "next/router";
+import React, {useContext} from 'react';
+import PageContainer from "widgets/page/PageContainer";
+import {GlobalContext} from "../context/GlobalContext";
+import {ACTION_RELOAD, HostContext, HostProvider} from "../context/HostContext";
 
 interface IHostLayout
 {

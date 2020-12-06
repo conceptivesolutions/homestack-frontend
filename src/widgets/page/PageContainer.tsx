@@ -1,21 +1,21 @@
-import React, {useContext} from "react";
-import styles from "./PageContainer.module.scss";
-import NavBar from "../navbar/NavBar";
-import NavBarItem, {INavBarItem} from "../navbar/NavBarItem";
-import ProfileItem from "../navbar/items/ProfileItem";
-import {GlobalContext} from "../../context/GlobalContext";
-import classNames from "classnames";
-import StackSwitcherEntry from "../stackSwitcher/StackSwitcherEntry";
-import _ from "lodash";
-import randomColor from "randomcolor";
-import StackSwitcher from "../stackSwitcher/StackSwitcher";
-import {IHost} from "../../types/model";
-import PopupItem from "../navbar/PopupItem";
-import {useRouter} from "next/router";
-import {AuthContext} from "../../context/AuthContext";
-import md5 from "md5";
 import {mdiAccount, mdiBellOutline, mdiCogOutline, mdiHomeOutline, mdiLaptop, mdiLogout} from "@mdi/js";
-import StackSwitcherEntryHeader from "../stackSwitcher/StackSwitcherEntryHeader";
+import classNames from "classnames";
+import ProfileItem from "components/navbar/items/ProfileItem";
+import NavBar from "components/navbar/NavBar";
+import NavBarItem, {INavBarItem} from "components/navbar/NavBarItem";
+import PopupItem from "components/navbar/PopupItem";
+import StackSwitcher from "components/stackSwitcher/StackSwitcher";
+import StackSwitcherEntry from "components/stackSwitcher/StackSwitcherEntry";
+import StackSwitcherEntryHeader from "components/stackSwitcher/StackSwitcherEntryHeader";
+import {AuthContext} from "context/AuthContext";
+import {GlobalContext} from "context/GlobalContext";
+import _ from "lodash";
+import md5 from "md5";
+import {useRouter} from "next/router";
+import randomColor from "randomcolor";
+import React, {useContext} from "react";
+import {IHost} from "types/model";
+import styles from "./PageContainer.module.scss";
 
 export interface IPageContent
 {

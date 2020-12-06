@@ -1,5 +1,5 @@
 import React from "react";
-import PageContainer from "../components/page/PageContainer";
+import PageContainer from "widgets/page/PageContainer";
 
 /**
  * Page: Help
