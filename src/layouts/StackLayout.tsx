@@ -1,26 +1,26 @@
 import {mdiRefresh} from "@mdi/js";
+import {GlobalContext} from "context/GlobalContext";
 import {ACTION_RELOAD, StackContext, StackProvider} from "context/StackContext";
 import _ from "lodash";
 import {useRouter} from "next/router";
 import React, {useContext} from 'react';
 import PageContainer from "widgets/page/PageContainer";
-import {GlobalContext} from "../context/GlobalContext";
 
-interface IHostLayout
+interface IStackLayout
 {
   children?: React.ReactNode,
 }
 
-const HostLayout = (props: IHostLayout) =>
+const StackLayout = (props: IStackLayout) =>
 {
   const {state: {stacks}} = useContext(GlobalContext)
-  const {query: {hostID}} = useRouter();
+  const {query: {stackID}} = useRouter();
 
-  if (!hostID || _.isEmpty(stacks))
+  if (!stackID || _.isEmpty(stacks))
     return <></>;
 
-  const currentHost = _.find(stacks, pHost => pHost.id === hostID);
-  if (!currentHost)
+  const currentStack = _.find(stacks, pStack => pStack.id === stackID);
+  if (!currentStack)
     return <></>;
 
   const InnerContainer = ({children}: { children: React.ReactNode }) =>
@@ -41,11 +41,11 @@ const HostLayout = (props: IHostLayout) =>
     </PageContainer>;
   }
 
-  return <StackProvider id={currentHost.id}>
+  return <StackProvider id={currentStack.id}>
     <InnerContainer>
       {props.children}
     </InnerContainer>
   </StackProvider>
 };
 
-export default HostLayout;
+export default StackLayout;

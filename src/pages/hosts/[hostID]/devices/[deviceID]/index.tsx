@@ -1,5 +1,6 @@
 import {mdiArrowLeft} from "@mdi/js";
 import {ACTION_REMOVE_DEVICE, ACTION_UPDATE_DEVICE, StackContext} from "context/StackContext";
+import StackLayout from "layouts/StackLayout";
 import _ from "lodash";
 import {useRouter} from "next/router";
 import React, {useContext, useEffect, useState} from "react";
@@ -11,7 +12,6 @@ import {getMetricRecordByType} from "../../../../../helpers/deviceHelper";
 import {GET, PUT} from "../../../../../helpers/fetchHelper";
 import {getIcons} from "../../../../../helpers/iconHelper";
 import CardLayout, {CardLayoutFooter, CardLayoutHeader} from "../../../../../layouts/CardLayout";
-import HostLayout from "../../../../../layouts/HostLayout";
 import {EMetricTypes, IDevice, IMetric} from "../../../../../types/model";
 import styles from "./index.module.scss";
 
@@ -112,7 +112,7 @@ function _createMetricRow(name: string, type: EMetricTypes, changedMetrics: { [t
   </tr>
 }
 
-DevicePage.Layout = HostLayout;
+DevicePage.Layout = StackLayout;
 DevicePage.Items = [{
   alignment: "left",
   children: "Back to Host",

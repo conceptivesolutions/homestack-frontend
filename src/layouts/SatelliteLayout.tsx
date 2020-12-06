@@ -1,7 +1,7 @@
-import React from 'react';
-import HostLayout from "./HostLayout";
-import {SatelliteProvider} from "../context/SatelliteContext";
+import StackLayout from "layouts/StackLayout";
 import {useRouter} from "next/router";
+import React from 'react';
+import {SatelliteProvider} from "../context/SatelliteContext";
 
 interface ISatelliteLayout
 {
@@ -17,9 +17,9 @@ const SatelliteLayout = (props: ISatelliteLayout) =>
 
   return (
     <SatelliteProvider satelliteID={satelliteID as string}>
-      <HostLayout>
+      <StackLayout>
         {props.children}
-      </HostLayout>
+      </StackLayout>
     </SatelliteProvider>
   );
 };

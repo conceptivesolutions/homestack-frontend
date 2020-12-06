@@ -1,6 +1,6 @@
+import classNames from "classnames";
 import React from 'react';
 import styles from "./CardLayout.module.scss";
-import classNames from "classnames";
 
 interface ICardLayout
 {
