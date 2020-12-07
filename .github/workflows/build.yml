@@ -1,11 +1,9 @@
 name: Build and Push
 
 on:
-  workflow_dispatch:
-    on:
   push:
     tags:
-      - '*'
+      - 'v*.*.*'
 
 jobs:
   build:
@@ -14,6 +12,10 @@ jobs:
       # Checkout Sources
       - name: Checkout Sources
         uses: actions/checkout@v2
+
+      # Set Version
+      - name: Set Version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       # Login to Nexus
       - uses: azure/docker-login@v1
@@ -24,8 +26,10 @@ jobs:
 
       # Build Docker Image
       - name: Build
-        run: docker build -t images.conceptive.io/homestack.frontend:latest .
+        run: docker build -t images.conceptive.io/homestack.frontend:latest -t images.conceptive.io/homestack.frontend:${{ env.RELEASE_VERSION }} .
 
       # Push Docker Image
       - name: Push
-        run: docker push images.conceptive.io/homestack.frontend:latest
+        run: |
+          docker push images.conceptive.io/homestack.frontend:latest
+          docker push images.conceptive.io/homestack.frontend:${{ env.RELEASE_VERSION }}
