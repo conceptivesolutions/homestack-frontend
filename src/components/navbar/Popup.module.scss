@@ -30,11 +30,8 @@
   padding: $title-padding $content-padding;
   display: flex;
   flex-direction: row;
-
-  &:hover {
-    border-radius: $border-radius;
-    background: hoverColor(white);
-  }
+  background: white;
+  @include hover_color;
 }
 
 .popupitem__icon {

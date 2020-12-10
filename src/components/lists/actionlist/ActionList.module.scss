@@ -12,9 +12,7 @@
   display: flex;
   align-items: center;
 
-  &:hover {
-    color: hoverColor($primary-color);
-  }
+  @include hover_color;
 }
 
 .itemDisabled {

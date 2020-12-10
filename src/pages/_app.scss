@@ -37,9 +37,7 @@ button {
   border-radius: $border-radius;
   cursor: pointer;
 
-  &:hover {
-    background-color: hoverColor(white);
-  }
+  @include hover_color;
 
   &:active {
     background-color: darken(white, 9%);

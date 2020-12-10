@@ -1,13 +1,12 @@
 @import "../borders";
 @import "../colors";
+@import "../../mixins/filters";
 
 button.primary {
   background-color: $primary-color;
   color: white;
 
-  &:hover {
-    background-color: hoverColor($primary-color);
-  }
+  @include hover_color;
 
   &:active {
     background-color: darken($primary-color, 9%);
@@ -18,9 +17,7 @@ button.destructive {
   background-color: $red;
   color: white;
 
-  &:hover {
-    background-color: hoverColor($red);
-  }
+  @include hover_color;
 
   &:active {
     background-color: darken($red, 9%);

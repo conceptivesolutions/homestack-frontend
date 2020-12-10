@@ -9,9 +9,10 @@ $selection-border-width: 3px;
   align-items: center;
   border-left: $selection-border-width solid transparent;
 
+  @include hover_color;
+
   &:hover {
-    filter: brightness(85%);
-    background: rgba(white, 0.15);
+    background: white;
   }
 }
 
