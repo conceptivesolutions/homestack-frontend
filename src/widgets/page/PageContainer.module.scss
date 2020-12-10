@@ -11,7 +11,7 @@
   grid-template-areas: "edge navbar navbar" "switcher content content";
   grid-gap: 0 0;
   grid-template-rows: min-content 1fr;
-  grid-template-columns: min-content 18% 1fr;
+  grid-template-columns: min-content 15% 1fr;
 }
 
 .container__withNavigator {
