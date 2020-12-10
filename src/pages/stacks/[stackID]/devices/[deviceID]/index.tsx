@@ -1,12 +1,12 @@
 import {mdiArrowLeft} from "@mdi/js";
 import SwitchButton from "components/button/SwitchButton";
+import CardLayout, {CardLayoutFooter, CardLayoutHeader} from "components/layouts/CardLayout";
 import {INavBarItem} from "components/navbar/NavBarItem";
 import {AuthContext} from "context/AuthContext";
 import {ACTION_PATCH_DEVICE, ACTION_REMOVE_DEVICE, StackContext} from "context/StackContext";
 import {getMetricRecordByType} from "helpers/deviceHelper";
 import {GET, PUT} from "helpers/fetchHelper";
 import {getIcons} from "helpers/iconHelper";
-import CardLayout, {CardLayoutFooter, CardLayoutHeader} from "layouts/CardLayout";
 import StackLayout from "layouts/StackLayout";
 import _ from "lodash";
 import {useRouter} from "next/router";

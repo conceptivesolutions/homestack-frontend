@@ -1,9 +1,9 @@
 import {mdiArrowLeft, mdiTrashCanOutline} from "@mdi/js";
 import Icon from "@mdi/react";
+import CardLayout, {CardLayoutFooter, CardLayoutHeader} from "components/layouts/CardLayout";
 import CardTableLayout from "components/layouts/CardTableLayout";
 import {INavBarItem} from "components/navbar/NavBarItem";
 import {ACTION_GENERATE_LEASE, ACTION_REVOKE_LEASE, SatelliteContext} from "context/SatelliteContext";
-import CardLayout, {CardLayoutFooter, CardLayoutHeader} from "layouts/CardLayout";
 import SatelliteLayout from "layouts/SatelliteLayout";
 import {useRouter} from "next/router";
 import React, {useContext} from "react";
