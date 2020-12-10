@@ -12,7 +12,6 @@ import {GlobalContext} from "context/GlobalContext";
 import _ from "lodash";
 import md5 from "md5";
 import {useRouter} from "next/router";
-import randomColor from "randomcolor";
 import React, {useContext} from "react";
 import {IStack} from "types/model";
 import styles from "./PageContainer.module.scss";
@@ -35,10 +34,10 @@ const PageContainer = (props: IPageContent) =>
     <div className={classNames(styles.container, {[styles.container__withNavigator]: !!props.navigator})}>
       <StackSwitcher className={styles.switcher}>
         <StackSwitcherEntryHeader alignment={"top"} title={"Main"}/>
-        <StackSwitcherEntry alignment={"top"} title={"Dashboard"} icon={mdiHomeOutline} color={"#14bae4"} active={router.pathname === "/"}
-                            onClick={() => router.push("/")}/>
+        <StackSwitcherEntry alignment={"top"} title={"Dashboard"} icon={mdiHomeOutline} color={"#ab6393"} active={router.pathname === "/"} url={"/"}/>
+        <StackSwitcherEntry alignment={"top"} title={"Notifications"} icon={mdiBellOutline} color={"#ecbe7a"}/>
         <StackSwitcherEntryHeader alignment={"top"} title={"Stacks"}/>
-        {_createStackSwitcherEntries(stacks, router.query.stackID as string || "", pStackID => router.push("/stacks/" + pStackID))}
+        {_createStackSwitcherEntries(stacks, router.query.stackID as string || "")}
       </StackSwitcher>
       <NavBar className={styles.navbar}>
         {props.navbarItems?.map(pItem => <NavBarItem key={md5(JSON.stringify(pItem))} {...pItem}/>)}
@@ -69,17 +68,12 @@ export default PageContainer;
  *
  * @param stacks current stacks
  * @param stackID ID of the currently selected stack
- * @param onClick function that gets executed on click
  */
-function _createStackSwitcherEntries(stacks: IStack[] | undefined, stackID: string, onClick: (stackID: string) => void)
+function _createStackSwitcherEntries(stacks: IStack[] | undefined, stackID: string)
 {
   return _.sortBy(stacks, ['displayName', 'id'])
     .map(pStack => <StackSwitcherEntry key={pStack.id} alignment={"top"} icon={mdiLaptop}
                                        title={pStack.displayName || ""}
                                        active={stackID === pStack.id}
-                                       color={randomColor({
-                                         seed: pStack.id,
-                                         luminosity: "dark"
-                                       })}
-                                       onClick={() => onClick(pStack.id)}/>)
+                                       url={"/stacks/" + pStack.id}/>)
 }

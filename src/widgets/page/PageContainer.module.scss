@@ -37,7 +37,8 @@
   background-repeat: no-repeat;
   background-size: contain;
   background-origin: content-box;
-  background-color: $gray-background;
+  background-color: white;
+  border-right: 2px solid $gray-background;
   padding: $title-padding;
   cursor: pointer;
 }

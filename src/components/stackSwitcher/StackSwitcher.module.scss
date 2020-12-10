@@ -1,8 +1,11 @@
 @import "src/css/material";
 
+$selection-border-width: 4px;
+
 .container {
   width: 216px;
-  background-color: $gray-background;
+  background-color: white;
+  border-right: 2px solid $gray-background;
   display: flex;
   flex-direction: column;
   color: $gray-font-color
@@ -22,7 +25,7 @@
 
 .header {
   color: $gray-font-color-disabled;
-  padding: 16px 8px 0;
+  padding: 12px 8px 5px;
   display: flex;
   align-items: center;
   cursor: default;
@@ -49,10 +52,16 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border-left: $selection-border-width solid transparent;
 
   &:hover {
     filter: brightness(85%)
   }
+}
+
+.entryActive {
+  border-left: $selection-border-width solid $primary-color;
+  background-color: rgba($primary-color, 0.05);
 }
 
 .icon {
@@ -66,11 +75,7 @@
 
 .text {
   flex-grow: 1;
-  margin: -2px 8px 0;
+  margin: -2px 6px 0;
   padding-top: 2px;
   font-weight: normal;
-}
-
-.textActive {
-  color: $primary-color;
 }

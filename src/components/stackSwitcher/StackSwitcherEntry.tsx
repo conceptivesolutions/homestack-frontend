@@ -10,16 +10,16 @@ export interface IContextSwitcherEntry
   title: string,
   alignment: 'top' | 'bottom',
   active?: boolean,
-  onClick?: () => void,
+  url?: string,
 }
 
 const StackSwitcherEntry = (props: IContextSwitcherEntry) => (
-  <div className={styles.entry} onClick={props.onClick}>
+  <a href={props.url || ""} className={classNames(styles.entry, {[styles.entryActive]: props.active})}>
     <div className={styles.icon}>
-      <Icon path={props.icon} color={props.color} size={0.8}/>
+      <Icon path={props.icon} color={props.color} size={1}/>
     </div>
-    <span className={classNames(styles.text, {[styles.textActive]: props.active})}>{props.title}</span>
-  </div>
+    <span className={classNames(styles.text)}>{props.title}</span>
+  </a>
 );
 
 export default StackSwitcherEntry;
