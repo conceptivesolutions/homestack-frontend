@@ -1,82 +1,32 @@
-import {mdiChartBar, mdiDevices, mdiMonitor, mdiPlusCircle, mdiPlusCircleOutline, mdiSatellite, mdiSatelliteUplink} from "@mdi/js";
+import {mdiMonitor, mdiSatellite} from "@mdi/js";
 import classNames from "classnames";
-import ActionList from "components/actionlist/ActionList";
-import ActionListItem from "components/actionlist/ActionListItem";
-import NavigationTree, {ITreeNode} from "components/tree/NavigationTree";
-import {ACTION_CREATE_DEVICE, ACTION_CREATE_SATELLITE, StackContext} from "context/StackContext";
+import TitledList from "components/lists/titledlist/TitledList";
+import TitledListEntry from "components/lists/titledlist/TitledListEntry";
+import {StackContext} from "context/StackContext";
 import {iconToSVG} from "helpers/iconHelper";
 import {getStateColor} from "helpers/NodeHelper";
-import _ from "lodash";
 import {useRouter} from "next/router";
-import React, {useContext, useEffect} from "react";
-import {useTreeState} from "react-hyper-tree";
-import {v4 as uuidv4} from 'uuid';
-import styles from "widgets/navigator/StackNavigatorComponent.module.scss";
+import React, {useContext} from "react";
+import styles from "./StackNavigatorComponent.module.scss";
 
 /**
  * Simple Navigator for a single stack
  */
 const StackNavigatorComponent = () =>
 {
-  const {state, dispatch} = useContext(StackContext)
+  const {state} = useContext(StackContext)
   const router = useRouter();
-  const root: ITreeNode[] = [{
-    id: "satellites",
-    name: "Satellites",
-    icon: mdiSatellite,
-    hoverIcon: mdiPlusCircleOutline,
-    hoverIconClick: () => dispatch(ACTION_CREATE_SATELLITE(undefined, (pID) => router.push(router.asPath + "/satellites/" + pID))),
-    children: _.sortBy(state.satellites || [], ['id']).map(pSatellite => ({
-      id: pSatellite.id,
-      name: pSatellite.id,
-      icon: mdiSatelliteUplink,
-      linkTo: router.asPath + "/satellites/" + pSatellite.id,
-    }))
-  }, {
-    id: "root",
-    name: "Devices",
-    icon: mdiDevices,
-    hoverIcon: mdiPlusCircleOutline,
-    hoverIconClick: () => dispatch(ACTION_CREATE_DEVICE(undefined, (pID) => router.push(router.asPath + "/devices/" + pID))),
-    children: _.sortBy(state.devices || [], ['address', 'id']).map(pDevice => ({
-      id: pDevice.id,
-      name: pDevice.address || "unknown",
-      icon: pDevice.icon && iconToSVG(pDevice.icon) || mdiMonitor,
-      iconColor: getStateColor(pDevice.metricRecords),
-      linkTo: router.asPath + "/devices/" + pDevice.id,
-      children: (pDevice.metricRecords || []).map(pRecord => ({
-        id: pDevice.id + pRecord.type,
-        name: pRecord.type + " => " + pRecord.state,
-        icon: mdiChartBar,
-        iconColor: getStateColor([pRecord]),
-      }))
-    }))
-  }];
-
-  const {required, instance, handlers} = useTreeState({
-    id: "deviceTree",
-    multipleSelect: true,
-    data: root,
-  });
-
-  // Always open root
-  useEffect(() =>
-  {
-    handlers.setOpen("satellites")
-    handlers.setOpen("root")
-  }, [handlers])
-
-  // Selection
-  useEffect(() => instance.traverse((node) => handlers.setSelected(node.id, _.indexOf(state.selection?.devices, node.id as string) > -1), true),
-    [state.selection, instance, handlers])
 
   return (
     <div className={classNames(styles.container)}>
-      <NavigationTree className={styles.tree} required={required} instance={instance} handlers={handlers}/>
-      <ActionList className={styles.actions}>
-        <ActionListItem name={"Add Device"} icon={mdiPlusCircle}
-                        onClick={() => dispatch(ACTION_CREATE_DEVICE(uuidv4(), (pID) => router.push(router.asPath + "/devices/" + pID)))}/>
-      </ActionList>
+      <TitledList title={"Satellites"}>
+        {state.satellites?.map(pSat => <TitledListEntry icon={mdiSatellite} url={router.asPath + "/satellites/" + pSat.id}>{pSat.id}</TitledListEntry>)}
+      </TitledList>
+      <TitledList title={"Devices"}>
+        {state.devices?.map(pDev => <TitledListEntry icon={pDev.icon && iconToSVG(pDev.icon) || mdiMonitor}
+                                                     url={router.asPath + "/devices/" + pDev.id}
+                                                     color={getStateColor(pDev.metricRecords)}>{pDev.address || pDev.id}</TitledListEntry>)}
+      </TitledList>
     </div>
   );
 };

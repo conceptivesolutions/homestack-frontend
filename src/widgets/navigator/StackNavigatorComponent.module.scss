@@ -6,12 +6,6 @@
   flex-direction: column;
 }
 
-.tree {
-  padding: $content-padding;
-  flex-grow: 1;
-  overflow: auto;
-}
-
 .actions {
   flex-grow: 0;
   padding: 0 $content-padding $content-padding;
