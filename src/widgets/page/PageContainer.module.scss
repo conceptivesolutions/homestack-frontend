@@ -4,6 +4,7 @@
   width: 100%;
   height: 100%;
   background-color: $light-gray-background;
+  color: $gray-font-color;
 
   // display as grid
   display: grid;
@@ -19,6 +20,12 @@
 
 .switcher {
   grid-area: switcher;
+
+  width: 216px;
+  background-color: white;
+  border-right: 2px solid $gray-background;
+  display: flex;
+  flex-direction: column;
 }
 
 .navigator {

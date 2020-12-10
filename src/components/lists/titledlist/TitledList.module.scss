@@ -1,0 +1,17 @@
+@import "src/css/material";
+
+.container {
+  display: flex;
+  flex-direction: column;
+  color: $gray-font-color;
+}
+
+.title {
+  color: $gray-font-color-disabled;
+  padding: 12px 12px 5px;
+  display: flex;
+  align-items: center;
+  cursor: default;
+  height: 24px;
+  font-size: 0.85rem;
+}
