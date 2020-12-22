@@ -11,10 +11,11 @@ interface ITitledListEntry
   children?: React.ReactNode,
   className?: string,
   active?: boolean,
+  onClick?: () => void,
 }
 
 const TitledListEntry = (props: ITitledListEntry) => (
-  <a href={props.url} className={classNames(styles.entry, props.className, {[styles.active]: props.active})}>
+  <a href={props.url} className={classNames(styles.entry, props.className, {[styles.active]: props.active})} onClick={() => props.onClick && props.onClick()}>
     {props.icon && <div className={styles.icon}>
       <Icon path={props.icon} color={props.color} size={1}/>
     </div>}
