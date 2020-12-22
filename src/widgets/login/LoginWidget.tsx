@@ -28,7 +28,7 @@ const LoginWidget = ({onTokenReceived}: { onTokenReceived: (token: string) => vo
           <button className={classNames(styles.primary, styles.submit)}>Login</button>
         </form>
       </div>
-      <Image className={styles.background} src={"/tech.jpg"} alt={""} unsized/>
+      <Image className={styles.background} src={"/tech.jpg"} alt={""} layout={"fill"}/>
     </>
   );
 }
