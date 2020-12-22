@@ -23,11 +23,12 @@ const StackNavigatorComponent = () =>
   return (
     <div className={classNames(styles.container)}>
       <TitledList title={"Satellites"}>
-        {state.satellites?.map(pSat => <TitledListEntry icon={mdiSatellite} url={router.asPath + "/satellites/" + pSat.id}>{pSat.id}</TitledListEntry>)}
+        {state.satellites?.map(pSat => <TitledListEntry key={pSat.id} icon={mdiSatellite}
+                                                        url={router.asPath + "/satellites/" + pSat.id}>{pSat.id}</TitledListEntry>)}
         <TitledListEntry className={styles.addEntry} icon={mdiPlusCircleOutline} onClick={addSatellite}>Add Satellite</TitledListEntry>
       </TitledList>
       <TitledList title={"Devices"}>
-        {state.devices?.map(pDev => <TitledListEntry icon={pDev.icon && iconToSVG(pDev.icon) || mdiMonitor}
+        {state.devices?.map(pDev => <TitledListEntry key={pDev.id} icon={pDev.icon && iconToSVG(pDev.icon) || mdiMonitor}
                                                      url={router.asPath + "/devices/" + pDev.id}
                                                      color={getStateColor(pDev.metricRecords)}>{pDev.address || pDev.id}</TitledListEntry>)}
         <TitledListEntry className={styles.addEntry} icon={mdiPlusCircleOutline} onClick={addDevice}>Add Device</TitledListEntry>
