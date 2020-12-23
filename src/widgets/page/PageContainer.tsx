@@ -1,5 +1,4 @@
 import {mdiAccount, mdiBellOutline, mdiCogOutline, mdiHomeOutline, mdiLaptop, mdiLogout} from "@mdi/js";
-import classNames from "classnames";
 import TitledList from "components/lists/titledlist/TitledList";
 import TitledListEntry from "components/lists/titledlist/TitledListEntry";
 import ProfileItem from "components/navbar/items/ProfileItem";
@@ -12,6 +11,7 @@ import _ from "lodash";
 import md5 from "md5";
 import {useRouter} from "next/router";
 import React, {useContext} from "react";
+import {ReflexContainer, ReflexElement, ReflexSplitter} from "react-reflex";
 import {IStack} from "types/model";
 import styles from "./PageContainer.module.scss";
 
@@ -30,7 +30,7 @@ const PageContainer = (props: IPageContent) =>
   const {state: {user, logout}} = useContext(AuthContext);
 
   return (
-    <div className={classNames(styles.container, {[styles.container__withNavigator]: !!props.navigator})}>
+    <div className={styles.container}>
       <div className={styles.switcher}>
         <TitledList title={"Main"}>
           <TitledListEntry icon={mdiHomeOutline} color={"#ab6393"} active={router.pathname === "/"} url={"/"}>Dashboard</TitledListEntry>
@@ -52,11 +52,16 @@ const PageContainer = (props: IPageContent) =>
       <div className={styles.edge} onClick={() => router.push("/")}>
         {props.edge}
       </div>
-      {<div className={styles.navigator}>
-        {props.navigator}
-      </div>}
       <div className={styles.content}>
-        {props.children}
+        <ReflexContainer orientation={"vertical"}>
+          {props.navigator && <ReflexElement minSize={216} flex={0.2}>
+            {props.navigator}
+          </ReflexElement>}
+          {props.navigator && <ReflexSplitter/>}
+          <ReflexElement className={styles.children}>
+            {props.children}
+          </ReflexElement>
+        </ReflexContainer>
       </div>
     </div>
   );

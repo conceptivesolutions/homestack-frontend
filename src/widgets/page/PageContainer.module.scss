@@ -10,12 +10,8 @@
   display: grid;
   grid-template-areas: "edge navbar navbar" "switcher content content";
   grid-gap: 0 0;
-  grid-template-rows: min-content 1fr;
+  grid-template-rows: min-content minmax(0, 1fr);
   grid-template-columns: min-content 15% 1fr;
-}
-
-.container__withNavigator {
-  grid-template-areas: "edge navbar navbar" "switcher navigator content";
 }
 
 .switcher {
@@ -26,10 +22,8 @@
   border-right: 2px solid $gray-background;
   display: flex;
   flex-direction: column;
-}
-
-.navigator {
-  grid-area: navigator;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .navbar {
@@ -53,5 +47,8 @@
 .content {
   grid-area: content;
   padding: 0 $content-padding $content-padding 0;
+}
+
+.children {
   overflow-y: auto;
 }
