@@ -3,6 +3,7 @@
 $selection-border-width: 3px;
 
 .entry {
+  flex-shrink: 0;
   height: 40px;
   padding: 0 8px 0 5px;
   display: flex;
