@@ -1,5 +1,9 @@
 @import "src/css/material";
 
+.container {
+  padding-left: $content-padding;
+}
+
 .contentTable {
   border-collapse: collapse;
   width: 100%;

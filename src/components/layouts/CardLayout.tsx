@@ -17,7 +17,7 @@ const CardLayout = (props: ICardLayout) => (
       <div className={styles.content}>
         {props.children}
       </div>
-      {props.footer && <div className={styles.header}>{props.footer}</div>}
+      {props.footer && <div className={styles.footer}>{props.footer}</div>}
     </div>
   </div>
 );

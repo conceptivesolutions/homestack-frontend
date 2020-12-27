@@ -34,7 +34,7 @@ const SatellitePage = () =>
     </CardLayoutFooter>
   )
 
-  return <CardLayout header={header} footer={footer}>
+  return <CardLayout header={header} footer={footer} className={styles.container}>
     <CardTableLayout>
       {state.leases?.filter(pLease => !pLease.revokedDate)
         .map(pLease => (

@@ -60,7 +60,7 @@ const DevicePage = () =>
     </CardLayoutFooter>
   )
 
-  return <CardLayout header={header} footer={footer}>
+  return <CardLayout header={header} footer={footer} className={styles.container}>
     <table className={styles.contentTable}>
       <tbody>
       <tr>

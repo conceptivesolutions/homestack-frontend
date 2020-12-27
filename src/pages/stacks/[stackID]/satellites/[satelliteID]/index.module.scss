@@ -1,5 +1,9 @@
 @import "src/css/material";
 
+.container {
+  padding-left: $content-padding;
+}
+
 .spacer {
   flex-grow: 1;
 }

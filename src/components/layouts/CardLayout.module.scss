@@ -8,11 +8,14 @@
 .innerContainer {
   flex-grow: 1;
   max-width: 1140px;
-  padding-left: $content-padding;
 }
 
 .header {
-  padding: $content-padding 0;
+  padding-bottom: $content-padding;
+}
+
+.footer {
+  padding-top: $content-padding;
 }
 
 .content {
