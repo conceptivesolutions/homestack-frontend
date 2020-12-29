@@ -1,9 +1,12 @@
+import classNames from "classnames";
 import React from 'react';
 import styles from "./CardTableLayout.module.scss";
 
 interface ICardTableLayout
 {
   children?: React.ReactNode,
+  className?: string,
+  small?: boolean,
 }
 
 /**
@@ -15,7 +18,10 @@ interface ICardTableLayout
  * @constructor
  */
 const CardTableLayout = (props: ICardTableLayout) => (
-  <div className={styles.layoutContainer}>
+  <div className={classNames(props.className, {
+    [styles.layoutContainer]: !props.small,
+    [styles.layoutContainer_small]: props.small
+  })}>
     {props.children}
   </div>
 );

@@ -6,7 +6,6 @@
   grid-auto-rows: 60px;
 
   & > *:nth-child(odd) {
-    white-space: nowrap;
     justify-self: end;
     color: $font-color-disabled;
   }
@@ -14,6 +13,28 @@
   & > * {
     padding: 0 $content-padding;
     align-self: center;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.layoutContainer_small {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  grid-auto-rows: 30px;
+
+  & > *:nth-child(odd) {
+    justify-self: end;
+    color: $font-color-disabled;
+    padding: 0;
   }
 
+  & > * {
+    padding: 0 $content-padding / 2;
+    align-self: center;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
