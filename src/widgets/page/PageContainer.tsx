@@ -20,6 +20,7 @@ export interface IPageContent
   navbarItems?: INavBarItem[],
   edge?: React.ReactNode,
   navigator?: React.ReactNode,
+  details?: React.ReactNode,
   children?: React.ReactNode,
 }
 
@@ -61,6 +62,10 @@ const PageContainer = (props: IPageContent) =>
           <ReflexElement className={styles.children}>
             {props.children}
           </ReflexElement>
+          {props.details && <ReflexSplitter/>}
+          {props.details && <ReflexElement minSize={216} flex={0.2} className={styles.details}>
+            {props.details}
+          </ReflexElement>}
         </ReflexContainer>
       </div>
     </div>

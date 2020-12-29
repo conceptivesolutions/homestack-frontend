@@ -1,0 +1,23 @@
+@import "src/css/material";
+
+.header {
+  margin: 0;
+  display: flex;
+
+  * {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.container {
+
+  div {
+    border: none;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    overflow: hidden;
+  }
+
+}

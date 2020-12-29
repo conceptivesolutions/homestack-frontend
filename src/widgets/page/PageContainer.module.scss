@@ -52,3 +52,11 @@
 .children {
   overflow-y: auto;
 }
+
+.details {
+  background: white;
+  border-radius: $border-radius;
+  border: 1px solid $border-color;
+  padding: $content-padding;
+  height: unset !important;
+}
