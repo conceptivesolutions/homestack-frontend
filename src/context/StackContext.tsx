@@ -15,7 +15,8 @@ export interface IStackState
   autoRefresh: boolean,
   selection?: {
     devices?: string[],
-    edges?: string[]
+    edges?: string[],
+    satellites?: string[],
   },
 }
 
@@ -238,7 +239,8 @@ export const ACTION_VALIDATE_SELECTION = (dispatch: StackDispatch, getState: () 
     payload: {
       devices: selection.devices?.filter(pDeviceID => _.findIndex(getState().devices, pValidDevice => pValidDevice.id === pDeviceID) > -1),
       edges: selection.edges?.filter(pEdgeID => _.findIndex(getState().devices?.flatMap(pDevice => pDevice.edges || []),
-        pValidEdge => pValidEdge.id === pEdgeID) > -1)
+        pValidEdge => pValidEdge.id === pEdgeID) > -1),
+      satellites: selection.satellites?.filter(pSatelliteID => _.findIndex(getState().satellites, pValidSatellite => pValidSatellite.id === pSatelliteID) > -1),
     }
   })
 }
@@ -272,6 +274,7 @@ const reducer = (state: IInternalStackState, action: Action) =>
           ...state.selection,
           devices: action.payload?.devices || state.selection?.devices,
           edges: action.payload?.edges || state.selection?.edges,
+          satellites: action.payload?.satellites || state.selection?.satellites,
         },
       }
 
