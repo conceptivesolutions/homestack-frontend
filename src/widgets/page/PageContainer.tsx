@@ -63,7 +63,7 @@ const PageContainer = (props: IPageContent) =>
             {props.children}
           </ReflexElement>
           {props.details && <ReflexSplitter/>}
-          {props.details && <ReflexElement minSize={216} flex={0.2} className={styles.details}>
+          {props.details && <ReflexElement minSize={310} flex={0.2} className={styles.details}>
             {props.details}
           </ReflexElement>}
         </ReflexContainer>
