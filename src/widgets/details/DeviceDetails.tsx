@@ -31,7 +31,7 @@ const DeviceDetails = (props: IDeviceDetails) =>
       <span>Adress</span>
       <span>{device.address || ""}</span>
       <span>DNS</span>
-      <span>{getMetricRecordByType(device, EMetricTypes.REVERSE_DNS)?.result || ""}</span>
+      <span>{deviceDNSName || ""}</span>
       <span>Ping</span>
       <span>{getMetricRecordByType(device, EMetricTypes.PING)?.result?.responseTime || -1} ms</span>
     </CardTableLayout>
