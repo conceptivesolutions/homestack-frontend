@@ -1,4 +1,4 @@
-import jwt_decode from "jwt-decode";
+import jwt_decode, {JwtPayload} from "jwt-decode";
 
 /**
  * Checks, if a jwt token could be valid.
@@ -10,10 +10,10 @@ export function isJWTTokenValid(token: string): boolean
 {
   try
   {
-    const {exp} = jwt_decode(token)
+    const {exp} = jwt_decode(token) as JwtPayload
 
     // expired
-    return exp >= Math.floor(Date.now() / 1000);
+    return exp! >= Math.floor(Date.now() / 1000);
   } catch (err)
   {
     return false;
