@@ -1,5 +1,9 @@
 @import "src/css/material";
 
+.container {
+  overflow: hidden;
+}
+
 .header {
   margin: 0;
   display: flex;
@@ -11,13 +15,18 @@
   }
 }
 
-.container {
+.latencyHeader {
+  margin: 0 0 10px;
+  display: flex;
+  flex-direction: row;
+}
 
-  div {
-    border: none;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    overflow: hidden;
-  }
+.latencyRangeSelect {
+  flex-grow: 0;
+  width: 130px;
+  margin: auto 10px auto auto;
+}
 
+.detailHeader {
+  flex-grow: 1;
 }
