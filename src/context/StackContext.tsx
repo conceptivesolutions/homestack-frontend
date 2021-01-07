@@ -271,10 +271,9 @@ const reducer = (state: IInternalStackState, action: Action) =>
       return {
         ...state,
         selection: {
-          ...state.selection,
-          devices: action.payload?.devices || state.selection?.devices,
-          edges: action.payload?.edges || state.selection?.edges,
-          satellites: action.payload?.satellites || state.selection?.satellites,
+          devices: action.payload?.devices || [],
+          edges: action.payload?.edges || [],
+          satellites: action.payload?.satellites || [],
         },
       }
 

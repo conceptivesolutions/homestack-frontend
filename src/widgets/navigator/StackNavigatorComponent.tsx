@@ -23,9 +23,8 @@ const StackNavigatorComponent = () =>
   const fnSelect = (pSatelliteID?: string, pDeviceID?: string) => () => dispatch({
     type: EStackStateActions.SET_SELECTION,
     payload: {
-      devices: pDeviceID ? [pDeviceID] : [],
-      edges: [],
-      satellites: pSatelliteID ? [pSatelliteID] : [],
+      devices: pDeviceID && [pDeviceID],
+      satellites: pSatelliteID && [pSatelliteID],
     }
   });
 
