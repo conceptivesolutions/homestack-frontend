@@ -63,6 +63,7 @@ interface INetworkGraph
   onDoubleClick: (nodeIDs: string[]) => void,
   onDragStart: () => void,
   onDragEnd: () => void,
+  onZoomChange: (level: number) => void,
   onSelectionChanged: (nodes: string[], edges: string[]) => void,
   onNetworkChange?: (network?: Network) => void,
 }
@@ -78,8 +79,9 @@ interface INetworkGraph
  * @param onDragEnd Function that gets called, if a drag was ended
  * @param onSelectionChanged Function that gets called, if the selection changed
  * @param onNetworkChange Function that gets called, if the network changed
+ * @param onZoomChange Function that gets called, if the zoom level changed
  */
-export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, onDragEnd, onSelectionChanged, onNetworkChange}: INetworkGraph) =>
+export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, onDragEnd, onSelectionChanged, onNetworkChange, onZoomChange}: INetworkGraph) =>
 {
   const domNode = useRef<HTMLDivElement>(null);
   const network = useRef<Network | null>(null);
@@ -104,7 +106,8 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
     interaction: {
       selectConnectedEdges: false,
       multiselect: true,
-    }
+      zoomSpeed: 0.5,
+    },
   };
 
   const grid = {
@@ -153,33 +156,14 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
         onDoubleClick(ctx.nodes);
     });
 
-    // noinspection JSUnresolvedFunction
-    network.current.on("selectNode", function ({nodes, edges})
-    {
-      if (!!onSelectionChanged)
-        onSelectionChanged(nodes, edges)
-    })
+    network.current!.on("selectNode", ({nodes, edges}) => !!onSelectionChanged && onSelectionChanged(nodes, edges));
+    network.current!.on("deselectNode", ({nodes, edges}) => !!onSelectionChanged && onSelectionChanged(nodes, edges));
+    network.current!.on("selectEdge", ({nodes, edges}) => !!onSelectionChanged && onSelectionChanged(nodes, edges));
+    network.current!.on("deselectEdge", ({nodes, edges}) => !!onSelectionChanged && onSelectionChanged(nodes, edges));
 
-    // noinspection JSUnresolvedFunction
-    network.current.on("deselectNode", function ({nodes, edges})
-    {
-      if (!!onSelectionChanged)
-        onSelectionChanged(nodes, edges)
-    })
-
-    // noinspection JSUnresolvedFunction
-    network.current.on("selectEdge", function ({nodes, edges})
-    {
-      if (!!onSelectionChanged)
-        onSelectionChanged(nodes, edges)
-    })
-
-    // noinspection JSUnresolvedFunction
-    network.current.on("deselectEdge", function ({nodes, edges})
-    {
-      if (!!onSelectionChanged)
-        onSelectionChanged(nodes, edges)
-    })
+    network.current!.on("zoom", () => !!onZoomChange && onZoomChange(network.current!.getScale()));
+    network.current!.on("resize", () => !!onZoomChange && onZoomChange(network.current!.getScale()));
+    network.current!.on("afterDrawing", () => !!onZoomChange && onZoomChange(network.current!.getScale()));
 
     // noinspection JSUnresolvedFunction
     network.current.on("beforeDrawing", function (ctx)
@@ -243,7 +227,7 @@ export const NetworkGraph = ({nodes, edges, onMove, onDoubleClick, onDragStart, 
     // Fire network change
     if (!!onNetworkChange)
       onNetworkChange(network.current);
-  }, [domNode, network, data, options, grid, onMove, onDoubleClick, onDragStart, onDragEnd, onSelectionChanged, onNetworkChange]);
+  }, [domNode, network, data, options, grid, onMove, onDoubleClick, onDragStart, onDragEnd, onSelectionChanged, onNetworkChange, onZoomChange]);
 
   return (
     <div className={styles.networkGraph} ref={domNode}/>

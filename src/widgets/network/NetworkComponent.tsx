@@ -1,10 +1,12 @@
+import {mdiFitToPageOutline, mdiMagnifyMinusOutline, mdiMagnifyPlusOutline} from "@mdi/js";
+import Icon from "@mdi/react";
 import classNames from "classnames";
 import {ACTION_ADD_EDGE_BETWEEN, ACTION_PATCH_DEVICE, ACTION_RELOAD, ACTION_REMOVE_EDGE_BETWEEN, EStackStateActions, StackContext, StackDispatch} from "context/StackContext";
 import {getStateColor} from "helpers/NodeHelper";
 import {useCallbackNoRefresh} from "helpers/Utility";
 import _ from "lodash";
 import {useRouter} from "next/router";
-import React, {useContext, useEffect, useMemo, useRef} from 'react';
+import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Position} from "vis-network/declarations/network/Network";
 import {DataSet, DataSetEdges, DataSetNodes, Edge, Network, Node} from "vis-network/standalone/umd/vis-network";
 import styles from "./NetworkComponent.module.scss";
@@ -23,6 +25,7 @@ const NetworkComponent = ({className, stackID}: { className?: string, stackID: s
   const nodesRef = useRef<DataSetNodes>(new DataSet());
   const edgesRef = useRef<DataSetEdges>(new DataSet());
   const networkRef = useRef<Network | undefined>();
+  const [zoom, setZoom] = useState<number>(1);
 
   /**
    * Function to refresh the current nodes / edges
@@ -111,12 +114,39 @@ const NetworkComponent = ({className, stackID}: { className?: string, stackID: s
                       edges,
                     }
                   })}
+                  onZoomChange={setZoom}
                   onDragStart={() => {}} onDragEnd={() => {}}
                   onNetworkChange={network => networkRef.current = network}/>
   ), [dispatch, onDoubleClickRef]);
 
+  /**
+   * Function to change the zoom amount of the current network
+   *
+   * @param amount amount to add or null, if the zoom should be fitted
+   */
+  const _zoom = (amount?: number) => () =>
+  {
+    if (!!amount)
+      networkRef.current!.moveTo({scale: amount === 1 ? 1 : networkRef.current!.getScale() + amount});
+    else
+      networkRef.current!.fit();
+    setZoom(networkRef.current!.getScale());
+  }
+
   return (
     <div className={classNames(className, styles.graphContainer)}>
+      <div className={styles.toolbar}>
+        <span onClick={_zoom(1)}>{Math.round(zoom * 100)} %</span>
+        <button className={styles.button} onClick={_zoom(0.1)}>
+          <Icon path={mdiMagnifyPlusOutline} size={1}/>
+        </button>
+        <button className={styles.button} onClick={_zoom(-0.1)}>
+          <Icon path={mdiMagnifyMinusOutline} size={1}/>
+        </button>
+        <button className={styles.button} onClick={_zoom()}>
+          <Icon path={mdiFitToPageOutline} size={1}/>
+        </button>
+      </div>
       {graph}
     </div>
   );
