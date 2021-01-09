@@ -1,13 +1,41 @@
-import {StackContext} from "context/StackContext";
+import NetworkComponent from "components/graph/NetworkComponent";
+import {EStackStateActions, StackContext} from "context/StackContext";
+import {getMetricRecordByType} from "helpers/deviceHelper";
+import {getStateColor} from "helpers/NodeHelper";
 import StackLayout from "layouts/StackLayout";
 import React, {useContext} from "react";
+import {EMetricTypes, IDevice, IEdge} from "types/model";
 import StackNavigatorComponent from "widgets/navigator/StackNavigatorComponent";
-import NetworkComponent from "widgets/network/NetworkComponent";
+import styles from "./index.module.scss";
 
 const StackPage = () =>
 {
-  const {state: {id}} = useContext(StackContext)
-  return <NetworkComponent stackID={id}/>
+  const {state: {devices}, dispatch} = useContext(StackContext)
+  return <NetworkComponent className={styles.networkComponent} data={{nodes: devices, edges: devices?.flatMap(pDev => pDev.edges || [])}}
+                           nodeToNodeConverter={(pDev: IDevice) => ({
+                             id: pDev.id,
+                             title: getMetricRecordByType(pDev, EMetricTypes.REVERSE_DNS)?.result?.name || pDev.address || pDev.id,
+                             x: pDev.location?.x || 0,
+                             y: pDev.location?.y || 0,
+                             icon: pDev.icon,
+                             color: getStateColor(pDev.metricRecords),
+                             slots: {
+                               x: 1,
+                               y: 1,
+                             }
+                           })}
+                           edgeToEdgeConverter={(pEdge: IEdge) => ({
+                             from: pEdge.sourceID,
+                             from_slotID: 0,
+                             to: pEdge.targetID,
+                             to_slotID: 0,
+                           })}
+                           onSelectionChanged={pObject => dispatch({
+                             type: EStackStateActions.SET_SELECTION,
+                             payload: {
+                               devices: !!pObject ? [pObject?.id] : [],
+                             }
+                           })}/>
 }
 
 StackPage.Navigator = <StackNavigatorComponent/>

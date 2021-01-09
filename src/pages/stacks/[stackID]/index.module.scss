@@ -1,0 +1,9 @@
+@import "src/css/material";
+
+.networkComponent {
+  height: calc(100% - 2px);
+  width: calc(100% - 2px);
+  border-radius: $border-radius;
+  border: 1px solid $border-color;
+  @include box_shadow_bottom_light(black)
+}

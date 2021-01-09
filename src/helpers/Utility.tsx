@@ -1,20 +1,39 @@
-import {MutableRefObject, useEffect, useRef} from "react";
+import {BaseSyntheticEvent} from "react";
 
 /**
- * This function is required, if you want to bind a callback function to the given dependencies
- * but do not trigger a refresh if it changes
+ * Utility method to execute "preventDefault()" before fn gets executed
  *
- * @param pCallbackFactory Factory to create the function
- * @param pDependencies the dependencies of the function
+ * @param fn function to execute on the event
  */
-export function useCallbackNoRefresh<C>(pCallbackFactory: () => C, ...pDependencies: any[]): MutableRefObject<C>
+export function preventDefault<T extends BaseSyntheticEvent>(fn: (event: T) => void)
 {
-  const callbackRef = useRef<C>(pCallbackFactory());
-
-  useEffect(() =>
+  return (e: T) =>
   {
-    callbackRef.current = pCallbackFactory()
-  }, [pDependencies, pCallbackFactory])
+    e.preventDefault();
+    fn(e);
+  }
+}
 
-  return callbackRef;
+/**
+ * Creates a random hex color code
+ */
+export function generateRandomHexColor(): string
+{
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++)
+    color += letters[Math.floor(Math.random() * 16)];
+  return color.toUpperCase();
+}
+
+/**
+ * Converts a RGB color to a hex (uppercased) color
+ */
+export function rgbToHex(r: number, g: number, b: number)
+{
+  return '#' + [r, g, b].map(x =>
+  {
+    const hex = x.toString(16)
+    return hex.length === 0 ? '00' : hex.length === 1 ? '0' + hex : hex
+  }).join('').toUpperCase();
 }
