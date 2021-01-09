@@ -1,3 +1,4 @@
+import {mdiCheckboxBlankOutline, mdiCheckboxMarked} from "@mdi/js";
 import {Edge, Node, SlotState} from "components/graph/NetworkComponentModel";
 import {IRenderInfo} from "components/graph/renderer/IRenderInfo";
 import {iconToPath2D} from "helpers/iconHelper";
@@ -140,6 +141,15 @@ function _renderNode(ctx: CanvasRenderingContext2D, info: IRenderInfo, node: Nod
     // Draw Icon Region
     info.rdcRef.current?.render(node, (color, ctx) => ctx.fillRect(node.x - (iconSize / 2), node.y - (iconSize / 2), iconSize, iconSize));
   }
+
+  // Draw Selection State
+  const isSelected = _.isEqual(node, info.selection?.object);
+  const selectionSize = 0.7;
+  ctx.transform(selectionSize, 0, 0, selectionSize, node.x - (iconSize / 2) - 7, node.y - (iconSize / 2) - 7);
+  ctx.fillStyle = isSelected ? "#14bae4" : "#d7d7d7";
+  ctx.fill(new Path2D(isSelected ? mdiCheckboxMarked : mdiCheckboxBlankOutline))
+  ctx.setTransform(oldTransform);
+  info.rdcRef.current?.render(node, (color, ctx) => ctx.fillRect(node.x - (iconSize / 2) - 7, node.y - (iconSize / 2) - 7, 17, 17))
 
   // Draw Edge Slot Backgrounds
   for (let slotID = 0; slotID < edgeAmountX * edgeAmountY; slotID++)

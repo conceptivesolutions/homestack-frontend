@@ -15,7 +15,10 @@ interface INetworkComponent
   data?: {
     nodes?: any[],
     edges?: any[],
-  }
+  },
+  selection?: {
+    node?: any,
+  },
   nodeToNodeConverter: (node: any) => Node | undefined,
   edgeToEdgeConverter: (edge: any) => Edge | undefined,
   onNodeDragFinished?: (node: Node) => void,
@@ -49,8 +52,11 @@ const NetworkComponent = (props: INetworkComponent) =>
       nodes: _.keyBy(props.data?.nodes?.map(props.nodeToNodeConverter).filter(pV => !!pV).map(pV => pV!), "id"),
       edges: _.groupBy(props.data?.edges?.map(props.edgeToEdgeConverter).filter(pV => !!pV).map(pV => pV!), "from"),
     });
+    info.current.selection = {
+      object: _.head([props.selection?.node].filter(pV => !!pV).map(props.nodeToNodeConverter)),
+    };
     regionDetectionContainer.current.clear(); //todo not whole clear, only remove or re-set
-  }, [props.data, props.nodeToNodeConverter, props.edgeToEdgeConverter])
+  }, [props.data, props.nodeToNodeConverter, props.edgeToEdgeConverter, props.selection?.node])
 
   // render if something changes
   useEffect(() => _requestRender(info.current), [canvasSize.width, canvasSize.height, props.data])
