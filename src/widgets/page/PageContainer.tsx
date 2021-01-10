@@ -1,4 +1,5 @@
 import {mdiAccount, mdiBellOutline, mdiCogOutline, mdiHomeOutline, mdiLaptop, mdiLogout} from "@mdi/js";
+import classNames from "classnames";
 import TitledList from "components/lists/titledlist/TitledList";
 import TitledListEntry from "components/lists/titledlist/TitledListEntry";
 import ProfileItem from "components/navbar/items/ProfileItem";
@@ -62,10 +63,10 @@ const PageContainer = (props: IPageContent) =>
           <ReflexElement className={styles.children}>
             {props.children}
           </ReflexElement>
-          {props.details && <ReflexSplitter/>}
-          {props.details && <ReflexElement minSize={310} flex={0.2} className={styles.details}>
+          <ReflexSplitter style={props.details ? {} : {pointerEvents: "none"}}/>
+          <ReflexElement minSize={props.details ? 310 : 0} flex={props.details ? 0.2 : 0} className={classNames({[styles.details]: !!props.details})}>
             {props.details}
-          </ReflexElement>}
+          </ReflexElement>
         </ReflexContainer>
       </div>
     </div>

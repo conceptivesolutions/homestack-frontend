@@ -69,4 +69,11 @@ export interface IRenderInfo
     /* listener that fires, if the selection changed */
     onSelectionChanged?: (object: any) => void,
   }
+
+  /* contains all volatile information of the last rendered frame */
+  frameRenderInfo?: {
+
+    /* rendered frame size */
+    frameSize?: { width: number, height: number }
+  }
 }

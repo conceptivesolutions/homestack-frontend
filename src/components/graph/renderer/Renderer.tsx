@@ -30,6 +30,14 @@ export function render(info: IRenderInfo)
   // render debug stuff, if we should do it
   if (!!info.debug?.enabled)
     _renderDebug(ctx, info);
+
+  // update renderinfo for next render instance
+  info.frameRenderInfo = {
+    frameSize: {
+      width: canvas.clientWidth,
+      height: canvas.clientHeight,
+    }
+  }
 }
 
 /**
@@ -45,6 +53,15 @@ function _initContext(ctx: CanvasRenderingContext2D, info: IRenderInfo, clientWi
   // correct canvas size to match its client size
   ctx.canvas.width = clientWidth;
   ctx.canvas.height = clientHeight;
+
+  // update viewport, if canvas was resized
+  if (!!info.frameRenderInfo && !!info.frameRenderInfo.frameSize &&
+    (info.frameRenderInfo.frameSize.width !== clientWidth || info.frameRenderInfo.frameSize.height !== clientHeight))
+  {
+    // align new viewport to top-left-corner
+    info.viewport.x += (info.frameRenderInfo.frameSize.width - clientWidth) / (4 * info.zoom)
+    info.viewport.y += (info.frameRenderInfo.frameSize.height - clientHeight) / (4 * info.zoom)
+  }
 
   // reset, clear the current view and apply viewport translation, so that 0,0 will be centered
   ctx.resetTransform()
