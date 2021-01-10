@@ -183,8 +183,9 @@ function _onZoomChangeRequested(info: IRenderInfo, statusBarComponentHandle: IZo
     else if (!value && info.zoom > min)
       info.zoom -= 0.03;
   } else
-    info.zoom = Math.max(min, Math.min(max, value));
+    info.zoom = value;
 
+  info.zoom = Math.max(min, Math.min(max, info.zoom));
   statusBarComponentHandle.setValue(info.zoom);
   _requestRender(info);
 }
