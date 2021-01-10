@@ -30,7 +30,7 @@ const NetworkComponent = (props: INetworkComponent) =>
 {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const regionDetectionContainer = useRef(new RegionDetectionContainer())
-  const statusBarZoomHandle = useRef<IZoomComponentHandle>();
+  const zoomHandle = useRef<IZoomComponentHandle>();
   const [canvasResizeListener, canvasSize] = useResizeAware();
 
   // we have to use refs here, because of "useMemo()" will create a canvas
@@ -63,44 +63,32 @@ const NetworkComponent = (props: INetworkComponent) =>
   // render if something changes
   useEffect(() => _requestRender(info.current), [canvasSize.width, canvasSize.height, props.data])
 
-  // We use a memo, because we do only want to redraw the canvas - not to fully recreate it
-  const canvas = useMemo(() =>
-    <canvas className={classNames(styles.canvas, props.className)} ref={canvasRef}
-            onMouseDown={((e) =>
-            {
-              if (!info.current.dragging)
-                _onCanvasDragStarted(info.current, e.clientX, e.clientY)
-            })}
-            onMouseMove={preventDefault((e) =>
-            {
-              if (!!info.current.dragging && (e.buttons === 1))
-                _onCanvasDragMoved(info.current, e.clientX, e.clientY);
-            })}
-            onMouseLeave={preventDefault(() => _onCanvasDragEnded(info.current, true))}
-            onMouseUp={preventDefault((e) =>
-            {
-              if (!!info.current.dragging && !info.current.dragging.inProgress)
-                _onCanvasClick(info.current, e.clientX, e.clientY);
-              _onCanvasDragEnded(info.current, false);
-            })}
-            onTouchStart={preventDefault((e) =>
-            {
-              if (e.touches.length === 1)
-                _onCanvasDragStarted(info.current, e.touches[0].clientX, e.touches[0].clientY);
-            })}
-            onTouchMove={preventDefault((e) =>
-            {
-              if (e.touches.length === 1)
-                _onCanvasDragMoved(info.current, e.touches[0].screenX, e.touches[0].screenY);
-            })}
-            onTouchEnd={preventDefault((e) => e.touches.length === 0 && _onCanvasDragEnded(info.current, false))}
-            onWheel={preventDefault((e) => _onZoomChangeRequested(info.current, statusBarZoomHandle.current!, e.deltaY < 0))}/>, []);
+  // initialize gesture detection
+  useEffect(() =>
+  {
+    const Hammer = require("hammerjs");
+    const hammer = new Hammer(canvasRef.current!);
+    hammer.add(new Hammer.Pan({direction: Hammer.DIRECTION_ALL}))
+    hammer.add(new Hammer.Tap())
+    hammer.add(new Hammer.Pinch());
+    hammer.on("tap", (e: HammerInput) => _onCanvasClick(info.current, e.center.x, e.center.y))
+    hammer.on("pinchstart panstart", (e: HammerInput) => _onCanvasDragStarted(info.current, e.center.x, e.center.y))
+    hammer.on("pinchmove panmove", (e: HammerInput) => _onCanvasDragMoved(info.current, e.deltaX, e.deltaY))
+    hammer.on("pinchmove", (e: HammerInput) => _onZoomChangeRequested(info.current, zoomHandle.current!, info.current.dragging!.initialZoom + (e.scale - 1)))
+    hammer.on("pinchend panend", () => _onCanvasDragEnded(info.current, false))
+    hammer.on("pinchcancel pancancel", () => _onCanvasDragEnded(info.current, true))
+    return () => hammer.destroy();
+  }, []);
 
+  // We use a memo, because we do only want to redraw the canvas - not to fully recreate it
+  const canvas = useMemo(() => <canvas className={classNames(styles.canvas, props.className)} ref={canvasRef}
+                                       onWheel={preventDefault((e) => _onZoomChangeRequested(info.current, zoomHandle.current!, e.deltaY < 0))}/>, []);
+
+  // Status Bar
   const statusBar = (
     <div className={styles.statusBar}>
       <div className={styles.alignSeparator}/>
-      <ZoomComponent handle={pH => statusBarZoomHandle.current = pH}
-                     onZoomChange={pV => _onZoomChangeRequested(info.current, statusBarZoomHandle.current!, pV)}/>
+      <ZoomComponent handle={pH => zoomHandle.current = pH} onZoomChange={pV => _onZoomChangeRequested(info.current, zoomHandle.current!, pV)}/>
     </div>
   );
 
@@ -138,7 +126,7 @@ function _onCanvasDragStarted(info: IRenderInfo, clientX: number, clientY: numbe
   // update dragging information in render
   info.dragging = {
     inProgress: false, // will be set in moved, if threshold exceeded
-    startMouseLocation: {x: clientX, y: clientY},
+    initialZoom: info.zoom,
     object: clickedObject, // If the clickedObject is undefined, then no object was clicked - and the viewport should be dragged.
     origin: !clickedObject ? info.viewport : {x: clickedObject.x, y: clickedObject.y},
   };
@@ -147,11 +135,9 @@ function _onCanvasDragStarted(info: IRenderInfo, clientX: number, clientY: numbe
 /**
  * this function gets called, if the user is dragging something
  */
-function _onCanvasDragMoved(info: IRenderInfo, clientX: number, clientY: number)
+function _onCanvasDragMoved(info: IRenderInfo, changeX: number, changeY: number)
 {
   const dragging = info.dragging!;
-  const changeX = clientX - (dragging.startMouseLocation.x || 0);
-  const changeY = clientY - (dragging.startMouseLocation.y || 0);
   const newLocation: Point = {
     x: dragging.origin.x + (changeX / info.zoom),
     y: dragging.origin.y + (changeY / info.zoom),
@@ -188,14 +174,16 @@ function _onCanvasDragEnded(info: IRenderInfo, cancelled: boolean)
  */
 function _onZoomChangeRequested(info: IRenderInfo, statusBarComponentHandle: IZoomComponentHandle, value: boolean | number)
 {
+  const min = 0.25;
+  const max = 2;
   if (typeof value === "boolean")
   {
-    if (value && info.zoom < 2)
+    if (value && info.zoom < max)
       info.zoom += 0.03;
-    else if (!value && info.zoom > 0.25)
+    else if (!value && info.zoom > min)
       info.zoom -= 0.03;
   } else
-    info.zoom = value;
+    info.zoom = Math.max(min, Math.min(max, value));
 
   statusBarComponentHandle.setValue(info.zoom);
   _requestRender(info);

@@ -56,8 +56,8 @@ export interface IRenderInfo
     /* the origin where the object initially was (before drag) */
     origin: Point,
 
-    /* the mouse location where the drag started */
-    startMouseLocation: Point,
+    /* the scale amount when the drag / pinch started */
+    initialZoom: number,
   },
 
   /* contains all information about event firing */

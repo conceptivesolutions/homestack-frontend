@@ -15,6 +15,7 @@
     "cors": "2.8.5",
     "downsample": "1.3.0",
     "framer-motion": "3.1.4",
+    "hammerjs": "^2.0.8",
     "http-proxy-middleware": "1.0.6",
     "jwt-decode": "3.1.2",
     "lodash": "4.17.20",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@types/classnames": "2.2.11",
     "@types/cors": "2.8.9",
+    "@types/hammerjs": "^2.0.36",
     "@types/jwt-decode": "3.1.0",
     "@types/lodash": "4.14.167",
     "@types/md5": "2.2.1",
