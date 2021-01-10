@@ -93,7 +93,7 @@ const NetworkComponent = (props: INetworkComponent) =>
               if (e.touches.length === 1)
                 _onCanvasDragMoved(info.current, e.touches[0].screenX, e.touches[0].screenY);
             })}
-            onTouchEnd={preventDefault(() => _onCanvasDragEnded(info.current, false))}
+            onTouchEnd={preventDefault((e) => e.touches.length === 0 && _onCanvasDragEnded(info.current, false))}
             onWheel={preventDefault((e) => _onZoomChangeRequested(info.current, statusBarZoomHandle.current!, e.deltaY < 0))}/>, []);
 
   const statusBar = (
