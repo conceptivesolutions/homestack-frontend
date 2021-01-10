@@ -3,6 +3,7 @@ import {Edge, Node, Point} from "components/graph/NetworkComponentModel";
 import {RegionDetectionContainer} from "components/graph/regionDetection/RegionDetectionContainer";
 import {IRenderInfo} from "components/graph/renderer/IRenderInfo";
 import {render} from "components/graph/renderer/Renderer";
+import ZoomComponent, {IZoomComponentHandle} from "components/graph/statusbar/ZoomComponent";
 import {preventDefault} from "helpers/Utility";
 import _ from "lodash";
 import React, {useEffect, useMemo, useRef} from 'react';
@@ -29,6 +30,7 @@ const NetworkComponent = (props: INetworkComponent) =>
 {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const regionDetectionContainer = useRef(new RegionDetectionContainer())
+  const statusBarZoomHandle = useRef<IZoomComponentHandle>();
   const [canvasResizeListener, canvasSize] = useResizeAware();
 
   // we have to use refs here, because of "useMemo()" will create a canvas
@@ -64,7 +66,7 @@ const NetworkComponent = (props: INetworkComponent) =>
   // We use a memo, because we do only want to redraw the canvas - not to fully recreate it
   const canvas = useMemo(() =>
     <canvas className={classNames(styles.canvas, props.className)} ref={canvasRef}
-            onMouseDown={preventDefault((e) =>
+            onMouseDown={((e) =>
             {
               if (!info.current.dragging)
                 _onCanvasDragStarted(info.current, e.clientX, e.clientY)
@@ -92,11 +94,20 @@ const NetworkComponent = (props: INetworkComponent) =>
                 _onCanvasDragMoved(info.current, e.touches[0].screenX, e.touches[0].screenY);
             })}
             onTouchEnd={preventDefault(() => _onCanvasDragEnded(info.current, false))}
-            onWheel={preventDefault((e) => _onZoomChangeRequested(info.current, e.deltaY < 0))}/>, []);
+            onWheel={preventDefault((e) => _onZoomChangeRequested(info.current, statusBarZoomHandle.current!, e.deltaY < 0))}/>, []);
+
+  const statusBar = (
+    <div className={styles.statusBar}>
+      <div className={styles.alignSeparator}/>
+      <ZoomComponent handle={pH => statusBarZoomHandle.current = pH}
+                     onZoomChange={pV => _onZoomChangeRequested(info.current, statusBarZoomHandle.current!, pV)}/>
+    </div>
+  );
 
   return <>
     {canvasResizeListener}
     {canvas}
+    {statusBar}
   </>
 };
 
@@ -175,12 +186,18 @@ function _onCanvasDragEnded(info: IRenderInfo, cancelled: boolean)
 /**
  * this function gets called if the user requested a zoom change
  */
-function _onZoomChangeRequested(info: IRenderInfo, increment: boolean)
+function _onZoomChangeRequested(info: IRenderInfo, statusBarComponentHandle: IZoomComponentHandle, value: boolean | number)
 {
-  if (increment && info.zoom < 2)
-    info.zoom += 0.03;
-  else if (!increment && info.zoom > 0.25)
-    info.zoom -= 0.03;
+  if (typeof value === "boolean")
+  {
+    if (value && info.zoom < 2)
+      info.zoom += 0.03;
+    else if (!value && info.zoom > 0.25)
+      info.zoom -= 0.03;
+  } else
+    info.zoom = value;
+
+  statusBarComponentHandle.setValue(info.zoom);
   _requestRender(info);
 }
 

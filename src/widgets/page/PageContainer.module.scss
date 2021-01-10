@@ -2,7 +2,14 @@
 
 .container {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+
+  /* mobile viewport bug fix */
+  @media screen and (-webkit-min-device-pixel-ratio: 0) {
+    //noinspection CssInvalidPropertyValue
+    min-height: -webkit-fill-available;
+  }
+
   background-color: $light-gray-background;
   color: $gray-font-color;
 

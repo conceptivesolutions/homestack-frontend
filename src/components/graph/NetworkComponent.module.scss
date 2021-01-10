@@ -1,3 +1,5 @@
+@import "src/css/material";
+
 .canvas {
   position: absolute;
   top: 0;
@@ -10,5 +12,17 @@
 
   :focus {
     outline: none;
+  }
+}
+
+.statusBar {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  display: flex;
+
+  .alignSeparator {
+    flex: 1 1;
   }
 }
