@@ -41,6 +41,9 @@ const NetworkComponent = (props: INetworkComponent) =>
     viewport: {x: 0, y: 0},
     data: {},
     zoom: 1,
+    debug: {
+      enabled: process.env.NODE_ENV === "development",
+    },
     events: {
       onDrop: props.onDrop,
       onSelectionChanged: props.onSelectionChanged,
