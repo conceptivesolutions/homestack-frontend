@@ -16,6 +16,7 @@ const StackPage = () =>
   const {state: {devices, selection}, dispatch} = useContext(StackContext)
   return <NetworkComponent className={styles.networkComponent} data={{nodes: devices, edges: devices?.flatMap(pDev => pDev.edges || [])}}
                            nodeToNodeConverter={(pDev: IDevice) => ({
+                             kind: "node",
                              id: pDev.id,
                              title: getMetricRecordByType(pDev, EMetricTypes.REVERSE_DNS)?.result?.name || pDev.address || pDev.id,
                              x: pDev.location?.x || 0,
@@ -26,21 +27,26 @@ const StackPage = () =>
                                x: 4,
                                y: 1,
                                data: [{
+                                 kind: "slot",
                                  id: uuidv4(),
                                  state: SlotState.UP,
                                }, {
+                                 kind: "slot",
                                  id: uuidv4(),
                                  state: SlotState.EMPTY,
                                }, {
+                                 kind: "slot",
                                  id: uuidv4(),
                                  state: SlotState.EMPTY,
                                }, {
+                                 kind: "slot",
                                  id: uuidv4(),
                                  state: SlotState.UP,
                                }]
                              }
                            })}
                            edgeToEdgeConverter={(pEdge: IEdge) => ({
+                             kind: "edge",
                              from: pEdge.sourceID,
                              from_slotID: 0,
                              to: pEdge.targetID,

@@ -1,5 +1,6 @@
 export interface Node
 {
+  kind: "node",
   icon?: string,
   id: string,
   title?: string,
@@ -15,6 +16,7 @@ export interface Node
 
 export interface Edge
 {
+  kind: "edge",
   from: string,
   from_slotID: number,
   to: string,
@@ -23,6 +25,7 @@ export interface Edge
 
 export interface Slot
 {
+  kind: "slot",
   id: string,
   state: SlotState,
 }
