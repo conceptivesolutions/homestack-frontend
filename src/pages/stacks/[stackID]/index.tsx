@@ -1,4 +1,5 @@
 import NetworkComponent from "components/graph/NetworkComponent";
+import {SlotState} from "components/graph/NetworkComponentModel";
 import {EStackStateActions, StackContext} from "context/StackContext";
 import {getMetricRecordByType} from "helpers/deviceHelper";
 import {getStateColor} from "helpers/NodeHelper";
@@ -6,6 +7,7 @@ import StackLayout from "layouts/StackLayout";
 import _ from "lodash";
 import React, {useContext} from "react";
 import {EMetricTypes, IDevice, IEdge} from "types/model";
+import {v4 as uuidv4} from 'uuid';
 import StackNavigatorComponent from "widgets/navigator/StackNavigatorComponent";
 import styles from "./index.module.scss";
 
@@ -21,8 +23,21 @@ const StackPage = () =>
                              icon: pDev.icon,
                              color: getStateColor(pDev.metricRecords),
                              slots: {
-                               x: 1,
+                               x: 4,
                                y: 1,
+                               data: [{
+                                 id: uuidv4(),
+                                 state: SlotState.UP,
+                               }, {
+                                 id: uuidv4(),
+                                 state: SlotState.EMPTY,
+                               }, {
+                                 id: uuidv4(),
+                                 state: SlotState.EMPTY,
+                               }, {
+                                 id: uuidv4(),
+                                 state: SlotState.UP,
+                               }]
                              }
                            })}
                            edgeToEdgeConverter={(pEdge: IEdge) => ({

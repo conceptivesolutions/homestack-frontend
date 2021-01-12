@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {Edge, Node, Point} from "components/graph/NetworkComponentModel";
+import {Edge, Node} from "components/graph/NetworkComponentModel";
 import {RegionDetectionContainer} from "components/graph/regionDetection/RegionDetectionContainer";
 import {IRenderInfo} from "components/graph/renderer/IRenderInfo";
 import {render} from "components/graph/renderer/Renderer";
@@ -22,7 +22,7 @@ interface INetworkComponent
   },
   nodeToNodeConverter: (node: any) => Node | undefined,
   edgeToEdgeConverter: (edge: any) => Edge | undefined,
-  onNodeDragFinished?: (node: Node) => void,
+  onDrop?: (source: any, target: any) => void,
   onSelectionChanged?: (object?: any) => void,
 }
 
@@ -42,7 +42,7 @@ const NetworkComponent = (props: INetworkComponent) =>
     data: {},
     zoom: 1,
     events: {
-      onDragFinished: props.onNodeDragFinished,
+      onDrop: props.onDrop,
       onSelectionChanged: props.onSelectionChanged,
     }
   });
@@ -68,15 +68,15 @@ const NetworkComponent = (props: INetworkComponent) =>
   {
     const Hammer = require("hammerjs");
     const hammer = new Hammer(canvasRef.current!);
-    hammer.add(new Hammer.Pan({direction: Hammer.DIRECTION_ALL}))
+    hammer.add(new Hammer.Pan({threshold: 1, direction: Hammer.DIRECTION_ALL}))
     hammer.add(new Hammer.Tap())
     hammer.add(new Hammer.Pinch());
     hammer.on("tap", (e: HammerInput) => _onCanvasClick(info.current, e.center.x, e.center.y))
     hammer.on("pinchstart panstart", (e: HammerInput) => _onCanvasDragStarted(info.current, e.center.x, e.center.y))
     hammer.on("pinchmove panmove", (e: HammerInput) => _onCanvasDragMoved(info.current, e.deltaX, e.deltaY))
     hammer.on("pinchmove", (e: HammerInput) => _onZoomChangeRequested(info.current, zoomHandle.current!, info.current.dragging!.initialZoom + (e.scale - 1)))
-    hammer.on("pinchend panend", () => _onCanvasDragEnded(info.current, false))
-    hammer.on("pinchcancel pancancel", () => _onCanvasDragEnded(info.current, true))
+    hammer.on("pinchend panend", (e: HammerInput) => _onCanvasDragEnded(info.current, false, e.center.x, e.center.y))
+    hammer.on("pinchcancel pancancel", (e: HammerInput) => _onCanvasDragEnded(info.current, true, e.center.x, e.center.y))
     return () => hammer.destroy();
   }, []);
 
@@ -129,6 +129,7 @@ function _onCanvasDragStarted(info: IRenderInfo, clientX: number, clientY: numbe
     initialZoom: info.zoom,
     object: clickedObject, // If the clickedObject is undefined, then no object was clicked - and the viewport should be dragged.
     origin: !clickedObject ? info.viewport : {x: clickedObject.x, y: clickedObject.y},
+    change: {x: 0, y: 0}
   };
 }
 
@@ -138,21 +139,17 @@ function _onCanvasDragStarted(info: IRenderInfo, clientX: number, clientY: numbe
 function _onCanvasDragMoved(info: IRenderInfo, changeX: number, changeY: number)
 {
   const dragging = info.dragging!;
-  const newLocation: Point = {
-    x: dragging.origin.x + (changeX / info.zoom),
-    y: dragging.origin.y + (changeY / info.zoom),
-  };
+  dragging.change = {
+    x: changeX / info.zoom,
+    y: changeY / info.zoom,
+  }
 
   // viewport changed, if no object was dragged
   if (!dragging.object)
-    info.viewport = newLocation;
-
-  // update dragged object, if it has an x/y coordinate
-  else
-  {
-    dragging.object.x = newLocation.x;
-    dragging.object.y = newLocation.y;
-  }
+    info.viewport = {
+      x: dragging.origin.x + dragging.change.x,
+      y: dragging.origin.y + dragging.change.y,
+    };
 
   dragging.inProgress = dragging.inProgress || (changeX + changeY !== 0);
   _requestRender(info)
@@ -161,12 +158,17 @@ function _onCanvasDragMoved(info: IRenderInfo, changeX: number, changeY: number)
 /**
  * this function gets called, if the user dragged something (sucessfully)
  */
-function _onCanvasDragEnded(info: IRenderInfo, cancelled: boolean)
+function _onCanvasDragEnded(info: IRenderInfo, cancelled: boolean, clientX: number, clientY: number)
 {
-  // Fire onDragFinished
-  if (!cancelled && !!info.dragging?.object && !!info.events?.onDragFinished)
-    info.events.onDragFinished(info.dragging.object);
+  // Fire onDrop
+  if (!cancelled && !!info.dragging?.object && !!info.events?.onDrop)
+  {
+    const target = _getClickedObject(info, clientX, clientY);
+    if (!!target)
+      info.events.onDrop(info.dragging.object, target);
+  }
   info.dragging = undefined;
+  _requestRender(info);
 }
 
 /**

@@ -9,14 +9,8 @@ export interface Node
   slots: {
     x: number,
     y: number,
-    states?: SlotState[],
+    data: Slot[],
   }
-}
-
-export enum SlotState
-{
-  UP = "UP",
-  DOWN = "DOWN",
 }
 
 export interface Edge
@@ -25,6 +19,19 @@ export interface Edge
   from_slotID: number,
   to: string,
   to_slotID: number,
+}
+
+export interface Slot
+{
+  id: string,
+  state: SlotState,
+}
+
+export enum SlotState
+{
+  UP = "UP",
+  DOWN = "DOWN",
+  EMPTY = "EMPTY"
 }
 
 export interface Point

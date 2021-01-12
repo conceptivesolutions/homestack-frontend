@@ -56,6 +56,9 @@ export interface IRenderInfo
     /* the origin where the object initially was (before drag) */
     origin: Point,
 
+    /* the amount of x/y that was dragged */
+    change: Point,
+
     /* the scale amount when the drag / pinch started */
     initialZoom: number,
   },
@@ -63,8 +66,8 @@ export interface IRenderInfo
   /* contains all information about event firing */
   events?: {
 
-    /* listener that fires, if an object was dragged successfully */
-    onDragFinished?: (object: any) => void,
+    /* listener that fires, if an object was dropped onto another one */
+    onDrop?: (source: any, target: any) => void,
 
     /* listener that fires, if the selection changed */
     onSelectionChanged?: (object: any) => void,
