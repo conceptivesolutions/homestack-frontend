@@ -129,8 +129,22 @@ function _onCanvasDragStarted(info: IRenderInfo, clientX: number, clientY: numbe
     initialZoom: info.zoom,
     object: clickedObject, // If the clickedObject is undefined, then no object was clicked - and the viewport should be dragged.
     origin: !clickedObject ? info.viewport : {x: clickedObject.x, y: clickedObject.y},
-    change: {x: 0, y: 0}
+    change: {x: 0, y: 0},
+    initialPointerLocation: _translateToCanvasCoordinates(info, clientX, clientY),
   };
+
+  // handling: edge creation
+  if (info.data.nodes && clickedObject?.kind === "slot")
+  {
+    const node = _.find(info.data.nodes, pNode => _.indexOf(pNode.slots.data, clickedObject) > 0);
+    if (!!node)
+      info.dragging.creation = {
+        edge: {
+          from: node,
+          slotID: _.indexOf(node.slots.data, clickedObject),
+        },
+      }
+  }
 }
 
 /**
@@ -198,12 +212,23 @@ function _onZoomChangeRequested(info: IRenderInfo, statusBarComponentHandle: IZo
 function _getClickedObject(info: IRenderInfo, clientX: number, clientY: number)
 {
   // Search the region detection layer, if an object was clicked
-  const canvasRect = info.canvasRef.current!.getBoundingClientRect();
-  const x = clientX - canvasRect.x - info.viewport.x + info.viewport.x - 1;
-  const y = clientY - canvasRect.y - info.viewport.y + info.viewport.y - 2;
+  const translated = _translateToCanvasCoordinates(info, clientX, clientY);
+  const x = translated.x;
+  const y = translated.y;
   info.debug = !!info.debug ? info.debug : {}; // create, if not exist
   info.debug.clickPoint = {x, y}
   return info.rdcRef.current.getObjectAt(x, y);
+}
+
+/**
+ * Translates the given coordinates to canvas coordinates (top left is zero)
+ */
+function _translateToCanvasCoordinates(info: IRenderInfo, clientX: number, clientY: number)
+{
+  const canvasRect = info.canvasRef.current!.getBoundingClientRect();
+  const x = clientX - canvasRect.x - info.viewport.x + info.viewport.x - 1;
+  const y = clientY - canvasRect.y - info.viewport.y + info.viewport.y - 2;
+  return {x, y}
 }
 
 /**

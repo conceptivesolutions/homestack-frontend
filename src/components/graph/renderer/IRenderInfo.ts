@@ -61,6 +61,19 @@ export interface IRenderInfo
 
     /* the scale amount when the drag / pinch started */
     initialZoom: number,
+
+    /* initial pointer location, relative to the left upper canvas corner */
+    initialPointerLocation: Point,
+
+    /* this object will be filled, if there is a object creation ongoing */
+    creation?: {
+
+      /* will be filled, if an edge will be created by dragging */
+      edge?: {
+        from: Node,
+        slotID: number,
+      }
+    }
   },
 
   /* contains all information about event firing */

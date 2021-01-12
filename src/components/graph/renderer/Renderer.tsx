@@ -27,6 +27,9 @@ export function render(info: IRenderInfo)
   _.forEach(info.data.nodes, pNode => _renderNode(ctx, info, pNode));
   _.forEach(info.data.edges, pEdges => pEdges.forEach(pEdge => _renderEdge(ctx, info, pEdge)));
 
+  // render all "in progress" information
+  _renderCreationInProgress(ctx, info);
+
   // render debug stuff, if we should do it
   if (!!info.debug?.enabled)
     _renderDebug(ctx, info);
@@ -252,6 +255,40 @@ function _renderEdge(ctx: CanvasRenderingContext2D, info: IRenderInfo, edge: Edg
 }
 
 /**
+ * Renders anything onto the context, that is going to be created
+ *
+ * @param ctx context to render on
+ * @param info render info
+ */
+function _renderCreationInProgress(ctx: CanvasRenderingContext2D, info: IRenderInfo)
+{
+  // render edge
+  if (!!info.dragging?.creation?.edge)
+  {
+    const edge = info.dragging.creation.edge;
+    const fromSlotRect = _calculateSlotRect(info, edge.from, edge.slotID, false);
+
+    // Draw Line to Mouse
+    ctx.strokeStyle = "#a0a0a0"
+    ctx.setLineDash([5])
+    ctx.beginPath();
+    ctx.moveTo(fromSlotRect.x + (fromSlotRect.width / 2), fromSlotRect.y + (fromSlotRect.height / 2))
+
+    const old = ctx.getTransform();
+    ctx.resetTransform();
+    ctx.lineTo(info.dragging.initialPointerLocation.x + info.dragging.change.x * info.zoom,
+      info.dragging.initialPointerLocation.y + info.dragging.change.y * info.zoom);
+    ctx.setTransform(old)
+
+    ctx.stroke();
+
+    // Draw FROM slot
+    ctx.fillStyle = _getSlotColor();
+    ctx.fillRect(fromSlotRect.x, fromSlotRect.y, fromSlotRect.width, fromSlotRect.height);
+  }
+}
+
+/**
  * Returns the rectangle for a given slot id for an edge
  *
  * @param info common render information
@@ -321,10 +358,9 @@ function _getSlotColor(slot?: Slot)
       return "#4bbf04";
     case SlotState.DOWN:
       return "#dd0404";
+    default:
     case SlotState.EMPTY:
       return "#a0a0a0";
-    default:
-      return "#dd0404";
   }
 }
 
