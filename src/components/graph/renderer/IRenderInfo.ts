@@ -90,6 +90,9 @@ export interface IRenderInfo
   frameRenderInfo?: {
 
     /* rendered frame size */
-    frameSize?: { width: number, height: number }
+    frameSize?: { width: number, height: number },
+
+    /* time that the last frame consumed to render */
+    renderTime?: number;
   }
 }

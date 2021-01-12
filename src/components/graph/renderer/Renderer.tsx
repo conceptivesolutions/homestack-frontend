@@ -1,6 +1,7 @@
 import {mdiCheckboxBlankOutline, mdiCheckboxMarked} from "@mdi/js";
 import {Edge, Node, Point, Slot, SlotState} from "components/graph/NetworkComponentModel";
 import {IRenderInfo} from "components/graph/renderer/IRenderInfo";
+import {NodeConstants, SlotConstants} from "components/graph/renderer/RenderConstants";
 import {iconToPath2D} from "helpers/iconHelper";
 import _ from "lodash";
 
@@ -11,6 +12,7 @@ import _ from "lodash";
  */
 export function render(info: IRenderInfo)
 {
+  const beginDate = Date.now();
   const canvas = info.canvasRef?.current;
   const ctx = canvas?.getContext("2d");
   if (!canvas || !ctx)
@@ -36,10 +38,11 @@ export function render(info: IRenderInfo)
 
   // update renderinfo for next render instance
   info.frameRenderInfo = {
+    renderTime: Date.now() - beginDate,
     frameSize: {
       width: canvas.clientWidth,
       height: canvas.clientHeight,
-    }
+    },
   }
 }
 
@@ -129,64 +132,95 @@ function _renderGrid(ctx: CanvasRenderingContext2D, info: IRenderInfo)
  */
 function _renderNode(ctx: CanvasRenderingContext2D, info: IRenderInfo, node: Node)
 {
-  const iconSize = 50;
-  const padding = 5; // vertical padding
-  const edgeSlotSize = 12; // size of a single edge slot rectangle
-  const edgeSlotPadding = 4; // padding between slots
-  const edgeAmountX = node.slots.x;
-  const edgeAmountY = node.slots.y;
   const nodeX = node.x + (info.dragging?.object === node ? info.dragging.change.x : 0);
   const nodeY = node.y + (info.dragging?.object === node ? info.dragging.change.y : 0);
-  const edgeSlotsHeight = edgeAmountY * edgeSlotSize + (edgeAmountY - 1) * edgeSlotPadding;
-
-  // Font
-  ctx.textBaseline = "middle";
-  ctx.textAlign = "center";
-
-  const oldTransform = ctx.getTransform();
 
   // Draw Icon
   if (!!node.icon)
-  {
-    ctx.shadowColor = "black";
-    ctx.shadowBlur = 5;
-    ctx.shadowOffsetX = 2;
-    ctx.shadowOffsetY = 2;
-    ctx.transform(2, 0, 0, 2, nodeX - (iconSize / 2), nodeY - (iconSize / 2))
-    ctx.fillStyle = node.color || "black";
-    ctx.fill(iconToPath2D(node.icon)!)
-    ctx.setTransform(oldTransform);
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-
-    // Draw Icon Region
-    info.rdcRef.current?.render(node, (color, ctx) => ctx.fillRect(nodeX - (iconSize / 2), nodeY - (iconSize / 2), iconSize, iconSize));
-  }
+    _renderNodeIcon(ctx, info, node, nodeX, nodeY);
 
   // Draw Selection State
-  const isSelected = node.id === info.selection?.object?.id || _.isEqual(node, info.selection?.object);
-  const selectionSize = 0.7;
-  ctx.transform(selectionSize, 0, 0, selectionSize, nodeX - (iconSize / 2) - 7, nodeY - (iconSize / 2) - 7);
-  ctx.fillStyle = isSelected ? "#14bae4" : "#d7d7d7";
-  ctx.fill(new Path2D(isSelected ? mdiCheckboxMarked : mdiCheckboxBlankOutline))
-  ctx.setTransform(oldTransform);
-  info.rdcRef.current?.render(node, (color, ctx) => ctx.fillRect(nodeX - (iconSize / 2) - 7, nodeY - (iconSize / 2) - 7, 17, 17))
+  _renderNodeSelectionState(ctx, info, node, nodeX, nodeY);
 
   // Draw Edge Slot Backgrounds
-  for (let slotID = 0; slotID < edgeAmountX * edgeAmountY; slotID++)
+  for (let slotID = 0; slotID < node.slots.x * node.slots.y; slotID++)
     _renderSlotBackground(ctx, info, node, slotID);
 
   // Draw Title
   if (!!node.title)
-  {
-    ctx.fillStyle = "black";
-    ctx.textBaseline = "top"
-    ctx.textAlign = "center"
-    ctx.font = "10pt monospace"
-    ctx.fillText(node.title, nodeX, nodeY + (iconSize / 2) + padding + edgeSlotsHeight + padding);
-    ctx.setTransform(oldTransform);
-  }
+    _renderNodeText(ctx, info, node, nodeX, nodeY);
+}
+
+/**
+ * Renders the icon of a single node
+ *
+ * @param ctx context to render on
+ * @param info render info
+ * @param node node to render
+ * @param nodeX x coordinate of the node
+ * @param nodeY y coordinate of the node
+ */
+function _renderNodeIcon(ctx: CanvasRenderingContext2D, info: IRenderInfo, node: Node, nodeX: number, nodeY: number)
+{
+  const old = ctx.getTransform();
+  ctx.shadowColor = "black";
+  ctx.shadowBlur = 5;
+  ctx.shadowOffsetX = 2;
+  ctx.shadowOffsetY = 2;
+  ctx.transform(2, 0, 0, 2, nodeX - (NodeConstants.ICON_SIZE / 2), nodeY - (NodeConstants.ICON_SIZE / 2))
+  ctx.fillStyle = node.color || "black";
+  ctx.fill(iconToPath2D(node.icon!)!)
+  ctx.setTransform(old);
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
+
+  // Draw clickable region
+  info.rdcRef.current?.render(node, (color, ctx) => ctx.fillRect(nodeX - (NodeConstants.ICON_SIZE / 2), nodeY - (NodeConstants.ICON_SIZE / 2),
+    NodeConstants.ICON_SIZE, NodeConstants.ICON_SIZE));
+}
+
+/**
+ * Renders the state of the selection of a single node
+ *
+ * @param ctx context to render on
+ * @param info render info
+ * @param node node to render
+ * @param nodeX x coordinate of the node
+ * @param nodeY y coordinate of the node
+ */
+function _renderNodeSelectionState(ctx: CanvasRenderingContext2D, info: IRenderInfo, node: Node, nodeX: number, nodeY: number)
+{
+  const old = ctx.getTransform();
+  const isSelected = node.id === info.selection?.object?.id || _.isEqual(node, info.selection?.object);
+  const selectionSize = 0.7;
+  ctx.transform(selectionSize, 0, 0, selectionSize, nodeX - (NodeConstants.ICON_SIZE / 2) - 7, nodeY - (NodeConstants.ICON_SIZE / 2) - 7);
+  ctx.fillStyle = isSelected ? "#14bae4" : "#d7d7d7";
+  ctx.fill(new Path2D(isSelected ? mdiCheckboxMarked : mdiCheckboxBlankOutline))
+  ctx.setTransform(old);
+
+  // Draw clickable region
+  info.rdcRef.current?.render(node, (color, ctx) => ctx.fillRect(nodeX - (NodeConstants.ICON_SIZE / 2) - 7, nodeY - (NodeConstants.ICON_SIZE / 2) - 7, 17, 17))
+}
+
+/**
+ * Renders the descriptive text a single node
+ *
+ * @param ctx context to render on
+ * @param info render info
+ * @param node node to render
+ * @param nodeX x coordinate of the node
+ * @param nodeY y coordinate of the node
+ */
+function _renderNodeText(ctx: CanvasRenderingContext2D, info: IRenderInfo, node: Node, nodeX: number, nodeY: number)
+{
+  ctx.fillStyle = "black";
+  ctx.textBaseline = "top"
+  ctx.textAlign = "center"
+  ctx.font = "10pt monospace"
+
+  const slotsHeight = node.slots.y * SlotConstants.SIZE + (node.slots.y - 1) * SlotConstants.PADDING;
+  ctx.fillText(node.title!, nodeX, nodeY + (NodeConstants.ICON_SIZE / 2) + NodeConstants.PADDING + slotsHeight + NodeConstants.PADDING);
 }
 
 /**
@@ -199,18 +233,19 @@ function _renderNode(ctx: CanvasRenderingContext2D, info: IRenderInfo, node: Nod
  */
 function _renderSlotBackground(ctx: CanvasRenderingContext2D, info: IRenderInfo, node: Node, slotID: number)
 {
-  const slotPadding = 1;
   const slotRect = _calculateSlotRect(info, node, slotID, false)
   const slot = _.nth(node.slots?.data, slotID);
   ctx.fillStyle = "#a0a0a0"
   ctx.strokeStyle = "#a0a0a0"
   if (!!slot)
   {
-    ctx.strokeRect(slotRect.x + slotPadding + 1, slotRect.y + slotPadding + 1, slotRect.width - 2 * slotPadding - 2, slotRect.height - 2 * slotPadding - 2);
+    ctx.strokeRect(slotRect.x + SlotConstants.PADDING_BACKGROUND + 1, slotRect.y + SlotConstants.PADDING_BACKGROUND + 1,
+      slotRect.width - 2 * SlotConstants.PADDING_BACKGROUND - 2, slotRect.height - 2 * SlotConstants.PADDING_BACKGROUND - 2);
     info.rdcRef.current?.render(slot, (color, ctx) => ctx.fillRect(slotRect.x, slotRect.y, slotRect.width, slotRect.height))
   } else
   {
-    ctx.fillRect(slotRect.x + slotPadding, slotRect.y + slotPadding, slotRect.width - 2 * slotPadding, slotRect.height - 2 * slotPadding);
+    ctx.fillRect(slotRect.x + SlotConstants.PADDING_BACKGROUND, slotRect.y + SlotConstants.PADDING_BACKGROUND,
+      slotRect.width - 2 * SlotConstants.PADDING_BACKGROUND, slotRect.height - 2 * SlotConstants.PADDING_BACKGROUND);
     ctx.strokeStyle = _getSlotColor();
     ctx.beginPath();
     ctx.moveTo(slotRect.x + slotRect.width, slotRect.y);
@@ -299,10 +334,6 @@ function _renderCreationInProgress(ctx: CanvasRenderingContext2D, info: IRenderI
 function _calculateSlotRect(info: IRenderInfo, node: Node, slotID: number, draggable: boolean): { x: number, y: number, width: number, height: number }
 {
   const object = _.nth(node.slots.data, slotID);
-  const iconSize = 50;
-  const iconPadding = 5; // vertical padding between icon and slots
-  const slotSize = 12; // size of a single edge slot rectangle
-  const padding = 3; // padding between slots
   const amount: Point = node.slots; // number of slots in x and y direction
   const isSlotDragActive = draggable && !!object && info.dragging?.object === object; // true, if this slot is currently beeing dragged
 
@@ -320,16 +351,16 @@ function _calculateSlotRect(info: IRenderInfo, node: Node, slotID: number, dragg
 
   // Size and position of the container that contains all slots for the rendered node
   const container = {
-    x: nodePos.x - ((amount.x * slotSize + (amount.x - 1) * padding) / 2),
-    y: nodePos.y + iconPadding + (iconSize / 2),
-    width: amount.x * slotSize + (amount.x - 1) * padding,
-    height: amount.x * slotSize + (amount.y - 1) * padding
+    x: nodePos.x - ((amount.x * SlotConstants.SIZE + (amount.x - 1) * SlotConstants.PADDING) / 2),
+    y: nodePos.y + NodeConstants.PADDING + (NodeConstants.ICON_SIZE / 2),
+    width: amount.x * SlotConstants.SIZE + (amount.x - 1) * SlotConstants.PADDING,
+    height: amount.x * SlotConstants.SIZE + (amount.y - 1) * SlotConstants.PADDING
   }
 
   // Position of the slot
   const slotPos: Point = {
-    x: container.x + (gridPos.x * slotSize) + (gridPos.x * padding),
-    y: container.y + (gridPos.y * slotSize) + (gridPos.y * padding),
+    x: container.x + (gridPos.x * SlotConstants.SIZE) + (gridPos.x * SlotConstants.PADDING),
+    y: container.y + (gridPos.y * SlotConstants.SIZE) + (gridPos.y * SlotConstants.PADDING),
   }
 
   // check if the current slot is about to be dragged
@@ -342,8 +373,8 @@ function _calculateSlotRect(info: IRenderInfo, node: Node, slotID: number, dragg
   return {
     x: slotPos.x,
     y: slotPos.y,
-    width: slotSize,
-    height: slotSize
+    width: SlotConstants.SIZE,
+    height: SlotConstants.SIZE
   }
 }
 
@@ -391,6 +422,15 @@ function _renderDebug(ctx: CanvasRenderingContext2D, info: IRenderInfo)
     ctx.moveTo(info.debug.clickPoint.x, info.debug.clickPoint.y - 10);
     ctx.lineTo(info.debug.clickPoint.x, info.debug.clickPoint.y + 10);
     ctx.stroke();
+  }
+
+  // render time
+  if (!!info.frameRenderInfo?.renderTime)
+  {
+    ctx.textBaseline = "top";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "black";
+    ctx.fillText(info.frameRenderInfo.renderTime + " ms", 5, 5)
   }
 
   // reset alpha
