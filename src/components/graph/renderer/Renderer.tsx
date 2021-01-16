@@ -404,7 +404,7 @@ function _getSlotColor(slot?: Slot)
 function _renderDebug(ctx: CanvasRenderingContext2D, info: IRenderInfo)
 {
   const oldAlpha = ctx.globalAlpha;
-  ctx.globalAlpha = 0.5;
+  ctx.globalAlpha = 0.15;
 
   // render rdc
   ctx.resetTransform();
