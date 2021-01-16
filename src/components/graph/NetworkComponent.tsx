@@ -175,10 +175,10 @@ function _onCanvasDragMoved(info: IRenderInfo, changeX: number, changeY: number)
 /**
  * this function gets called, if the user dragged something (sucessfully)
  */
-function _onCanvasDragEnded(info: IRenderInfo, cancelled: boolean, clientX: number, clientY: number)
+function _onCanvasDragEnded(info: IRenderInfo, cancelled: boolean, clientX?: number, clientY?: number)
 {
   // Fire onDrop
-  if (!cancelled && !!info.dragging?.object && !!info.events?.onDrop)
+  if (!cancelled && !!clientX && !!clientY && !!info.dragging?.object && !!info.events?.onDrop)
   {
     const target = _getClickedObject(info, clientX, clientY);
     if (!!target)
