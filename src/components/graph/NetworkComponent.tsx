@@ -43,12 +43,17 @@ const NetworkComponent = (props: INetworkComponent) =>
     zoom: 1,
     debug: {
       enabled: process.env.NODE_ENV === "development",
-    },
-    events: {
+    }
+  });
+
+  // update events if properties change
+  useEffect(() =>
+  {
+    info.current.events = {
       onDrop: props.onDrop,
       onSelectionChanged: props.onSelectionChanged,
     }
-  });
+  }, [props.onDrop, props.onSelectionChanged])
 
   // transform data, if data changes
   useEffect(() =>
