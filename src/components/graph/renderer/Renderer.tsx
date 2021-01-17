@@ -134,16 +134,17 @@ function _renderNode(ctx: CanvasRenderingContext2D, info: IRenderInfo, node: Nod
   const nodeX = node.x + (info.dragging?.object === node ? info.dragging.change.x : 0);
   const nodeY = node.y + (info.dragging?.object === node ? info.dragging.change.y : 0);
 
+  // Draw Network Slot Backgrounds
+  for (let slotX = 0; slotX < node.slots.length; slotX++)
+    for (let slotY = 0; slotY < node.slots[slotX].length; slotY++)
+      _renderSlot(ctx, info, node, node.slots[slotX][slotY], slotX, slotY)
+
   // Draw Icon
   if (!!node.icon)
     _renderNodeIcon(ctx, info, node, nodeX, nodeY);
 
   // Draw Selection State
   _renderNodeSelectionState(ctx, info, node, nodeX, nodeY);
-
-  // Draw Edge Slot Backgrounds
-  for (let slotID = 0; slotID < node.slots.x * node.slots.y; slotID++)
-    _renderSlotBackground(ctx, info, node, slotID);
 
   // Draw Title
   if (!!node.title)
@@ -218,74 +219,58 @@ function _renderNodeText(ctx: CanvasRenderingContext2D, info: IRenderInfo, node:
   ctx.textAlign = "center"
   ctx.font = "10pt monospace"
 
-  const slotsHeight = node.slots.y * SlotConstants.SIZE + (node.slots.y - 1) * SlotConstants.PADDING;
+  const slotsHeight = node.slots.length * SlotConstants.SIZE + (node.slots.length - 1) * SlotConstants.PADDING;
   ctx.fillText(node.title!, nodeX, nodeY + (NodeConstants.ICON_SIZE / 2) + NodeConstants.PADDING + slotsHeight + NodeConstants.PADDING);
 }
 
 /**
- * Renders the slot background for the slot with the given ID
- *
- * @param ctx context to render on
- * @param info render information
- * @param node slots node
- * @param slotID id of the slot to render
- */
-function _renderSlotBackground(ctx: CanvasRenderingContext2D, info: IRenderInfo, node: Node, slotID: number)
-{
-  const slotRect = _calculateSlotRect(info, node, slotID, false)
-  const slot = _.nth(node.slots?.data, slotID);
-  ctx.fillStyle = "#a0a0a0"
-  ctx.strokeStyle = "#a0a0a0"
-  if (!!slot)
-  {
-    ctx.strokeRect(slotRect.x + SlotConstants.PADDING_BACKGROUND + 1, slotRect.y + SlotConstants.PADDING_BACKGROUND + 1,
-      slotRect.width - 2 * SlotConstants.PADDING_BACKGROUND - 2, slotRect.height - 2 * SlotConstants.PADDING_BACKGROUND - 2);
-    info.rdcRef.current?.render(slot, (color, ctx) => ctx.fillRect(slotRect.x, slotRect.y, slotRect.width, slotRect.height))
-  } else
-  {
-    ctx.fillRect(slotRect.x + SlotConstants.PADDING_BACKGROUND, slotRect.y + SlotConstants.PADDING_BACKGROUND,
-      slotRect.width - 2 * SlotConstants.PADDING_BACKGROUND, slotRect.height - 2 * SlotConstants.PADDING_BACKGROUND);
-    ctx.strokeStyle = _getSlotColor();
-    ctx.beginPath();
-    ctx.moveTo(slotRect.x + slotRect.width, slotRect.y);
-    ctx.lineTo(slotRect.x, slotRect.y + slotRect.height);
-    ctx.stroke();
-  }
-}
-
-/**
- * Renders a single edge onto a canvas context
+ * Renders a single slot with the connection to the target slot, if available and necessary
  *
  * @param ctx context to render on
  * @param info render info
- * @param edge edge to render
+ * @param node source node
+ * @param slot slot to render
+ * @param slotRow x grid coordinate
+ * @param slotColumn y grid coordinate
  */
-function _renderEdge(ctx: CanvasRenderingContext2D, info: IRenderInfo, edge: Edge)
+function _renderSlot(ctx: CanvasRenderingContext2D, info: IRenderInfo, node: Node, slot: Slot, slotRow: number, slotColumn: number)
 {
-  if (!info.data.nodes)
-    return;
+  const target = _.head(_.map(info.data.nodes, pNode => _.head(pNode.slots.flatMap(pRow => pRow)
+    .filter(pSlot => slot.targetSlotID === pSlot.id)
+    .map(pSlot => ({
+      node: pNode,
+      slot: pSlot,
+    })))));
 
-  const from = info.data.nodes[edge.from];
-  const to = info.data.nodes[edge.to]
-  if (!from || !to)
-    return;
+  // render slot state
+  const fromSlotRect = _calculateSlotRect(info, node, slot, false)
+  ctx.fillStyle = _getSlotColor(slot);
+  ctx.strokeStyle = _getSlotColor(slot);
+  if (slot.state !== undefined)
+    ctx.fillRect(fromSlotRect.x, fromSlotRect.y, fromSlotRect.width, fromSlotRect.height);
+  else
+    ctx.strokeRect(fromSlotRect.x + SlotConstants.PADDING_BACKGROUND, fromSlotRect.y + SlotConstants.PADDING_BACKGROUND,
+      fromSlotRect.width - (2 * +SlotConstants.PADDING_BACKGROUND), fromSlotRect.height - (2 * +SlotConstants.PADDING_BACKGROUND));
 
-  const fromSlotRect = _calculateSlotRect(info, from, edge.from_slotID, true)
-  const toSlotRect = _calculateSlotRect(info, to, edge.to_slotID, true)
+  // render slot dragable
+  info.rdcRef.current.render(slot, (pColor, pCtx) => pCtx.fillRect(fromSlotRect.x, fromSlotRect.y, fromSlotRect.width, fromSlotRect.height))
+
+  if (!target)
+    return;
 
   // Draw Edge
-  ctx.strokeStyle = "#a0a0a0"
-  ctx.setLineDash([5])
+  const toSlotRect = _calculateSlotRect(info, target.node, target.slot, false)
+  ctx.strokeStyle = _getSlotColor(slot, target.slot);
   ctx.beginPath();
   ctx.moveTo(fromSlotRect.x + (fromSlotRect.width / 2), fromSlotRect.y + (fromSlotRect.height / 2))
   ctx.lineTo(toSlotRect.x + (toSlotRect.width / 2), toSlotRect.y + (toSlotRect.height / 2));
   ctx.stroke();
 
-  // Draw Slot Colors
-  ctx.fillStyle = _getSlotColor(_.nth(from.slots.data, edge.from_slotID));
-  ctx.fillRect(fromSlotRect.x, fromSlotRect.y, fromSlotRect.width, fromSlotRect.height);
-  ctx.fillStyle = _getSlotColor(_.nth(to.slots.data, edge.to_slotID));
-  ctx.fillRect(toSlotRect.x, toSlotRect.y, toSlotRect.width, toSlotRect.height);
+  // Draw "Plug"
+  const plugPadding = 3;
+  ctx.fillStyle = "#00000080";
+  ctx.fillRect(fromSlotRect.x + plugPadding, fromSlotRect.y + plugPadding, fromSlotRect.width - 2 * plugPadding, fromSlotRect.height - 2 * plugPadding);
+  ctx.fillRect(toSlotRect.x + plugPadding, toSlotRect.y + plugPadding, toSlotRect.width - 2 * plugPadding, toSlotRect.height - 2 * plugPadding);
 }
 
 /**
@@ -296,11 +281,11 @@ function _renderEdge(ctx: CanvasRenderingContext2D, info: IRenderInfo, edge: Edg
  */
 function _renderCreationInProgress(ctx: CanvasRenderingContext2D, info: IRenderInfo)
 {
-  // render edge
-  if (!!info.dragging?.creation?.edge)
+  // render newly created connection
+  if (!!info.dragging?.creation?.connection)
   {
-    const edge = info.dragging.creation.edge;
-    const fromSlotRect = _calculateSlotRect(info, edge.from, edge.slotID, false);
+    const from = info.dragging.creation.connection;
+    const fromSlotRect = _calculateSlotRect(info, from.node, from.slot, false);
 
     // Draw Line to Mouse
     ctx.strokeStyle = "#a0a0a0"
@@ -315,31 +300,31 @@ function _renderCreationInProgress(ctx: CanvasRenderingContext2D, info: IRenderI
     ctx.setTransform(old)
 
     ctx.stroke();
-
-    // Draw FROM slot
-    ctx.fillStyle = _getSlotColor();
-    ctx.fillRect(fromSlotRect.x, fromSlotRect.y, fromSlotRect.width, fromSlotRect.height);
   }
 }
 
 /**
- * Returns the rectangle for a given slot id for an edge
+ * Returns the rectangle for a given slot id for a network slot
  *
  * @param info common render information
  * @param node node to get the slot for
- * @param slotID id of the slot
+ * @param slot source slot
  * @param draggable if the current drag should be included in calculation
  */
-function _calculateSlotRect(info: IRenderInfo, node: Node, slotID: number, draggable: boolean): { x: number, y: number, width: number, height: number }
+function _calculateSlotRect(info: IRenderInfo, node: Node, slot: Slot, draggable: boolean): { x: number, y: number, width: number, height: number }
 {
-  const object = _.nth(node.slots.data, slotID);
-  const amount: Point = node.slots; // number of slots in x and y direction
-  const isSlotDragActive = draggable && !!object && info.dragging?.object === object; // true, if this slot is currently beeing dragged
+  const isSlotDragActive = draggable && !!slot && info.dragging?.object === slot; // true, if this slot is currently beeing dragged
+
+  // max number of slots in x and y direction
+  const maxAmount: Point = {
+    x: _.maxBy(node.slots, pSlots => pSlots.length)?.length || 0,
+    y: node.slots.length,
+  };
 
   // x and y grid position for the current slot
   const gridPos: Point = {
-    x: slotID % amount.x,
-    y: Math.floor(slotID / amount.x)
+    x: _.head(node.slots.map(pRow => pRow.indexOf(slot)).filter(pIdx => pIdx > -1))!,
+    y: _.findIndex(node.slots, pRow => pRow.indexOf(slot) > -1)
   };
 
   // Position of the given node
@@ -350,10 +335,10 @@ function _calculateSlotRect(info: IRenderInfo, node: Node, slotID: number, dragg
 
   // Size and position of the container that contains all slots for the rendered node
   const container = {
-    x: nodePos.x - ((amount.x * SlotConstants.SIZE + (amount.x - 1) * SlotConstants.PADDING) / 2),
+    x: nodePos.x - ((maxAmount.x * SlotConstants.SIZE + (maxAmount.x - 1) * SlotConstants.PADDING) / 2),
     y: nodePos.y + NodeConstants.PADDING + (NodeConstants.ICON_SIZE / 2),
-    width: amount.x * SlotConstants.SIZE + (amount.x - 1) * SlotConstants.PADDING,
-    height: amount.x * SlotConstants.SIZE + (amount.y - 1) * SlotConstants.PADDING
+    width: maxAmount.x * SlotConstants.SIZE + (maxAmount.x - 1) * SlotConstants.PADDING,
+    height: maxAmount.x * SlotConstants.SIZE + (maxAmount.y - 1) * SlotConstants.PADDING
   }
 
   // Position of the slot
@@ -380,18 +365,13 @@ function _calculateSlotRect(info: IRenderInfo, node: Node, slotID: number, dragg
 /**
  * Returns the color that a slot has
  */
-function _getSlotColor(slot?: Slot)
+function _getSlotColor(slot?: Slot, slot2?: Slot)
 {
-  switch (slot?.state)
-  {
-    case SlotState.UP:
-      return "#4bbf04";
-    case SlotState.DOWN:
-      return "#dd0404";
-    default:
-    case SlotState.EMPTY:
-      return "#a0a0a0";
-  }
+  if (slot?.state === SlotState.ONLINE && (!slot2 || slot2?.state === SlotState.ONLINE))
+    return "#4bbf04";
+  else if (slot?.state === SlotState.OFFLINE || slot2?.state === SlotState.OFFLINE)
+    return "#dd0404";
+  return "#a0a0a0";
 }
 
 /**

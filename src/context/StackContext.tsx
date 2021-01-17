@@ -88,6 +88,21 @@ export const ACTION_CREATE_SATELLITE = (id?: string, onCreation?: (id: string) =
 }
 
 /**
+ * Creates a new connection between two network slots.
+ * If a slot already contains a connection, the old one will be removed
+ *
+ * @param pSource source slot
+ * @param pTarget target slot
+ * @constructor
+ */
+export const ACTION_CREATE_CONNECTION = (pSource: INetworkSlot, pTarget: INetworkSlot) => (dispatch: StackDispatch, getState: () => IInternalStackState) =>
+{
+  getState().getAccessToken()
+    .then(pToken => PUT("/api/slots/" + pSource.id + "/target", pToken, pTarget.id))
+    .then(() => dispatch(ACTION_RELOAD))
+}
+
+/**
  * Action: Updates a single device with the given id
  *
  * @param id ID of the device to update

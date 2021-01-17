@@ -34,14 +34,21 @@ export interface IDevice
   address?: string,
   location?: ILocation,
   metricRecords?: IMetricRecord[],
-  edges?: IEdge[],
+  slots?: INetworkSlot[][],
 }
 
-export interface IEdge
+export interface INetworkSlot
 {
   id: string,
-  sourceID: string,
-  targetID: string,
+  targetSlotID?: string,
+  state?: ESlotState,
+}
+
+export enum ESlotState
+{
+  ONLINE = "ONLINE",
+  OFFLINE = "OFFLINE",
+  DISABLED = "DISABLED"
 }
 
 export interface IMetric
