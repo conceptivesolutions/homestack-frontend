@@ -1,6 +1,6 @@
 import NetworkComponent from "components/graph/NetworkComponent";
 import {Slot} from "components/graph/NetworkComponentModel";
-import {ACTION_CREATE_CONNECTION, EStackStateActions, StackContext} from "context/StackContext";
+import {ACTION_CREATE_CONNECTION, ACTION_PATCH_DEVICE, EStackStateActions, StackContext} from "context/StackContext";
 import {getMetricRecordByType} from "helpers/deviceHelper";
 import {getStateColor} from "helpers/NodeHelper";
 import StackLayout from "layouts/StackLayout";
@@ -36,6 +36,20 @@ const StackPage = () =>
                            {
                              if (pSource.kind === "slot" && pTarget.kind === "slot")
                                dispatch(ACTION_CREATE_CONNECTION(pSource, pTarget))
+                           }}
+                           onMove={(pSource, pX, pY) =>
+                           {
+                             if (pSource.kind === "node")
+                             {
+                               const device = _.find(devices, pDev => pDev.id === pSource.id)
+                               if (device)
+                               {
+                                 device.location = {x: pX, y: pY};
+                                 dispatch(ACTION_PATCH_DEVICE(device.id, device));
+                                 return true;
+                               }
+                             }
+                             return false;
                            }}
                            onSelectionChanged={pObject => dispatch({
                              type: EStackStateActions.SET_SELECTION,

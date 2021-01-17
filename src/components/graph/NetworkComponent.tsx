@@ -21,6 +21,7 @@ interface INetworkComponent
   },
   nodeToNodeConverter: (node: any) => Node | undefined,
   onDrop?: (source: any, target: any) => void,
+  onMove?: (source: any, x: number, y: number) => boolean,
   onSelectionChanged?: (object?: any) => void,
 }
 
@@ -49,9 +50,10 @@ const NetworkComponent = (props: INetworkComponent) =>
   {
     info.current.events = {
       onDrop: props.onDrop,
+      onMove: props.onMove,
       onSelectionChanged: props.onSelectionChanged,
     }
-  }, [props.onDrop, props.onSelectionChanged])
+  }, [props.onDrop, props.onMove, props.onSelectionChanged])
 
   // transform data, if data changes
   useEffect(() =>
@@ -180,11 +182,29 @@ function _onCanvasDragMoved(info: IRenderInfo, changeX: number, changeY: number)
 function _onCanvasDragEnded(info: IRenderInfo, cancelled: boolean, clientX?: number, clientY?: number)
 {
   // Fire onDrop
-  if (!cancelled && !!clientX && !!clientY && !!info.dragging?.object && !!info.events?.onDrop)
+  if (!cancelled && !!clientX && !!clientY && !!info.dragging?.object)
   {
-    const target = _getClickedObject(info, clientX, clientY);
-    if (!!target)
-      info.events.onDrop(info.dragging.object, target);
+    // Object was dropped
+    if (!!info.events?.onDrop)
+    {
+      const target = _getClickedObject(info, clientX, clientY);
+      if (!!target)
+        info.events.onDrop(info.dragging.object, target);
+    }
+
+    // Move Object
+    if (!!info.events?.onMove)
+    {
+      const targetPoint = {x: info.dragging.origin.x + info.dragging.change.x, y: info.dragging.origin.y + info.dragging.change.y};
+      const moveInstantly = info.events.onMove(info.dragging.object, targetPoint.x, targetPoint.y)
+      if (moveInstantly)
+      {
+        if (info.dragging.object.hasOwnProperty("x"))
+          info.dragging.object.x = targetPoint.x;
+        if (info.dragging.object.hasOwnProperty("y"))
+          info.dragging.object.y = targetPoint.y;
+      }
+    }
   }
   info.dragging = undefined;
   _requestRender(info);
