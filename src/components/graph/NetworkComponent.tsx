@@ -22,6 +22,7 @@ interface INetworkComponent
   nodeToNodeConverter: (node: any) => Node | undefined,
   onDrop?: (source: any, target: any) => void,
   onMove?: (source: any, x: number, y: number) => boolean,
+  onDelete?: (source: any) => void,
   onSelectionChanged?: (object?: any) => void,
 }
 
@@ -51,9 +52,10 @@ const NetworkComponent = (props: INetworkComponent) =>
     info.current.events = {
       onDrop: props.onDrop,
       onMove: props.onMove,
+      onDelete: props.onDelete,
       onSelectionChanged: props.onSelectionChanged,
     }
-  }, [props.onDrop, props.onMove, props.onSelectionChanged])
+  }, [props.onDrop, props.onMove, props.onDelete, props.onSelectionChanged])
 
   // transform data, if data changes
   useEffect(() =>
@@ -69,6 +71,14 @@ const NetworkComponent = (props: INetworkComponent) =>
 
   // render if something changes
   useEffect(() => _requestRender(info.current), [canvasSize.width, canvasSize.height, props.data])
+
+  // initialize keyboard detection
+  useEffect(() =>
+  {
+    const listener = (e: KeyboardEvent) => _onKey(info.current, e.key);
+    window.addEventListener("keyup", listener)
+    return () => window.removeEventListener("keyup", listener);
+  }, [])
 
   // initialize gesture detection
   useEffect(() =>
@@ -208,6 +218,16 @@ function _onCanvasDragEnded(info: IRenderInfo, cancelled: boolean, clientX?: num
   }
   info.dragging = undefined;
   _requestRender(info);
+}
+
+/**
+ * gets called if the user pressed any key
+ */
+function _onKey(info: IRenderInfo, key: string)
+{
+  if (key === "Delete")
+    if (!!info.selection?.object && !!info.events?.onDelete)
+      info.events.onDelete(info.selection.object);
 }
 
 /**

@@ -83,6 +83,9 @@ export interface IRenderInfo
     /* listener that fires, if an object was moved to another location */
     onMove?: (source: any, x: number, y: number) => boolean,
 
+    /* listener that fires, if the user wanted to delete an object */
+    onDelete?: (source: any) => void,
+
     /* listener that fires, if the selection changed */
     onSelectionChanged?: (object: any) => void,
   }
