@@ -1,9 +1,9 @@
-import {DELETE, GET, POST, PUT} from "helpers/fetchHelper";
+import {DELETE, GET, PUT} from "helpers/fetchHelper";
 import _ from "lodash";
 import React, {createContext, Dispatch, useContext, useEffect} from "react";
 import useThunkReducer, {Thunk} from "react-hook-thunk-reducer";
 import {Action} from "types/context";
-import {IDevice, IEdge, IMetricRecord, ISatellite} from "types/model";
+import {IDevice, IMetricRecord, INetworkSlot, ISatellite} from "types/model";
 import {v4 as uuidv4} from 'uuid';
 import {AuthContext} from "./AuthContext";
 
@@ -15,7 +15,6 @@ export interface IStackState
   autoRefresh: boolean,
   selection?: {
     devices?: string[],
-    edges?: string[],
     satellites?: string[],
   },
 }
@@ -148,35 +147,6 @@ export const ACTION_REMOVE_DEVICE = (id: string, onDeletion?: (id: string) => vo
 }
 
 /**
- * Action: Adds a new edge between two IDs
- *
- * @param from ID of the FROM-part of the edge
- * @param to ID of the TO-part of the edge
- * @constructor
- */
-export const ACTION_ADD_EDGE_BETWEEN = (from: string, to: string) => (dispatch: StackDispatch, getState: () => IInternalStackState) =>
-{
-  getState().getAccessToken()
-    .then(pToken => POST('/api/devices/' + from + '/edges', pToken, to))
-    .then(() => dispatch(ACTION_RELOAD))
-}
-
-/**
- * Action: Removes an edge between two IDs
- *
- * @param from ID of the FROM-part of the edge
- * @param to ID of the TO-part of the edge
- * @constructor
- */
-export const ACTION_REMOVE_EDGE_BETWEEN = (from: string, to: string) => (dispatch: StackDispatch, getState: () => IInternalStackState) =>
-{
-  getState().getAccessToken()
-    .then(pToken => DELETE('/api/devices/' + from + '/edges/' + to, pToken))
-    .then(() => dispatch(ACTION_RELOAD))
-    .then(() => dispatch(ACTION_VALIDATE_SELECTION))
-}
-
-/**
  * Reloads the current available devices and satellites
  */
 export const ACTION_RELOAD = (dispatch: StackDispatch, getState: () => IInternalStackState) =>
@@ -188,13 +158,10 @@ export const ACTION_RELOAD = (dispatch: StackDispatch, getState: () => IInternal
     .then(pToken => GET('/api/stacks/' + triggeredForID + '/devices', pToken)
       .then(res => res.json() as Promise<IDevice[]>)
 
-      // enrich devices with records and edges
+      // enrich devices with records
       .then(pDevices => Promise.all(pDevices.map(pDevice => GET('/api/metrics/' + pDevice.id + "/records", pToken)
         .then(pResult => pResult.json() as Promise<IMetricRecord[]>)
         .then(pRecords => pDevice.metricRecords = pRecords)
-        .then(() => GET('/api/devices/' + pDevice.id + '/edges', pToken))
-        .then(res => res.json() as Promise<IEdge[]>)
-        .then(pEdges => pDevice.edges = pEdges)
         .then(() => pDevice))))
 
       // set devices
@@ -238,8 +205,6 @@ export const ACTION_VALIDATE_SELECTION = (dispatch: StackDispatch, getState: () 
     type: EStackStateActions.SET_SELECTION,
     payload: {
       devices: selection.devices?.filter(pDeviceID => _.findIndex(getState().devices, pValidDevice => pValidDevice.id === pDeviceID) > -1),
-      edges: selection.edges?.filter(pEdgeID => _.findIndex(getState().devices?.flatMap(pDevice => pDevice.edges || []),
-        pValidEdge => pValidEdge.id === pEdgeID) > -1),
       satellites: selection.satellites?.filter(pSatelliteID => _.findIndex(getState().satellites, pValidSatellite => pValidSatellite.id === pSatelliteID) > -1),
     }
   })
@@ -272,7 +237,6 @@ const reducer = (state: IInternalStackState, action: Action) =>
         ...state,
         selection: {
           devices: action.payload?.devices || [],
-          edges: action.payload?.edges || [],
           satellites: action.payload?.satellites || [],
         },
       }

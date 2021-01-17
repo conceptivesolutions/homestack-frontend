@@ -6,7 +6,7 @@ export class NodeConstants
 
 export class SlotConstants
 {
-  public static readonly SIZE = 12; // size of a single edge slot rectangle
+  public static readonly SIZE = 12; // size of a single network slot rectangle
   public static readonly PADDING_BACKGROUND = 1;
   public static readonly PADDING = 3; // padding between slots
 }

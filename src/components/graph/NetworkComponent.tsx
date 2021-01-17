@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {Edge, Node} from "components/graph/NetworkComponentModel";
+import {Node} from "components/graph/NetworkComponentModel";
 import {RegionDetectionContainer} from "components/graph/regionDetection/RegionDetectionContainer";
 import {IRenderInfo} from "components/graph/renderer/IRenderInfo";
 import {render} from "components/graph/renderer/Renderer";
@@ -15,13 +15,11 @@ interface INetworkComponent
   className?: string,
   data?: {
     nodes?: any[],
-    edges?: any[],
   },
   selection?: {
     node?: any,
   },
   nodeToNodeConverter: (node: any) => Node | undefined,
-  edgeToEdgeConverter: (edge: any) => Edge | undefined,
   onDrop?: (source: any, target: any) => void,
   onSelectionChanged?: (object?: any) => void,
 }
@@ -60,13 +58,12 @@ const NetworkComponent = (props: INetworkComponent) =>
   {
     info.current.data = ({
       nodes: _.keyBy(props.data?.nodes?.map(props.nodeToNodeConverter).filter(pV => !!pV).map(pV => pV!), "id"),
-      edges: _.groupBy(props.data?.edges?.map(props.edgeToEdgeConverter).filter(pV => !!pV).map(pV => pV!), "from"),
     });
     info.current.selection = {
       object: _.head([props.selection?.node].filter(pV => !!pV).map(props.nodeToNodeConverter)),
     };
     regionDetectionContainer.current.clear(); //todo not whole clear, only remove or re-set
-  }, [props.data, props.nodeToNodeConverter, props.edgeToEdgeConverter, props.selection?.node])
+  }, [props.data, props.nodeToNodeConverter, props.selection?.node])
 
   // render if something changes
   useEffect(() => _requestRender(info.current), [canvasSize.width, canvasSize.height, props.data])
@@ -141,15 +138,15 @@ function _onCanvasDragStarted(info: IRenderInfo, clientX: number, clientY: numbe
     initialPointerLocation: _translateToCanvasCoordinates(info, clientX, clientY),
   };
 
-  // handling: edge creation
+  // handling: connection creation
   if (info.data.nodes && clickedObject?.kind === "slot")
   {
-    const node = _.find(info.data.nodes, pNode => _.indexOf(pNode.slots.data, clickedObject) > 0);
+    const node = _.head(_.filter(info.data.nodes, pNode => !!_.head(pNode.slots.flatMap(pRow => pRow).filter(pSlot => pSlot === clickedObject))));
     if (!!node)
       info.dragging.creation = {
-        edge: {
-          from: node,
-          slotID: _.indexOf(node.slots.data, clickedObject),
+        connection: {
+          node,
+          slot: clickedObject,
         },
       }
   }

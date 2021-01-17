@@ -1,4 +1,4 @@
-import {Edge, Node, Point} from "components/graph/NetworkComponentModel";
+import {Node, Point, Slot} from "components/graph/NetworkComponentModel";
 import {RegionDetectionContainer} from "components/graph/regionDetection/RegionDetectionContainer";
 import {Dictionary} from "lodash";
 import {MutableRefObject} from "react";
@@ -17,8 +17,6 @@ export interface IRenderInfo
     /* nodes to display as dictionary, where key = ID */
     nodes?: Dictionary<Node>,
 
-    /* edges to display as dictionary, where key = node-ID */
-    edges?: Dictionary<Edge[]>
   }
 
   /* current viewport */
@@ -68,10 +66,10 @@ export interface IRenderInfo
     /* this object will be filled, if there is a object creation ongoing */
     creation?: {
 
-      /* will be filled, if an edge will be created by dragging */
-      edge?: {
-        from: Node,
-        slotID: number,
+      /* will be filled, if an connection will be created by dragging */
+      connection?: {
+        node: Node,
+        slot: Slot,
       }
     }
   },

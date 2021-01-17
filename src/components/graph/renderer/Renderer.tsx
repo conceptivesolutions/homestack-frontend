@@ -1,5 +1,5 @@
 import {mdiCheckboxBlankOutline, mdiCheckboxMarked} from "@mdi/js";
-import {Edge, Node, Point, Slot, SlotState} from "components/graph/NetworkComponentModel";
+import {Node, Point, Slot, SlotState} from "components/graph/NetworkComponentModel";
 import {IRenderInfo} from "components/graph/renderer/IRenderInfo";
 import {NodeConstants, SlotConstants} from "components/graph/renderer/RenderConstants";
 import {iconToPath2D} from "helpers/iconHelper";
@@ -27,7 +27,6 @@ export function render(info: IRenderInfo)
 
   // render data
   _.forEach(info.data.nodes, pNode => _renderNode(ctx, info, pNode));
-  _.forEach(info.data.edges, pEdges => pEdges.forEach(pEdge => _renderEdge(ctx, info, pEdge)));
 
   // render all "in progress" information
   _renderCreationInProgress(ctx, info);

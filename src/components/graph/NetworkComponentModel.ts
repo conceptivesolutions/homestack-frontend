@@ -7,34 +7,22 @@ export interface Node
   color?: string,
   x: number,
   y: number,
-  slots: {
-    x: number,
-    y: number,
-    data: Slot[],
-  }
-}
-
-export interface Edge
-{
-  kind: "edge",
-  from: string,
-  from_slotID: number,
-  to: string,
-  to_slotID: number,
+  slots: Slot[][],
 }
 
 export interface Slot
 {
   kind: "slot",
   id: string,
-  state: SlotState,
+  state?: SlotState,
+  targetSlotID?: string,
 }
 
 export enum SlotState
 {
-  UP = "UP",
-  DOWN = "DOWN",
-  EMPTY = "EMPTY"
+  ONLINE = "ONLINE",
+  OFFLINE = "OFFLINE",
+  DISABLED = "DISABLED"
 }
 
 export interface Point
