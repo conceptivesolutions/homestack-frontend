@@ -37,9 +37,11 @@ export class RegionDetectionContainer
   public render(object: any, fn: ((color: string, ctx: CanvasRenderingContext2D) => void)): void
   {
     const color = this.insertIfAbsent(object);
+    const transform = this.ctx.getTransform();
     this.ctx.strokeStyle = color;
     this.ctx.fillStyle = color;
     fn(color, this.ctx);
+    this.ctx.setTransform(transform);
   }
 
   /**
