@@ -1,6 +1,6 @@
 import NetworkComponent from "components/graph/NetworkComponent";
 import {Slot} from "components/graph/NetworkComponentModel";
-import {ACTION_CREATE_CONNECTION, ACTION_PATCH_DEVICE, ACTION_RELOAD, ACTION_REMOVE_DEVICE, EStackStateActions, StackContext} from "context/StackContext";
+import {ACTION_CREATE_CONNECTION, ACTION_PATCH_DEVICE, ACTION_RELOAD, ACTION_REMOVE_CONNECTION, ACTION_REMOVE_DEVICE, EStackStateActions, StackContext} from "context/StackContext";
 import {getMetricRecordByType} from "helpers/deviceHelper";
 import {getStateColor} from "helpers/NodeHelper";
 import StackLayout from "layouts/StackLayout";
@@ -55,11 +55,13 @@ const StackPage = () =>
                            {
                              if (pObject.kind === "node")
                                dispatch(ACTION_REMOVE_DEVICE(pObject.id, () => dispatch(ACTION_RELOAD)))
+                             else if (pObject.kind === "connection")
+                               dispatch(ACTION_REMOVE_CONNECTION(pObject.fromSlot, () => dispatch(ACTION_RELOAD)))
                            }}
                            onSelectionChanged={pObject => dispatch({
                              type: EStackStateActions.SET_SELECTION,
                              payload: {
-                               devices: !!pObject ? [pObject?.id] : [],
+                               devices: pObject?.kind === "node" ? [pObject?.id] : [],
                              }
                            })}/>
 }

@@ -162,6 +162,20 @@ export const ACTION_REMOVE_DEVICE = (id: string, onDeletion?: (id: string) => vo
 }
 
 /**
+ * Removes a single connection from a slot
+ *
+ * @param slotID id of the slot to remove the connection from
+ * @param onDeletion function that gets executed, if the device was removed
+ * @constructor
+ */
+export const ACTION_REMOVE_CONNECTION = (slotID: string, onDeletion?: () => void) => (dispatch: StackDispatch, getState: () => IInternalStackState) =>
+{
+  getState().getAccessToken()
+    .then(pToken => DELETE('/api/slots/' + slotID + "/target", pToken))
+    .then(() => onDeletion && onDeletion());
+}
+
+/**
  * Reloads the current available devices and satellites
  */
 export const ACTION_RELOAD = (dispatch: StackDispatch, getState: () => IInternalStackState) =>

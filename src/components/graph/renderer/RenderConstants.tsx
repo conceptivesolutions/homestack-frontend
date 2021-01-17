@@ -10,3 +10,13 @@ export class SlotConstants
   public static readonly PADDING_BACKGROUND = 1;
   public static readonly PADDING = 3; // padding between slots
 }
+
+export class ConnectionConstants
+{
+  public static readonly DELETE_ICON_SIZE = 25;
+}
+
+export class Actions
+{
+  public static readonly DELETE_SELECTION = "DELETE_SELECTION";
+}

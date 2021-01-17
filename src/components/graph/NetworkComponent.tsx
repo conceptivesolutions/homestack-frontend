@@ -2,6 +2,7 @@ import classNames from "classnames";
 import {Node} from "components/graph/NetworkComponentModel";
 import {RegionDetectionContainer} from "components/graph/regionDetection/RegionDetectionContainer";
 import {IRenderInfo} from "components/graph/renderer/IRenderInfo";
+import {Actions} from "components/graph/renderer/RenderConstants";
 import {render} from "components/graph/renderer/Renderer";
 import ZoomComponent, {IZoomComponentHandle} from "components/graph/statusbar/ZoomComponent";
 import {preventDefault} from "helpers/Utility";
@@ -122,7 +123,10 @@ const NetworkComponent = (props: INetworkComponent) =>
 function _onCanvasClick(info: IRenderInfo, clientX: number, clientY: number)
 {
   const clickedObject = _getClickedObject(info, clientX, clientY);
-  if (clickedObject !== info.selection?.object)
+
+  if (clickedObject === Actions.DELETE_SELECTION) // specialhandling: delete seletion
+    _onKey(info, "Delete");
+  else if (clickedObject !== info.selection?.object)
   {
     info.selection = {object: clickedObject};
     if (!!info.events?.onSelectionChanged)

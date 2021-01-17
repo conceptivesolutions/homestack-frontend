@@ -1,7 +1,7 @@
-import {mdiCheckboxBlankOutline, mdiCheckboxMarked} from "@mdi/js";
-import {Node, Point, Slot, SlotState} from "components/graph/NetworkComponentModel";
+import {mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiTrashCanOutline} from "@mdi/js";
+import {Node, Point, Rectangle, Slot, SlotState} from "components/graph/NetworkComponentModel";
 import {IRenderInfo} from "components/graph/renderer/IRenderInfo";
-import {NodeConstants, SlotConstants} from "components/graph/renderer/RenderConstants";
+import {Actions, ConnectionConstants, NodeConstants, SlotConstants} from "components/graph/renderer/RenderConstants";
 import {iconToPath2D} from "helpers/iconHelper";
 import _ from "lodash";
 
@@ -258,19 +258,75 @@ function _renderSlot(ctx: CanvasRenderingContext2D, info: IRenderInfo, node: Nod
   if (!target)
     return;
 
-  // Draw Edge
-  const toSlotRect = _calculateSlotRect(info, target.node, target.slot, false)
-  ctx.strokeStyle = _getSlotColor(slot, target.slot);
+  // render connection
+  _renderConnection(ctx, info, slot, target.slot, fromSlotRect, _calculateSlotRect(info, target.node, target.slot, false));
+}
+
+/**
+ * Renders the connection between two slots
+ *
+ * @param ctx context to render on
+ * @param info render info
+ * @param source slot to start
+ * @param target slot to end
+ * @param sourceRect rect for source
+ * @param targetRect rect for target
+ */
+function _renderConnection(ctx: CanvasRenderingContext2D, info: IRenderInfo, source: Slot, target: Slot, sourceRect: Rectangle, targetRect: Rectangle)
+{
+  const sourceSlotID = source.id;
+  const targetSlotID = target.id;
+  const sourceX = sourceRect.x + (sourceRect.width / 2);
+  const sourceY = sourceRect.y + (sourceRect.height / 2);
+  const targetX = targetRect.x + (targetRect.width / 2);
+  const targetY = targetRect.y + (targetRect.height / 2);
+
+  // Draw Connection
+  ctx.strokeStyle = _getSlotColor(source, target);
   ctx.beginPath();
-  ctx.moveTo(fromSlotRect.x + (fromSlotRect.width / 2), fromSlotRect.y + (fromSlotRect.height / 2))
-  ctx.lineTo(toSlotRect.x + (toSlotRect.width / 2), toSlotRect.y + (toSlotRect.height / 2));
+  ctx.moveTo(sourceX, sourceY)
+  ctx.lineTo(targetX, targetY);
   ctx.stroke();
 
+  // render connection selectable
+  info.rdcRef.current.render({
+    kind: "connection",
+    fromSlot: sourceSlotID,
+    toSlot: targetSlotID
+  }, (pColor, pCtx) =>
+  {
+    pCtx.lineWidth = 7;
+    pCtx.beginPath();
+    pCtx.moveTo(sourceX, sourceY)
+    pCtx.lineTo(targetX, targetY);
+    pCtx.stroke();
+  })
+
+  // currently selected connection
+  if (info.selection?.object?.kind === "connection" && info.selection.object.fromSlot === sourceSlotID && info.selection.object.toSlot === targetSlotID)
+  {
+    const old = ctx.getTransform();
+    const x = sourceX + ((targetX - sourceX) / 2) - (ConnectionConstants.DELETE_ICON_SIZE / 2);
+    const y = sourceY + ((targetY - sourceY) / 2) - (ConnectionConstants.DELETE_ICON_SIZE / 2);
+    ctx.transform(1, 0, 0, 1, x, y)
+    ctx.fillStyle = "white"
+    ctx.fillRect(0, 0, ConnectionConstants.DELETE_ICON_SIZE, ConnectionConstants.DELETE_ICON_SIZE)
+    ctx.fillStyle = "red";
+    ctx.fill(new Path2D(mdiTrashCanOutline))
+    ctx.setTransform(old);
+
+    info.rdcRef.current.render(Actions.DELETE_SELECTION, (pColor, pCtx) =>
+    {
+      pCtx.transform(1, 0, 0, 1, x, y)
+      pCtx.fillRect(0, 0, ConnectionConstants.DELETE_ICON_SIZE, ConnectionConstants.DELETE_ICON_SIZE)
+    });
+  }
+
   // Draw "Plug"
-  const plugPadding = 3;
+  const plugSize = 3;
   ctx.fillStyle = "#00000080";
-  ctx.fillRect(fromSlotRect.x + plugPadding, fromSlotRect.y + plugPadding, fromSlotRect.width - 2 * plugPadding, fromSlotRect.height - 2 * plugPadding);
-  ctx.fillRect(toSlotRect.x + plugPadding, toSlotRect.y + plugPadding, toSlotRect.width - 2 * plugPadding, toSlotRect.height - 2 * plugPadding);
+  ctx.fillRect(sourceX - plugSize, sourceY - plugSize, 2 * plugSize, 2 * plugSize);
+  ctx.fillRect(targetX - plugSize, targetY - plugSize, 2 * plugSize, 2 * plugSize);
 }
 
 /**
@@ -311,7 +367,7 @@ function _renderCreationInProgress(ctx: CanvasRenderingContext2D, info: IRenderI
  * @param slot source slot
  * @param draggable if the current drag should be included in calculation
  */
-function _calculateSlotRect(info: IRenderInfo, node: Node, slot: Slot, draggable: boolean): { x: number, y: number, width: number, height: number }
+function _calculateSlotRect(info: IRenderInfo, node: Node, slot: Slot, draggable: boolean): Rectangle
 {
   const isSlotDragActive = draggable && !!slot && info.dragging?.object === slot; // true, if this slot is currently beeing dragged
 

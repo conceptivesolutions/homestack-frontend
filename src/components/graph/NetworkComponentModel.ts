@@ -18,6 +18,13 @@ export interface Slot
   targetSlotID?: string,
 }
 
+export interface Connection
+{
+  kind: "connection",
+  fromSlot: string,
+  toSlot: string,
+}
+
 export enum SlotState
 {
   ONLINE = "ONLINE",
@@ -29,4 +36,12 @@ export interface Point
 {
   x: number,
   y: number,
+}
+
+export interface Rectangle
+{
+  x: number,
+  y: number,
+  width: number,
+  height: number
 }
