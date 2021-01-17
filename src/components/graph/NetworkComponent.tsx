@@ -64,7 +64,7 @@ const NetworkComponent = (props: INetworkComponent) =>
       nodes: _.keyBy(props.data?.nodes?.map(props.nodeToNodeConverter).filter(pV => !!pV).map(pV => pV!), "id"),
     });
     info.current.selection = {
-      object: _.head([props.selection?.node].filter(pV => !!pV).map(props.nodeToNodeConverter)),
+      object: _.head([props.selection?.node].filter(pV => !!pV).map(props.nodeToNodeConverter)) || info.current.selection?.object,
     };
     regionDetectionContainer.current.clear(); //todo not whole clear, only remove or re-set
   }, [props.data, props.nodeToNodeConverter, props.selection?.node])
