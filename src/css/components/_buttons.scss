@@ -1,6 +1,6 @@
 @import "../borders";
 @import "../colors";
-@import "../../mixins/filters";
+@import "../mixins/filters";
 
 button.primary {
   background-color: $primary-color;
