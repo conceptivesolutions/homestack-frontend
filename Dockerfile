@@ -24,31 +24,9 @@ RUN yarn run build
 
 # Second Stage
 # Runtime
-FROM node:15-alpine
-ENV NODE_ENV production
-ENV PORT 3000
-
-# add build stuff
-RUN apk add --no-cache python make gcc g++
-
-# set workdir, instead of using root
-RUN mkdir /app
-WORKDIR /app
-
-# Install dependencies (NOT including dev dependencies, because of NODE_ENV)
-COPY package.json yarn.lock .npmrc /app/
-RUN yarn install
-
-# Get the built application from the first stage
-COPY --from=build /app/.next /app/.next
-COPY --from=build /app/public /app/public
-
-# Add a nextjs user, to force running in non-root mode
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
-RUN chown nextjs:nodejs -R /app
-USER nextjs
+FROM nginx:1.18-alpine
+COPY --from=build /app/build /usr/share/nginx/html
 
 # Set runtime metadata
 EXPOSE 3000
-CMD [ "yarn", "start" ]
+CMD ["/bin/sh", "-c", "sed -i 's/listen  .*/listen 3000;/g' /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]
