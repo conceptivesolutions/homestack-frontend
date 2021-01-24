@@ -1,6 +1,7 @@
 import Icon from "@mdi/react";
 import classNames from "classnames";
 import React from 'react';
+import { Link } from "react-router-dom";
 import styles from "./TitledList.module.scss";
 
 type TitledListProps = {
@@ -30,7 +31,7 @@ export const TitledList: React.FC<TitledListProps> = ({title, children}) => (
  * Entry for titled list
  */
 export const TitledListEntry: React.FC<TitledListEntryProps> = ({url, icon, color, children, className, active, onClick}) => (
-  <a href={url} className={classNames(styles.entry, className, {[styles.active]: active})} onClick={(e) =>
+  <Link to={url || ""} className={classNames(styles.entry, className, {[styles.active]: active})} onClick={(e) =>
   {
     if (onClick && e.button === 0)
     {
@@ -42,7 +43,7 @@ export const TitledListEntry: React.FC<TitledListEntryProps> = ({url, icon, colo
       <Icon path={icon} color={color} size={1}/>
     </div>}
     {children && <span className={styles.text}>{children}</span>}
-  </a>
+  </Link>
 );
 
 
