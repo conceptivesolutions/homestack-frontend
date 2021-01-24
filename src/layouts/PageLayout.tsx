@@ -1,12 +1,14 @@
 import { mdiAccount, mdiBellOutline, mdiCogOutline, mdiHomeOutline, mdiLaptop, mdiLogout } from "@mdi/js";
 import { ButtonStrip, ButtonStripItem } from "components/base/list/ButtonStrip";
 import { TitledList, TitledListEntry } from "components/base/list/TitledList";
+import { Loading } from "components/base/Loading";
 import { PopupItem } from "components/base/Popup";
 import { ProfileButtonStripItem } from "components/profile/ProfileButtonStripItem";
 import _ from "lodash";
-import { IStack } from "models/backend";
+import { IStack } from "models/definitions/backend";
 import { useLogin } from "models/states/AuthState";
-import React from 'react';
+import { useUserInfo } from "models/states/UserState";
+import React, { Suspense } from 'react';
 import { useHistory, useLocation, useParams } from "react-router";
 import styles from "./PageLayout.module.scss";
 
@@ -22,15 +24,16 @@ export const PageLayout: React.FC<PageLayoutProps> = ({children, stripItems}) =>
   const {logout} = useLogin();
 
   // todo include stacks
-  // todo user (profile picture)
 
   return (
     <div className={styles.container}>
       <ButtonStrip className={styles.strip}>
-        <ProfileButtonStripItem>
-          <PopupItem icon={mdiAccount}>My Profile</PopupItem>
-          <PopupItem icon={mdiLogout} separatorTop onClick={logout}>Logout</PopupItem>
-        </ProfileButtonStripItem>
+        <Suspense fallback={<Loading size={1.5}/>}>
+          <UserProfileButtonStripItem>
+            <PopupItem icon={mdiAccount}>My Profile</PopupItem>
+            <PopupItem icon={mdiLogout} separatorTop onClick={logout}>Logout</PopupItem>
+          </UserProfileButtonStripItem>
+        </Suspense>
         <ButtonStripItem icon={mdiBellOutline}/>
         <ButtonStripItem icon={mdiCogOutline} active={location.pathname.startsWith("/settings")} onClick={() => history.push("/settings")}/>
         {stripItems && _.reverse(stripItems)}
@@ -51,6 +54,17 @@ export const PageLayout: React.FC<PageLayoutProps> = ({children, stripItems}) =>
     </div>
   );
 };
+
+/**
+ * Item to show the user information and the appropriate user picture
+ */
+const UserProfileButtonStripItem: React.FC = ({children}) =>
+{
+  const {getUserInfo} = useUserInfo();
+  return <ProfileButtonStripItem iconSrc={getUserInfo()?.picture}>
+    {children}
+  </ProfileButtonStripItem>
+}
 
 /**
  * Creates the stacks entries for the switcher
