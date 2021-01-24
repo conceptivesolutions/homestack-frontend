@@ -1,0 +1,24 @@
+@import "css/styles";
+
+.container {
+  position: relative;
+}
+
+.innerContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .icon {
+    width: 25px;
+    height: 25px;
+    background: $border-color;
+    border-radius: 100%;
+
+    @include box_shadow_bottom_light(black)
+  }
+}
+
+.dropdownArrow {
+  padding-left: 2px;
+}
