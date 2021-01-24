@@ -1,5 +1,6 @@
 import { ButtonStripItem } from "components/base/list/ButtonStrip";
 import { PageLayout } from "layouts/PageLayout";
+import { LoginPage } from "pages/LoginPage";
 import React from 'react';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 
@@ -17,6 +18,9 @@ export const App = () => (
         </Route>
         <Route path="/settings">
           <div>settings</div>
+        </Route>
+        <Route path="/login">
+          <LoginPage/>
         </Route>
         <Route path="/">
           <Redirect to={"/dashboard"}/>

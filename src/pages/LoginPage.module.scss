@@ -1,0 +1,72 @@
+@import "css/styles";
+
+.page {
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  width: 50rem;
+  height: 30rem;
+  background: white;
+  border-radius: $border-radius;
+  display: flex;
+  flex-direction: row;
+
+  @include box_shadow_bottom(black)
+}
+
+.left {
+  border-top-left-radius: $border-radius;
+  border-bottom-left-radius: $border-radius;
+  padding: 10px;
+  background: $gray-background;
+  flex: 1 1 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 15rem;
+  }
+}
+
+.right {
+  flex: 1 1 60%;
+  display: flex;
+  flex-direction: column;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 50px;
+
+  .header {
+    margin-bottom: 20px;
+  }
+
+  .user,
+  .password {
+    width: 100%;
+  }
+
+  .login {
+    width: 8rem;
+    margin-top: 20px;
+  }
+
+}
