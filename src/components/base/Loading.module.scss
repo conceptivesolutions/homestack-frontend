@@ -13,9 +13,6 @@
   0% {
     transform: rotate(0deg)
   }
-  50% {
-    transform: rotate(180deg)
-  }
   100% {
     transform: rotate(360deg)
   }
@@ -24,18 +21,10 @@
 .loading div {
   position: absolute;
   animation: loading 1s linear infinite;
-  width: 156px;
-  height: 156px;
-  top: 22px;
-  left: 22px;
   border-radius: 50%;
-  box-shadow: 0 4px 0 0 $border-color;
-  transform-origin: 78px 80px;
 }
 
 .loadingioSpinner {
-  width: 200px;
-  height: 200px;
   display: inline-block;
   overflow: hidden;
   background: none;
@@ -48,6 +37,33 @@
   transform: translateZ(0) scale(1);
   backface-visibility: hidden;
   transform-origin: 0 0; /* see note above */
+}
+
+.loadingBig {
+  box-shadow: 0 4px 0 0 $border-color;
+  width: calc(100% - 4px - 4px);
+  height: calc(100% - 4px - 4px);
+  top: 4px;
+  left: 4px;
+  transform-origin: calc((100% - 4px - 4px) / 2) calc(((100% - 4px - 4px) / 2) + 2);
+}
+
+.loadingMid {
+  box-shadow: 0 3px 0 0 $border-color;
+  width: calc(100% - 3px - 3px);
+  height: calc(100% - 3px - 3px);
+  top: 3px;
+  left: 3px;
+  transform-origin: calc((100% - 3px - 3px) / 2) calc(((100% - 3px - 3px) / 2) + 2);
+}
+
+.loadingSmall {
+  box-shadow: 0 2px 0 0 $border-color;
+  width: calc(100% - 2px - 2px);
+  height: calc(100% - 2px - 2px);
+  top: 2px;
+  left: 2px;
+  transform-origin: calc((100% - 2px - 2px) / 2) calc(((100% - 2px - 2px) / 2) + 2);
 }
 
 .loading div {
