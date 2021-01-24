@@ -1,4 +1,3 @@
-import { ButtonStripItem } from "components/base/list/ButtonStrip";
 import { PageLayout } from "layouts/PageLayout";
 import { useAuth } from "models/states/AuthState";
 import { LoginPage } from "pages/LoginPage";
@@ -14,7 +13,7 @@ import { RecoilRoot } from "recoil";
 export const App = () => (
   <RecoilRoot>
     <BrowserRouter>
-      <PageLayout stripItems={[<ButtonStripItem/>]}>
+      <PageLayout>
         <Switch>
           <PrivateRoute path="/dashboard">
             <div>dashboard</div>
