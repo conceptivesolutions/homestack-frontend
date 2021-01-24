@@ -5,6 +5,7 @@ import { PopupItem } from "components/base/Popup";
 import { ProfileButtonStripItem } from "components/profile/ProfileButtonStripItem";
 import _ from "lodash";
 import { IStack } from "models/backend";
+import { useLogin } from "models/states/AuthState";
 import React from 'react';
 import { useHistory, useLocation, useParams } from "react-router";
 import styles from "./PageLayout.module.scss";
@@ -18,16 +19,17 @@ export const PageLayout: React.FC<PageLayoutProps> = ({children, stripItems}) =>
   const location = useLocation();
   const history = useHistory();
   const {stackID} = useParams<{ stackID: string }>();
+  const {logout} = useLogin();
 
   // todo include stacks
-  // todo user (logout, profile picture)
+  // todo user (profile picture)
 
   return (
     <div className={styles.container}>
       <ButtonStrip className={styles.strip}>
         <ProfileButtonStripItem>
           <PopupItem icon={mdiAccount}>My Profile</PopupItem>
-          <PopupItem icon={mdiLogout} separatorTop>Logout</PopupItem>
+          <PopupItem icon={mdiLogout} separatorTop onClick={logout}>Logout</PopupItem>
         </ProfileButtonStripItem>
         <ButtonStripItem icon={mdiBellOutline}/>
         <ButtonStripItem icon={mdiCogOutline} active={location.pathname.startsWith("/settings")} onClick={() => history.push("/settings")}/>
