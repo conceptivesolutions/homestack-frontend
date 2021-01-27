@@ -5,8 +5,9 @@ import { Loading } from "components/base/Loading";
 import { PopupItem } from "components/base/Popup";
 import { ProfileButtonStripItem } from "components/profile/ProfileButtonStripItem";
 import _ from "lodash";
-import { IStack } from "models/definitions/backend";
+import { IStack } from "models/definitions/backend/common";
 import { useLogin } from "models/states/AuthState";
+import { useStacks } from "models/states/DataState";
 import { useUserInfo } from "models/states/UserState";
 import React, { Suspense } from 'react';
 import { useHistory, useLocation, useParams } from "react-router";
@@ -20,7 +21,6 @@ export const PageLayout: React.FC<PageLayoutProps> = ({children, stripItems}) =>
 {
   const location = useLocation();
   const history = useHistory();
-  const {stackID} = useParams<{ stackID: string }>();
   const {logout} = useLogin();
 
   // todo include stacks
@@ -43,9 +43,9 @@ export const PageLayout: React.FC<PageLayoutProps> = ({children, stripItems}) =>
           <TitledListEntry icon={mdiHomeOutline} color={"#ab6393"} active={location.pathname === "/dashboard"} url={"/dashboard"}>Dashboard</TitledListEntry>
           <TitledListEntry icon={mdiBellOutline} color={"#ecbe7a"}>Notifications</TitledListEntry>
         </TitledList>
-        <TitledList title={"Stacks"}>
-          {_createStackSwitcherEntries(undefined, stackID || "")}
-        </TitledList>
+        <Suspense fallback={<Loading size={1.5}/>}>
+          <StacksTitledList/>
+        </Suspense>
       </div>
       <div className={styles.edge} onClick={() => history.push("/")}/>
       <div className={styles.content}>
@@ -67,12 +67,24 @@ const UserProfileButtonStripItem: React.FC = ({children}) =>
 }
 
 /**
+ * List to show the current stacks
+ */
+const StacksTitledList: React.VFC = () =>
+{
+  const {stackID} = useParams<{ stackID: string }>();
+  const {stacks} = useStacks();
+  return <TitledList title={"Stacks"}>
+    {_createStackSwitcherEntries(stacks, stackID || "")}
+  </TitledList>
+}
+
+/**
  * Creates the stacks entries for the switcher
  *
  * @param stacks current stacks
  * @param stackID ID of the currently selected stack
  */
-function _createStackSwitcherEntries(stacks: IStack[] | undefined, stackID: string)
+function _createStackSwitcherEntries(stacks: IStack[] | null, stackID: string)
 {
   return _.sortBy(stacks, ['displayName', 'id'])
     .map(pStack => <TitledListEntry key={pStack.id} icon={mdiLaptop}
