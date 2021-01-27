@@ -1,5 +1,6 @@
 import { PageLayout } from "layouts/PageLayout";
 import { useAuth } from "models/states/AuthState";
+import { ErrorPage } from "pages/ErrorPage";
 import { LoginPage } from "pages/LoginPage";
 import React from 'react';
 import { BrowserRouter, Redirect, Route, RouteProps, Switch } from 'react-router-dom';
@@ -15,18 +16,24 @@ export const App = () => (
     <BrowserRouter>
       <PageLayout>
         <Switch>
-          <PrivateRoute path="/dashboard">
-            <div>dashboard</div>
-          </PrivateRoute>
-          <PrivateRoute path="/settings">
-            <div>settings</div>
-          </PrivateRoute>
-          <Route path="/login">
+          {/* Public Routes */}
+          <Route path="/login" exact>
             <LoginPage/>
           </Route>
-          <Route path="/">
+
+          {/* Private Routes */}
+          <PrivateRoute path="/" exact>
             <Redirect to={"/dashboard"}/>
-          </Route>
+          </PrivateRoute>
+          <PrivateRoute path="/dashboard" exact>
+            <div>dashboard</div>
+          </PrivateRoute>
+          <PrivateRoute path="/settings" exact>
+            <div>settings</div>
+          </PrivateRoute>
+          <PrivateRoute path="/">
+            <ErrorPage/>
+          </PrivateRoute>
         </Switch>
       </PageLayout>
     </BrowserRouter>
