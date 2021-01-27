@@ -9,6 +9,7 @@
   "dependencies": {
     "@mdi/js": "^5.9.55",
     "@mdi/react": "^1.4.0",
+    "body-parser": "^1.19.0",
     "classnames": "^2.2.6",
     "framer-motion": "^3.2.2-rc.1",
     "http-proxy-middleware": "1.0.6",

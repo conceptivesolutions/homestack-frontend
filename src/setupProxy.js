@@ -1,7 +1,11 @@
 const {createProxyMiddleware} = require('http-proxy-middleware');
+const bodyParser = require('body-parser');
 
 module.exports = function (app)
 {
+  // parse JSON
+  app.use(bodyParser.json());
+
   // proxy to authentication server
   app.use('/api/auth', createProxyMiddleware({
     target: process.env.AUTH_TARGET,
@@ -28,6 +32,9 @@ module.exports = function (app)
   // proxy to backend
   app.use('/api', createProxyMiddleware({
     target: process.env.API_TARGET,
+    pathRewrite: {
+      '^/api': ''
+    },
     changeOrigin: true,
   }));
 };
