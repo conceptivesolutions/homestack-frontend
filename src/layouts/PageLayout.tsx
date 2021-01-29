@@ -10,7 +10,7 @@ import { useLogin } from "models/states/AuthState";
 import { useStacks } from "models/states/DataState";
 import { useUserInfo } from "models/states/UserState";
 import React, { Suspense } from 'react';
-import { useHistory, useLocation, useParams } from "react-router";
+import { useHistory, useLocation } from "react-router";
 import styles from "./PageLayout.module.scss";
 
 type PageLayoutProps = {
@@ -69,10 +69,10 @@ const UserProfileButtonStripItem: React.FC = ({children}) =>
  */
 const StacksTitledList: React.VFC = () =>
 {
-  const {stackID} = useParams<{ stackID: string }>();
+  const {pathname} = useLocation();
   const {stacks} = useStacks();
   return <TitledList title={"Stacks"}>
-    {_createStackSwitcherEntries(stacks, stackID || "")}
+    {_createStackSwitcherEntries(stacks, pathname || "")}
   </TitledList>
 }
 
@@ -80,14 +80,14 @@ const StacksTitledList: React.VFC = () =>
  * Creates the stacks entries for the switcher
  *
  * @param stacks current stacks
- * @param stackID ID of the currently selected stack
+ * @param currentPath current url
  */
-function _createStackSwitcherEntries(stacks: IStack[] | null, stackID: string)
+function _createStackSwitcherEntries(stacks: IStack[] | null, currentPath: string)
 {
   return _.sortBy(stacks, ['displayName', 'id'])
     .map(pStack => <TitledListEntry key={pStack.id} icon={mdiLaptop}
-                                    active={stackID === pStack.id}
+                                    active={currentPath.startsWith("/stacks/" + pStack.id)}
                                     url={"/stacks/" + pStack.id}>
       {pStack.displayName || pStack.id}
-    </TitledListEntry>)
+    </TitledListEntry>);
 }
