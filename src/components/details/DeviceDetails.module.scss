@@ -1,0 +1,31 @@
+@import "css/styles";
+
+.container {
+}
+
+.header {
+  margin: 0;
+  display: flex;
+
+  * {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+//.latencyHeader {
+//  margin: 0 0 10px;
+//  display: flex;
+//  flex-direction: row;
+//}
+//
+//.latencyRangeSelect {
+//  flex-grow: 0;
+//  width: 130px;
+//  margin: auto 10px auto auto;
+//}
+
+.detailHeader {
+  flex-grow: 1;
+}

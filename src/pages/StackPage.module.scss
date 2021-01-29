@@ -13,3 +13,24 @@
 .network {
   @include box_shadow_bottom_light(black)
 }
+
+.detailsContainer {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  height: calc(100% - 10px);
+  display: flex;
+
+  border-radius: $border-radius;
+  border: 1px solid $border-color;
+  @include box_shadow_bottom(black);
+
+  .details {
+    background: rgba($gray-background, 0.92);
+    width: 250px;
+    padding: $content-padding;
+    flex: 1 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}

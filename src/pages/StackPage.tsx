@@ -1,6 +1,7 @@
 import { mdiMonitor, mdiSatelliteUplink } from "@mdi/js";
 import { TitledList, TitledListEntry } from "components/base/list/TitledList";
 import { Loading } from "components/base/Loading";
+import { DeviceDetails } from "components/details/DeviceDetails";
 import NetworkComponent from "components/graph/NetworkComponent";
 import { Slot } from "components/graph/NetworkComponentModel";
 import { getMetricRecordByType, getStateColor } from "helpers/deviceHelper";
@@ -22,17 +23,20 @@ export const StackPage: React.VFC = () =>
   // set stack id before rendering (and on id updating) to avoid flickering
   useLayoutEffect(() => setStackID(id), [id, setStackID]);
 
-  return <SplitPane className={styles.page} split="vertical" defaultSize={216} minSize={216} primary="first">
-    <div className={styles.navigator}>
+  return <>
+    <SplitPane className={styles.page} split="vertical" defaultSize={216} minSize={216} primary="first">
+      <div className={styles.navigator}>
+        <Suspense fallback={<Loading size={1}/>}>
+          <SatellitesTree selection={selected} onSelect={setSelected}/>
+          <DevicesTree selection={selected} onSelect={setSelected}/>
+        </Suspense>
+      </div>
       <Suspense fallback={<Loading size={1}/>}>
-        <SatellitesTree selection={selected} onSelect={setSelected}/>
-        <DevicesTree selection={selected} onSelect={setSelected}/>
+        <NetworkGraph selection={selected} onSelect={setSelected}/>
+        {selected && <Details selection={selected}/>}
       </Suspense>
-    </div>
-    <Suspense fallback={<Loading size={1}/>}>
-      <NetworkGraph selection={selected} onSelect={setSelected}/>
-    </Suspense>
-  </SplitPane>;
+    </SplitPane>
+  </>;
 };
 
 /**
@@ -69,6 +73,25 @@ const DevicesTree: React.VFC<{ onSelect: (id: string) => void, selection: string
       {pDev.address || pDev.id}
     </TitledListEntry>)}
   </TitledList>;
+};
+
+/**
+ * Details of the currently selected object
+ */
+const Details: React.VFC<{ selection: string }> = ({selection}) =>
+{
+  const {devices} = useActiveStackDevices();
+  const device = _.find(devices, pDev => pDev.id === selection);
+
+  // we do not support other selection than devices
+  if (!device)
+    return <></>;
+
+  return <div className={styles.detailsContainer}>
+    <div className={styles.details}>
+      <DeviceDetails device={device}/>
+    </div>
+  </div>;
 };
 
 /**
