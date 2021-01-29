@@ -1,4 +1,4 @@
-import { mdiMonitor } from "@mdi/js";
+import { mdiMonitor, mdiSatelliteUplink } from "@mdi/js";
 import { TitledList, TitledListEntry } from "components/base/list/TitledList";
 import { Loading } from "components/base/Loading";
 import NetworkComponent from "components/graph/NetworkComponent";
@@ -7,7 +7,7 @@ import { getMetricRecordByType, getStateColor } from "helpers/deviceHelper";
 import { iconToSVG } from "helpers/iconHelper";
 import _ from "lodash";
 import { EMetricTypes, IDevice } from "models/definitions/backend/device";
-import { useActiveStackDevices, useSetActiveStackID } from "models/states/DataState";
+import { useActiveStackDevices, useActiveStackSatellites, useSetActiveStackID } from "models/states/DataState";
 import React, { Suspense, useLayoutEffect, useState } from 'react';
 import { useParams, useRouteMatch } from "react-router";
 import SplitPane from "react-split-pane";
@@ -23,9 +23,12 @@ export const StackPage: React.VFC = () =>
   useLayoutEffect(() => setStackID(id), [id, setStackID]);
 
   return <SplitPane className={styles.page} split="vertical" defaultSize={216} minSize={216} primary="first">
-    <Suspense fallback={<Loading size={1}/>}>
-      <DevicesTree selection={selected} onSelect={setSelected}/>
-    </Suspense>
+    <div className={styles.navigator}>
+      <Suspense fallback={<Loading size={1}/>}>
+        <SatellitesTree selection={selected} onSelect={setSelected}/>
+        <DevicesTree selection={selected} onSelect={setSelected}/>
+      </Suspense>
+    </div>
     <Suspense fallback={<Loading size={1}/>}>
       <NetworkGraph selection={selected} onSelect={setSelected}/>
     </Suspense>
@@ -33,11 +36,28 @@ export const StackPage: React.VFC = () =>
 };
 
 /**
+ * Tree for Satellites on the left side
+ */
+const SatellitesTree: React.VFC<{ onSelect: (id: string) => void, selection: string | null }> = ({onSelect, selection}) =>
+{
+  const {satellites} = useActiveStackSatellites();
+  const {url} = useRouteMatch();
+
+  return <TitledList title="Satellites">
+    {satellites?.map(pSat => <TitledListEntry key={pSat.id} icon={mdiSatelliteUplink}
+                                              onClick={() => onSelect(pSat.id)}
+                                              active={selection === pSat.id}
+                                              url={url + "/satellites/" + pSat.id}>
+      {pSat.id}
+    </TitledListEntry>)}
+  </TitledList>;
+};
+
+/**
  * Tree for Devices on the left side
  */
 const DevicesTree: React.VFC<{ onSelect: (id: string) => void, selection: string | null }> = ({onSelect, selection}) =>
 {
-  //todo satellites
   const {devices} = useActiveStackDevices();
   const {url} = useRouteMatch();
 

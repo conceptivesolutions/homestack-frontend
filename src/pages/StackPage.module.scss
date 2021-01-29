@@ -5,6 +5,11 @@
   padding: 0 $content-padding $content-padding 0;
 }
 
+.navigator {
+  display: flex;
+  flex-direction: column;
+}
+
 .network {
   @include box_shadow_bottom_light(black)
 }

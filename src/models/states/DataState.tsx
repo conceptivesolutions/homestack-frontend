@@ -2,6 +2,7 @@ import { GET } from "helpers/fetchHelper";
 import _ from "lodash";
 import { IStack } from "models/definitions/backend/common";
 import { IDevice } from "models/definitions/backend/device";
+import { ISatellite } from "models/definitions/backend/satellite";
 import { _sessionToken } from "models/states/AuthState";
 import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil";
 
@@ -51,6 +52,22 @@ const _activeStackDevices = selector<IDevice[] | null>({
 });
 
 /**
+ * Contains the satellites of the currently active stack
+ */
+const _activeStackSatellites = selector<ISatellite[] | null>({
+  key: "activeStackSatellites",
+  get: ({get}) =>
+  {
+    const token = get(_sessionToken);
+    const stackID = get(_activeStackID);
+    if (_.isEmpty(token) || _.isEmpty(stackID))
+      return null;
+    return GET('/api/stacks/' + stackID + '/satellites', token)
+      .then(pResult => pResult.json());
+  },
+});
+
+/**
  * Provides the functionality to set the active stack
  */
 export function useSetActiveStackID()
@@ -80,5 +97,16 @@ export function useActiveStackDevices()
   const activeDevices = useRecoilValue(_activeStackDevices);
   return {
     devices: activeDevices,
+  };
+}
+
+/**
+ * Provides all satellites of the currently selected stack
+ */
+export function useActiveStackSatellites()
+{
+  const activeSatellites = useRecoilValue(_activeStackSatellites);
+  return {
+    satellites: activeSatellites,
   };
 }
