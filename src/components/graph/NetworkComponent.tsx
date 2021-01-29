@@ -43,7 +43,7 @@ const NetworkComponent = (props: INetworkComponent) =>
     data: {},
     zoom: 1,
     debug: {
-      enabled: process.env.NODE_ENV === "development",
+      enabled: false,
     },
   });
 
@@ -100,7 +100,8 @@ const NetworkComponent = (props: INetworkComponent) =>
 
   // We use a memo, because we do only want to redraw the canvas - not to fully recreate it
   const canvas = useMemo(() => <canvas className={classNames(styles.canvas, props.className)} ref={canvasRef}
-                                       onWheel={preventDefault((e) => _onZoomChangeRequested(info.current, zoomHandle.current!, e.deltaY < 0))}/>, []);
+                                       onWheel={preventDefault((e) => _onZoomChangeRequested(info.current, zoomHandle.current!, e.deltaY < 0))}/>,
+    [props.className]);
 
   // Status Bar
   const statusBar = (
