@@ -1,0 +1,59 @@
+@import "css/styles";
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.innerContainer {
+  flex-grow: 1;
+  max-width: 1140px;
+}
+
+.header {
+  padding-bottom: $content-padding;
+}
+
+.footer {
+  padding-top: $content-padding;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+
+  & > * {
+    margin-bottom: $content-padding;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.border {
+  & > div, table {
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    background-color: white;
+    @include box_shadow_bottom_light(black);
+  }
+}
+
+.headerContainer {
+  display: flex;
+  flex-direction: column;
+
+  h1 {
+    margin-bottom: 0;
+  }
+
+  & > * {
+    color: $gray-font-color;
+  }
+}
+
+.footerContainer {
+  display: flex;
+  flex-direction: row-reverse;
+}
