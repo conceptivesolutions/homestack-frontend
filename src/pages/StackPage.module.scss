@@ -1,0 +1,10 @@
+@import "css/styles";
+
+.page {
+  box-sizing: border-box;
+  padding: 0 $content-padding $content-padding 0;
+}
+
+.network {
+  @include box_shadow_bottom_light(black)
+}

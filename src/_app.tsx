@@ -2,6 +2,7 @@ import { PageLayout } from "layouts/PageLayout";
 import { useAuth } from "models/states/AuthState";
 import { ErrorPage } from "pages/ErrorPage";
 import { LoginPage } from "pages/LoginPage";
+import { StackPage } from "pages/StackPage";
 import React from 'react';
 import { BrowserRouter, Redirect, Route, RouteProps, Switch } from 'react-router-dom';
 import { RecoilRoot } from "recoil";
@@ -27,6 +28,9 @@ export const App = () => (
           </PrivateRoute>
           <PrivateRoute path="/dashboard" exact>
             <div>dashboard</div>
+          </PrivateRoute>
+          <PrivateRoute path="/stacks/:id">
+            <StackPage/>
           </PrivateRoute>
           <PrivateRoute path="/settings" exact>
             <div>settings</div>
