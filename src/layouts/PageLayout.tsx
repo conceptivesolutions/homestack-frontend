@@ -23,8 +23,6 @@ export const PageLayout: React.FC<PageLayoutProps> = ({children, stripItems}) =>
   const history = useHistory();
   const {logout} = useLogin();
 
-  // todo include stacks
-
   return (
     <div className={styles.container}>
       <ButtonStrip className={styles.strip}>
