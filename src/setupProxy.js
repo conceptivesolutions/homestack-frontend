@@ -3,6 +3,15 @@ const bodyParser = require('body-parser');
 
 module.exports = function (app)
 {
+  // proxy to backend
+  app.use(except("/api", "/api/auth", createProxyMiddleware({
+    target: process.env.API_TARGET,
+    pathRewrite: {
+      '^/api': '',
+    },
+    changeOrigin: true,
+  })));
+
   // parse JSON
   app.use(bodyParser.json());
 
@@ -10,7 +19,7 @@ module.exports = function (app)
   app.use('/api/auth', createProxyMiddleware({
     target: process.env.AUTH_TARGET,
     pathRewrite: {
-      '^/api/auth': '/api'
+      '^/api/auth': '/api',
     },
     changeOrigin: true,
     logLevel: "warn",
@@ -27,14 +36,36 @@ module.exports = function (app)
       proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
       proxyReq.write(bodyData);
     },
-  }))
-
-  // proxy to backend
-  app.use('/api', createProxyMiddleware({
-    target: process.env.API_TARGET,
-    pathRewrite: {
-      '^/api': ''
-    },
-    changeOrigin: true,
   }));
+};
+
+/**
+ * function to exclude a specific sub-url
+ *
+ * @param base base url
+ * @param path path to exclude incl. base url
+ * @param middleware middleware to execute
+ */
+const except = function (base, path, middleware)
+{
+  return function (req, res, next)
+  {
+    console.log(req.path);
+    console.log(path.indexOf(req.path), req.path.indexOf(base));
+    console.log(path.indexOf(req.path) > -1 || req.path.indexOf(base) !== 0);
+
+    const isCorrectBaseURL = req.path.indexOf(base) === 0;
+    const isExcludedPath = req.path.indexOf(path) === 0;
+
+    if (!isCorrectBaseURL || isExcludedPath)
+    {
+      // Exclude
+      return next();
+    }
+    else
+    {
+      // Apply for all others
+      return middleware(req, res, next);
+    }
+  };
 };
