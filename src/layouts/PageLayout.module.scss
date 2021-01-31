@@ -50,6 +50,10 @@
   position: relative;
   grid-area: content;
   overflow: hidden;
+
+  .loadingContent {
+    height: 100%;
+  }
 }
 
 .details {

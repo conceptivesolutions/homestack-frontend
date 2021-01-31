@@ -47,7 +47,9 @@ export const PageLayout: React.FC<PageLayoutProps> = ({children, stripItems}) =>
       </div>
       <div className={styles.edge} onClick={() => history.push("/")}/>
       <div className={styles.content}>
-        {children}
+        <Suspense fallback={<Loading className={styles.loadingContent} size={10}/>}>
+          {children}
+        </Suspense>
       </div>
     </div>
   );
