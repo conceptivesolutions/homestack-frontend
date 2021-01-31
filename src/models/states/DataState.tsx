@@ -1,10 +1,11 @@
-import { GET } from "helpers/fetchHelper";
+import { GET, PUT } from "helpers/fetchHelper";
 import _ from "lodash";
 import { IStack } from "models/definitions/backend/common";
 import { IDevice } from "models/definitions/backend/device";
 import { ISatellite } from "models/definitions/backend/satellite";
 import { _sessionToken } from "models/states/AuthState";
 import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil";
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Contains all information about all stacks the current user has
@@ -31,12 +32,31 @@ const _activeStackID = atom<string | null>({
 });
 
 /**
+ * Contains a unique id to identify the current device query.
+ * Change to reload devices
+ */
+const _activeStackDevicesQueryID = atom<number>({
+  key: "_activeStackDevicesQueryID",
+  default: 0,
+});
+
+/**
+ * Contains a unique id to identify the current satellite query.
+ * Change to reload satellites
+ */
+const _activeStackSatellitesQueryID = atom<number>({
+  key: "_activeStackSatellitesQueryID",
+  default: 0,
+});
+
+/**
  * Contains the devices of the currently active stack
  */
 const _activeStackDevices = selector<IDevice[] | null>({
   key: "activeStackDevices",
   get: ({get}) =>
   {
+    get(_activeStackDevicesQueryID); // bind
     const token = get(_sessionToken);
     const stackID = get(_activeStackID);
     if (_.isEmpty(token) || _.isEmpty(stackID))
@@ -58,6 +78,7 @@ const _activeStackSatellites = selector<ISatellite[] | null>({
   key: "activeStackSatellites",
   get: ({get}) =>
   {
+    get(_activeStackSatellitesQueryID); // bind
     const token = get(_sessionToken);
     const stackID = get(_activeStackID);
     if (_.isEmpty(token) || _.isEmpty(stackID))
@@ -66,6 +87,34 @@ const _activeStackSatellites = selector<ISatellite[] | null>({
       .then(pResult => pResult.json());
   },
 });
+
+/**
+ * Provides all functionality to alter data in the current stack
+ */
+export function useActiveStackCRUD()
+{
+  const token = useRecoilValue(_sessionToken);
+  const stackID = useRecoilValue(_activeStackID);
+  const reloadDevices = useSetRecoilState(_activeStackDevicesQueryID);
+  const reloadSatellites = useSetRecoilState(_activeStackSatellitesQueryID);
+
+  return {
+    createDevice: () =>
+    {
+      const id = uuidv4();
+      return PUT('/api/devices/' + id, token, JSON.stringify({id, stackID}))
+        .then(() => reloadDevices(v => v + 1))
+        .then(() => id);
+    },
+    createSatellite: () =>
+    {
+      const id = uuidv4();
+      return PUT('/api/satellites/' + id, token, JSON.stringify({id, stackID}))
+        .then(() => reloadSatellites(v => v + 1))
+        .then(() => id);
+    },
+  };
+}
 
 /**
  * Provides the functionality to set the active stack

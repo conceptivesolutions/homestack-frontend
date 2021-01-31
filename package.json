@@ -9,6 +9,7 @@
   "dependencies": {
     "@mdi/js": "^5.9.55",
     "@mdi/react": "^1.4.0",
+    "@types/uuid": "^8.3.0",
     "body-parser": "^1.19.0",
     "classnames": "^2.2.6",
     "framer-motion": "^3.2.2-rc.1",
@@ -25,7 +26,8 @@
     "react-scripts": "4.0.1",
     "react-select": "^4.0.2",
     "react-split-pane": "^0.1.92",
-    "recoil": "^0.1.2"
+    "recoil": "^0.1.2",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.11",

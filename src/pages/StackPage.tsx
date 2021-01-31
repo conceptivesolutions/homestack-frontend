@@ -1,4 +1,5 @@
-import { mdiMonitor, mdiSatelliteUplink } from "@mdi/js";
+import { mdiMonitor, mdiPlus, mdiSatelliteUplink } from "@mdi/js";
+import Icon from "@mdi/react";
 import { TitledList, TitledListEntry } from "components/base/list/TitledList";
 import { Loading } from "components/base/Loading";
 import { DeviceDetails } from "components/details/DeviceDetails";
@@ -8,9 +9,9 @@ import { getMetricRecordByType, getStateColor } from "helpers/deviceHelper";
 import { iconToSVG } from "helpers/iconHelper";
 import _ from "lodash";
 import { EMetricTypes, IDevice } from "models/definitions/backend/device";
-import { useActiveStackDevices, useActiveStackSatellites, useSetActiveStackID } from "models/states/DataState";
+import { useActiveStackCRUD, useActiveStackDevices, useActiveStackSatellites, useSetActiveStackID } from "models/states/DataState";
 import React, { Suspense, useLayoutEffect, useState } from 'react';
-import { useParams, useRouteMatch } from "react-router";
+import { useHistory, useParams, useRouteMatch } from "react-router";
 import SplitPane from "react-split-pane";
 import styles from "./StackPage.module.scss";
 
@@ -27,8 +28,10 @@ export const StackPage: React.VFC = () =>
     <SplitPane className={styles.page} split="vertical" defaultSize={216} minSize={216} primary="first">
       <div className={styles.navigator}>
         <Suspense fallback={<Loading size={1}/>}>
-          <SatellitesTree selection={selected} onSelect={setSelected}/>
-          <DevicesTree selection={selected} onSelect={setSelected}/>
+          <div className={styles.navigatorTrees}>
+            <SatellitesTree selection={selected} onSelect={setSelected}/>
+            <DevicesTree selection={selected} onSelect={setSelected}/>
+          </div>
         </Suspense>
       </div>
       <Suspense fallback={<Loading size={1}/>}>
@@ -46,15 +49,22 @@ const SatellitesTree: React.VFC<{ onSelect: (id: string) => void, selection: str
 {
   const {satellites} = useActiveStackSatellites();
   const {url} = useRouteMatch();
+  const {createSatellite} = useActiveStackCRUD();
+  const {push} = useHistory();
 
-  return <TitledList title="Satellites">
-    {satellites?.map(pSat => <TitledListEntry key={pSat.id} icon={mdiSatelliteUplink}
-                                              onClick={() => onSelect(pSat.id)}
-                                              active={selection === pSat.id}
-                                              url={url + "/satellites/" + pSat.id}>
-      {pSat.id}
-    </TitledListEntry>)}
-  </TitledList>;
+  return <div className={styles.listContainer}>
+    <TitledList className={styles.list} title="Satellites">
+      {satellites?.map(pSat => <TitledListEntry key={pSat.id} icon={mdiSatelliteUplink}
+                                                onClick={() => onSelect(pSat.id)}
+                                                active={selection === pSat.id}
+                                                url={url + "/satellites/" + pSat.id}>
+        {pSat.id}
+      </TitledListEntry>)}
+    </TitledList>
+    <button className={styles.listAdd} onClick={() => createSatellite().then(pNewID => push(url + "/satellites/" + pNewID))}>
+      <Icon size={1} path={mdiPlus}/>
+    </button>
+  </div>;
 };
 
 /**
@@ -64,15 +74,22 @@ const DevicesTree: React.VFC<{ onSelect: (id: string) => void, selection: string
 {
   const {devices} = useActiveStackDevices();
   const {url} = useRouteMatch();
+  const {createDevice} = useActiveStackCRUD();
+  const {push} = useHistory();
 
-  return <TitledList title="Devices">
-    {devices?.map(pDev => <TitledListEntry key={pDev.id} icon={(pDev.icon && iconToSVG(pDev.icon)) || mdiMonitor}
-                                           onClick={() => onSelect(pDev.id)}
-                                           active={selection === pDev.id}
-                                           url={url + "/devices/" + pDev.id}>
-      {pDev.address || pDev.id}
-    </TitledListEntry>)}
-  </TitledList>;
+  return <div className={styles.listContainer}>
+    <TitledList className={styles.list} title="Devices">
+      {devices?.map(pDev => <TitledListEntry key={pDev.id} icon={(pDev.icon && iconToSVG(pDev.icon)) || mdiMonitor}
+                                             onClick={() => onSelect(pDev.id)}
+                                             active={selection === pDev.id}
+                                             url={url + "/devices/" + pDev.id}>
+        {pDev.address || pDev.id}
+      </TitledListEntry>)}
+    </TitledList>
+    <button className={styles.listAdd} onClick={() => createDevice().then(pNewID => push(url + "/devices/" + pNewID))}>
+      <Icon size={1} path={mdiPlus}/>
+    </button>
+  </div>;
 };
 
 /**
