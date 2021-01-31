@@ -12,10 +12,13 @@ type TitledListProps = {
 type TitledListEntryProps = {
   url?: string,
   icon?: string,
+  hoverIcon?: string,
   color?: string,
+  hoverIconColor?: string,
   className?: string,
   active?: boolean,
   onClick?: () => void,
+  onHoverIconClick?: () => void,
 }
 
 /**
@@ -31,19 +34,29 @@ export const TitledList: React.FC<TitledListProps> = ({title, className, childre
 /**
  * Entry for titled list
  */
-export const TitledListEntry: React.FC<TitledListEntryProps> = ({url, icon, color, children, className, active, onClick}) => (
-  <Link to={url || ""} className={classNames(styles.entry, className, {[styles.active]: active})} onClick={(e) =>
+export const TitledListEntry: React.FC<TitledListEntryProps> = (props) => (
+  <Link to={props.url || ""} className={classNames(styles.entry, props.className, {[styles.active]: props.active})} onClick={(e) =>
   {
-    if (onClick && e.button === 0)
+    if (props.onClick && e.button === 0)
     {
       e.preventDefault();
-      onClick();
+      props.onClick();
     }
   }}>
-    {icon && <div className={styles.icon}>
-      <Icon path={icon} color={color} size={1}/>
+    {props.icon && <div className={styles.icon}>
+      <Icon path={props.icon} color={props.color} size={1}/>
     </div>}
-    {children && <span className={styles.text}>{children}</span>}
+    {props.children && <span className={styles.text}>{props.children}</span>}
+    {props.hoverIcon && <div className={styles.hoverIcon} onClick={(e) =>
+    {
+      if (props.onHoverIconClick && e.button === 0)
+      {
+        e.preventDefault();
+        props.onHoverIconClick();
+      }
+    }}>
+      <Icon path={props.hoverIcon} color={props.hoverIconColor || props.color} size={1}/>
+    </div>}
   </Link>
 );
 

@@ -1,4 +1,4 @@
-import { mdiMonitor, mdiPlus, mdiSatelliteUplink } from "@mdi/js";
+import { mdiMonitor, mdiPlus, mdiSatelliteUplink, mdiTrashCanOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { TitledList, TitledListEntry } from "components/base/list/TitledList";
 import { Loading } from "components/base/Loading";
@@ -49,7 +49,7 @@ const SatellitesTree: React.VFC<{ onSelect: (id: string) => void, selection: str
 {
   const {satellites} = useActiveStackSatellites();
   const {url} = useRouteMatch();
-  const {createSatellite} = useActiveStackCRUD();
+  const {createSatellite, deleteSatellite} = useActiveStackCRUD();
   const {push} = useHistory();
 
   return <div className={styles.listContainer}>
@@ -57,6 +57,9 @@ const SatellitesTree: React.VFC<{ onSelect: (id: string) => void, selection: str
       {satellites?.map(pSat => <TitledListEntry key={pSat.id} icon={mdiSatelliteUplink}
                                                 onClick={() => onSelect(pSat.id)}
                                                 active={selection === pSat.id}
+                                                hoverIcon={mdiTrashCanOutline}
+                                                hoverIconColor={"#ca1a1a"}
+                                                onHoverIconClick={() => deleteSatellite(pSat.id)}
                                                 url={url + "/satellites/" + pSat.id}>
         {pSat.id}
       </TitledListEntry>)}
@@ -74,7 +77,7 @@ const DevicesTree: React.VFC<{ onSelect: (id: string) => void, selection: string
 {
   const {devices} = useActiveStackDevices();
   const {url} = useRouteMatch();
-  const {createDevice} = useActiveStackCRUD();
+  const {createDevice, deleteDevice} = useActiveStackCRUD();
   const {push} = useHistory();
 
   return <div className={styles.listContainer}>
@@ -82,7 +85,10 @@ const DevicesTree: React.VFC<{ onSelect: (id: string) => void, selection: string
       {devices?.map(pDev => <TitledListEntry key={pDev.id} icon={(pDev.icon && iconToSVG(pDev.icon)) || mdiMonitor}
                                              onClick={() => onSelect(pDev.id)}
                                              active={selection === pDev.id}
-                                             url={url + "/devices/" + pDev.id}>
+                                             url={url + "/devices/" + pDev.id}
+                                             hoverIcon={mdiTrashCanOutline}
+                                             hoverIconColor={"#ca1a1a"}
+                                             onHoverIconClick={() => deleteDevice(pDev.id)}>
         {pDev.address || pDev.id}
       </TitledListEntry>)}
     </TitledList>

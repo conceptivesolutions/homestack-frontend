@@ -1,4 +1,4 @@
-import { GET, PUT } from "helpers/fetchHelper";
+import { DELETE, GET, PUT } from "helpers/fetchHelper";
 import _ from "lodash";
 import { IStack } from "models/definitions/backend/common";
 import { IDevice } from "models/definitions/backend/device";
@@ -106,6 +106,9 @@ export function useActiveStackCRUD()
         .then(() => reloadDevices(v => v + 1))
         .then(() => id);
     },
+    deleteDevice: (id: string) => DELETE('/api/devices/' + id, token)
+      .then(() => reloadDevices(v => v + 1))
+      .then(() => id),
     createSatellite: () =>
     {
       const id = uuidv4();
@@ -113,6 +116,9 @@ export function useActiveStackCRUD()
         .then(() => reloadSatellites(v => v + 1))
         .then(() => id);
     },
+    deleteSatellite: (id: string) => DELETE('/api/satellites/' + id, token)
+      .then(() => reloadSatellites(v => v + 1))
+      .then(() => id),
   };
 }
 
