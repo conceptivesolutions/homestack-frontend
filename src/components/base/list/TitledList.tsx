@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import styles from "./TitledList.module.scss";
 
 type TitledListProps = {
+  className?: string,
   title?: string,
 };
 
@@ -20,8 +21,8 @@ type TitledListEntryProps = {
 /**
  * Displays TitledListEntries in a titled list view
  */
-export const TitledList: React.FC<TitledListProps> = ({title, children}) => (
-  <div className={styles.container}>
+export const TitledList: React.FC<TitledListProps> = ({title, className, children}) => (
+  <div className={classNames(styles.container, className)}>
     <span className={styles.title}>{title}</span>
     {children}
   </div>
