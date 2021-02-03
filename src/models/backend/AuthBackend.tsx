@@ -1,8 +1,24 @@
-import { GET } from "helpers/fetchHelper";
+import { GET, POST } from "helpers/fetchHelper";
 import md5 from "md5";
+
+type AnonymousAuthBackend = {
+  login: (user: string, password: string) => Promise<string | null>
+}
 
 type AuthBackend = {
   getUserInfo: () => Promise<User | null>
+}
+
+/**
+ * Returns the anonymouse backend to use without a token
+ */
+export function getAnonymousAuthBackend(): AnonymousAuthBackend
+{
+  return {
+    login: (user, password) => POST("/api/auth/login", null, JSON.stringify({"loginId": user, "password": password}))
+      .then(pResult => pResult.json())
+      .then(pResult => pResult.token),
+  };
 }
 
 /**
