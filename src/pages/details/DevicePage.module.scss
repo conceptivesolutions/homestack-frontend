@@ -1,0 +1,30 @@
+@import "css/styles";
+
+.container {
+  padding-left: $content-padding;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.contentTable {
+  border-collapse: collapse;
+  width: 100%;
+
+  tr {
+    border-bottom: 1px solid $border-color;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  td {
+    width: 100%;
+    height: 60px;
+    padding: 0 $content-padding;
+  }
+}
+
+.spacer {
+  flex-grow: 1;
+}

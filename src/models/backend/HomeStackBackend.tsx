@@ -1,18 +1,21 @@
 import { DELETE, GET, PUT } from "helpers/fetchHelper";
 import _ from "lodash";
 import { IStack } from "models/definitions/backend/common";
-import { IDevice } from "models/definitions/backend/device";
+import { IDevice, IMetric } from "models/definitions/backend/device";
 import { ISatellite } from "models/definitions/backend/satellite";
 
 type HomeStackBackend = {
   getDevices: (stackID: string) => Promise<IDevice[] | null>,
   getDevice: (deviceID: string) => Promise<IDevice | null>,
-  deleteDevice: (deviceID: string) => Promise<void>,
   createDevice: (stackID: string, deviceID: string) => Promise<IDevice | null>,
+  updateDevice: (device: IDevice) => Promise<IDevice | null>,
+  deleteDevice: (deviceID: string) => Promise<void>,
   getStacks: () => Promise<IStack[] | null>,
   getSatellites: (stackID: string) => Promise<ISatellite[] | null>,
   createSatellite: (stackID: string, satelliteID: string) => Promise<ISatellite | null>,
-  deleteSatellite: (satelliteID: string) => Promise<void>
+  deleteSatellite: (satelliteID: string) => Promise<void>,
+  getMetrics: (deviceID: string) => Promise<IMetric[] | null>,
+  updateMetric: (deviceID: string, metric: IMetric) => Promise<IMetric | null>,
 }
 
 /**
@@ -38,6 +41,8 @@ export function getHomeStackBackend(sessionToken: string): HomeStackBackend
         .then(() => pDevice)),
     createDevice: (stackID, deviceID) => PUT('/api/devices/' + deviceID, sessionToken, JSON.stringify({deviceID, stackID}))
       .then(res => res.json()),
+    updateDevice: (device) => PUT('/api/devices/' + device.id, sessionToken, JSON.stringify(device))
+      .then(res => res.json()),
     deleteDevice: (deviceID) => DELETE('/api/devices/' + deviceID, sessionToken)
       .then(() => {}),
     getStacks: () => GET("/api/stacks", sessionToken)
@@ -48,5 +53,9 @@ export function getHomeStackBackend(sessionToken: string): HomeStackBackend
       .then(res => res.json()),
     deleteSatellite: (satelliteID) => DELETE('/api/satellites/' + satelliteID, sessionToken)
       .then(() => {}),
+    getMetrics: (deviceID) => GET("/api/metrics/" + deviceID, sessionToken)
+      .then(pResult => pResult.json()),
+    updateMetric: (deviceID, metric) => PUT("/api/metrics/" + deviceID + "/" + metric.type, sessionToken, JSON.stringify(metric))
+      .then(pResult => pResult.json()),
   };
 }

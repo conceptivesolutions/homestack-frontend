@@ -1,5 +1,6 @@
 import { PageLayout } from "layouts/PageLayout";
 import { useAuth } from "models/states/AuthState";
+import { DevicePage } from "pages/details/DevicePage";
 import { ErrorPage } from "pages/ErrorPage";
 import { LoginPage } from "pages/LoginPage";
 import { StackPage } from "pages/StackPage";
@@ -29,8 +30,11 @@ export const App = () => (
           <PrivateRoute path="/dashboard" exact>
             <div>dashboard</div>
           </PrivateRoute>
-          <PrivateRoute path="/stacks/:id">
+          <PrivateRoute path="/stacks/:id" exact>
             <StackPage/>
+          </PrivateRoute>
+          <PrivateRoute path="/stacks/:id/devices/:deviceID" exact>
+            <DevicePage/>
           </PrivateRoute>
           <PrivateRoute path="/settings" exact>
             <div>settings</div>
