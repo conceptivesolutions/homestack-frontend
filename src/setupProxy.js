@@ -50,10 +50,6 @@ const except = function (base, path, middleware)
 {
   return function (req, res, next)
   {
-    console.log(req.path);
-    console.log(path.indexOf(req.path), req.path.indexOf(base));
-    console.log(path.indexOf(req.path) > -1 || req.path.indexOf(base) !== 0);
-
     const isCorrectBaseURL = req.path.indexOf(base) === 0;
     const isExcludedPath = req.path.indexOf(path) === 0;
 
