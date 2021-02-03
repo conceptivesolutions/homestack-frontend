@@ -4,6 +4,7 @@ import { getMetricRecordByType } from "helpers/deviceHelper";
 import { EMetricTypes, IDevice } from "models/definitions/backend/device";
 import React from 'react';
 import { useParams } from "react-router";
+import { Link } from "react-router-dom";
 import styles from "./DeviceDetails.module.scss";
 
 type DeviceDetailsProps = {
@@ -17,7 +18,7 @@ export const DeviceDetails: React.VFC<DeviceDetailsProps> = ({device}) =>
   const deviceDNSName = device && (getMetricRecordByType(device, EMetricTypes.REVERSE_DNS)?.result?.name);
   const header = (
     <CardLayoutHeader>
-      <h2 className={styles.header}><a href={"/stacks/" + stackID + "/devices/" + device.id}>{deviceDNSName || device.address || device.id}</a></h2>
+      <h2 className={styles.header}><Link to={"/stacks/" + stackID + "/devices/" + device.id}>{deviceDNSName || device.address || device.id}</Link></h2>
       {deviceDNSName && <span>{device.address}</span>}
     </CardLayoutHeader>
   );
