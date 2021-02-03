@@ -1,5 +1,4 @@
-import { GET } from "helpers/fetchHelper";
-import md5 from "md5";
+import { getAuthBackend } from "models/backend/AuthBackend";
 import { _sessionToken } from "models/states/AuthState";
 import { selector, useRecoilValue } from "recoil";
 
@@ -13,17 +12,7 @@ const _userInfo = selector<User | null>({
     const token = get(_sessionToken);
     if (!token)
       return null;
-    return GET("/api/auth/user", token)
-      .then(pResult => pResult.json())
-      .then(pResult => pResult.user)
-      .then(pInfo => ({
-        username: pInfo.username,
-        email: pInfo.email,
-        firstName: pInfo.firstName,
-        lastName: pInfo.lastName,
-        picture: pInfo.picture || (pInfo.verified ? "https://www.gravatar.com/avatar/" + md5(pInfo.email) : undefined),
-        verified: pInfo.verified,
-      }))
+    return getAuthBackend(token).getUserInfo();
   }
 })
 

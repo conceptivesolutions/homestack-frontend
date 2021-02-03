@@ -1,5 +1,5 @@
-import { DELETE, GET, PUT } from "helpers/fetchHelper";
 import _ from "lodash";
+import { getHomeStackBackend } from "models/backend/HomeStackBackend";
 import { IStack } from "models/definitions/backend/common";
 import { IDevice } from "models/definitions/backend/device";
 import { ISatellite } from "models/definitions/backend/satellite";
@@ -17,9 +17,7 @@ const _stacks = selector<IStack[] | null>({
     const token = get(_sessionToken);
     if (_.isEmpty(token))
       return null;
-    return GET("/api/stacks", token)
-      .then(pResponse => pResponse.json())
-      .catch(console.log);
+    return getHomeStackBackend(token!).getStacks();
   },
 });
 
@@ -61,13 +59,7 @@ const _activeStackDevices = selector<IDevice[] | null>({
     const stackID = get(_activeStackID);
     if (_.isEmpty(token) || _.isEmpty(stackID))
       return null;
-    return GET('/api/stacks/' + stackID + '/devices', token)
-      .then(res => res.json())
-      .then((pDevices: IDevice[]) => Promise.all(pDevices.map(pDevice => GET('/api/metrics/' + pDevice.id + "/records", token)
-        .then(pResult => pResult.json())
-        .then(pRecords => pDevice.metricRecords = pRecords)
-        .then(() => pDevice))))
-      .then(pDevices => _.sortBy(pDevices, ["address", "id"]));
+    return getHomeStackBackend(token!).getDevices(stackID!);
   },
 });
 
@@ -83,8 +75,7 @@ const _activeStackSatellites = selector<ISatellite[] | null>({
     const stackID = get(_activeStackID);
     if (_.isEmpty(token) || _.isEmpty(stackID))
       return null;
-    return GET('/api/stacks/' + stackID + '/satellites', token)
-      .then(pResult => pResult.json());
+    return getHomeStackBackend(token!).getSatellites(stackID!);
   },
 });
 
@@ -97,26 +88,27 @@ export function useActiveStackCRUD()
   const stackID = useRecoilValue(_activeStackID);
   const reloadDevices = useSetRecoilState(_activeStackDevicesQueryID);
   const reloadSatellites = useSetRecoilState(_activeStackSatellitesQueryID);
+  const backend = getHomeStackBackend(token!);
 
   return {
     createDevice: () =>
     {
       const id = uuidv4();
-      return PUT('/api/devices/' + id, token, JSON.stringify({id, stackID}))
+      return backend.createDevice(stackID!, id)
         .then(() => reloadDevices(v => v + 1))
         .then(() => id);
     },
-    deleteDevice: (id: string) => DELETE('/api/devices/' + id, token)
+    deleteDevice: (id: string) => backend.deleteDevice(id)
       .then(() => reloadDevices(v => v + 1))
       .then(() => id),
     createSatellite: () =>
     {
       const id = uuidv4();
-      return PUT('/api/satellites/' + id, token, JSON.stringify({id, stackID}))
+      return backend.createSatellite(stackID!, id)
         .then(() => reloadSatellites(v => v + 1))
         .then(() => id);
     },
-    deleteSatellite: (id: string) => DELETE('/api/satellites/' + id, token)
+    deleteSatellite: (id: string) => backend.deleteSatellite(id)
       .then(() => reloadSatellites(v => v + 1))
       .then(() => id),
   };
@@ -164,4 +156,13 @@ export function useActiveStackSatellites()
   return {
     satellites: activeSatellites,
   };
+}
+
+/**
+ * Provides all facade methods to the backend directly
+ */
+export function useBackend()
+{
+  const token = useRecoilValue(_sessionToken);
+  return getHomeStackBackend(token!);
 }
