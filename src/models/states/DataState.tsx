@@ -4,6 +4,7 @@ import { IStack } from "models/definitions/backend/common";
 import { IDevice } from "models/definitions/backend/device";
 import { ISatellite } from "models/definitions/backend/satellite";
 import { _sessionToken } from "models/states/AuthState";
+import { useCallback, useMemo } from "react";
 import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -91,26 +92,26 @@ export function useActiveStackCRUD()
   const backend = getHomeStackBackend(token!);
 
   return {
-    createDevice: () =>
+    createDevice: useCallback(() =>
     {
       const id = uuidv4();
       return backend.createDevice(stackID!, id)
         .then(() => reloadDevices(v => v + 1))
         .then(() => id);
-    },
-    deleteDevice: (id: string) => backend.deleteDevice(id)
+    }, [backend, reloadDevices, stackID]),
+    deleteDevice: useCallback((id: string) => backend.deleteDevice(id)
       .then(() => reloadDevices(v => v + 1))
-      .then(() => id),
-    createSatellite: () =>
+      .then(() => id), [backend, reloadDevices]),
+    createSatellite: useCallback(() =>
     {
       const id = uuidv4();
       return backend.createSatellite(stackID!, id)
         .then(() => reloadSatellites(v => v + 1))
         .then(() => id);
-    },
-    deleteSatellite: (id: string) => backend.deleteSatellite(id)
+    }, [backend, reloadSatellites, stackID]),
+    deleteSatellite: useCallback((id: string) => backend.deleteSatellite(id)
       .then(() => reloadSatellites(v => v + 1))
-      .then(() => id),
+      .then(() => id), [backend, reloadSatellites]),
   };
 }
 
@@ -120,9 +121,9 @@ export function useActiveStackCRUD()
 export function useSetActiveStackID()
 {
   const setStackID = useSetRecoilState(_activeStackID);
-  return {
+  return useMemo(() => ({
     setStackID,
-  };
+  }), [setStackID]);
 }
 
 /**
@@ -131,9 +132,9 @@ export function useSetActiveStackID()
 export function useStacks()
 {
   const stacks = useRecoilValue(_stacks);
-  return {
+  return useMemo(() => ({
     stacks,
-  };
+  }), [stacks]);
 }
 
 /**
@@ -142,9 +143,9 @@ export function useStacks()
 export function useActiveStackDevices()
 {
   const activeDevices = useRecoilValue(_activeStackDevices);
-  return {
+  return useMemo(() => ({
     devices: activeDevices,
-  };
+  }), [activeDevices]);
 }
 
 /**
@@ -153,9 +154,9 @@ export function useActiveStackDevices()
 export function useActiveStackSatellites()
 {
   const activeSatellites = useRecoilValue(_activeStackSatellites);
-  return {
+  return useMemo(() => ({
     satellites: activeSatellites,
-  };
+  }), [activeSatellites]);
 }
 
 /**
@@ -164,5 +165,5 @@ export function useActiveStackSatellites()
 export function useBackend()
 {
   const token = useRecoilValue(_sessionToken);
-  return getHomeStackBackend(token!);
+  return useMemo(() => getHomeStackBackend(token!), [token]);
 }

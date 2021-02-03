@@ -1,4 +1,6 @@
 import _ from "lodash";
+import { getAnonymousAuthBackend } from "models/backend/AuthBackend";
+import { useCallback } from "react";
 import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil";
 
 /**
@@ -7,7 +9,7 @@ import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil";
 const _issuedToken = atom<string | null>({
   key: "issuedToken",
   default: null,
-})
+});
 
 /**
  * Contains the current session token for the current user.
@@ -18,8 +20,8 @@ export const _sessionToken = selector<string | null>({
   get: ({get}) =>
   {
     return get(_issuedToken); //todo validate and re-issue
-  }
-})
+  },
+});
 
 /**
  * Provides the functionality to login / logout the current user
@@ -27,29 +29,19 @@ export const _sessionToken = selector<string | null>({
 export function useLogin()
 {
   const setToken = useSetRecoilState(_issuedToken);
+  const {login} = getAnonymousAuthBackend();
 
   return {
-    login: (user: string, password: string): Promise<void> =>
-      fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          "loginId": user,
-          "password": password,
-        })
-      })
-        .then(pResult => pResult.json())
-        .then(pResult => pResult.token)
+    login: useCallback((user: string, password: string): Promise<void> =>
+      login(user, password)
         .catch(pErr =>
         {
           setToken(null);
           throw pErr;
         })
-        .then(pToken => setToken(pToken)),
-    logout: () => setToken(null),
-  }
+        .then(pToken => setToken(pToken)), [login, setToken]),
+    logout: useCallback(() => setToken(null), [setToken]),
+  };
 }
 
 /**
@@ -57,8 +49,8 @@ export function useLogin()
  */
 export function useAuth()
 {
-  const token = useRecoilValue(_sessionToken)
+  const token = useRecoilValue(_sessionToken);
   return {
-    isAuthenticated: () => !_.isEmpty(token),
-  }
+    isAuthenticated: useCallback(() => !_.isEmpty(token), [token]),
+  };
 }
