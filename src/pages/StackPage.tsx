@@ -123,6 +123,8 @@ const Details: React.VFC<{ selection: string }> = ({selection}) =>
 const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection: string | null }> = ({onSelect, selection}) =>
 {
   const {devices} = useActiveStackDevices();
+  const {updateDevice, deleteDevice, updateSlotTarget, deleteSlotConnection} = useActiveStackCRUD();
+
   return <NetworkComponent className={styles.network}
                            data={{nodes: devices || []}}
                            onSelectionChanged={(obj) =>
@@ -147,5 +149,36 @@ const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection
                                targetSlotID: pSlot.targetSlotID,
                                state: pSlot.state,
                              }) as Slot)) || [],
-                           })}/>;
+                           })}
+                           onMove={(pSource, pX, pY) =>
+                           {
+                             if (pSource.kind === "node")
+                             {
+                               const device = _.find(devices, pDev => pDev.id === pSource.id);
+                               if (device)
+                               {
+                                 updateDevice({
+                                   ...device,
+                                   location: {
+                                     x: pX,
+                                     y: pY,
+                                   },
+                                 });
+                                 return true;
+                               }
+                             }
+                             return false;
+                           }}
+                           onDelete={pObject =>
+                           {
+                             if (pObject.kind === "node")
+                               deleteDevice(pObject.id);
+                             else if (pObject.kind === "connection")
+                               deleteSlotConnection(pObject.fromSlot);
+                           }}
+                           onDrop={(pSource: any, pTarget: any) =>
+                           {
+                             if (pSource.kind === "slot" && pTarget.kind === "slot")
+                               updateSlotTarget(pSource.id, pTarget.id);
+                           }}/>;
 };

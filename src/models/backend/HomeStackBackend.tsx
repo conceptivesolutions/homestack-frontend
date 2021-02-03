@@ -16,6 +16,8 @@ type HomeStackBackend = {
   deleteSatellite: (satelliteID: string) => Promise<void>,
   getMetrics: (deviceID: string) => Promise<IMetric[] | null>,
   updateMetric: (deviceID: string, metric: IMetric) => Promise<IMetric | null>,
+  updateSlotTarget: (slotID: string, targetSlotID: string) => Promise<void>,
+  deleteSlotConnection: (slotID: string) => Promise<void>,
 }
 
 /**
@@ -57,5 +59,9 @@ export function getHomeStackBackend(sessionToken: string): HomeStackBackend
       .then(pResult => pResult.json()),
     updateMetric: (deviceID, metric) => PUT("/api/metrics/" + deviceID + "/" + metric.type, sessionToken, JSON.stringify(metric))
       .then(pResult => pResult.json()),
+    updateSlotTarget: (slotID, targetSlotID) => PUT("/api/slots/" + slotID + "/target", sessionToken, targetSlotID)
+      .then(() => {}),
+    deleteSlotConnection: (slotID) => DELETE("/api/slots/" + slotID + "/target", sessionToken)
+      .then(() => {}),
   };
 }

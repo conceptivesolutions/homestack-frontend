@@ -99,6 +99,9 @@ export function useActiveStackCRUD()
         .then(() => reloadDevices(v => v + 1))
         .then(() => id);
     }, [backend, reloadDevices, stackID]),
+    updateDevice: useCallback((device: IDevice) => backend.updateDevice(device)
+      .then(() => reloadDevices(v => v + 1))
+      .then(() => {}), [backend, reloadDevices]),
     deleteDevice: useCallback((id: string) => backend.deleteDevice(id)
       .then(() => reloadDevices(v => v + 1))
       .then(() => id), [backend, reloadDevices]),
@@ -112,6 +115,12 @@ export function useActiveStackCRUD()
     deleteSatellite: useCallback((id: string) => backend.deleteSatellite(id)
       .then(() => reloadSatellites(v => v + 1))
       .then(() => id), [backend, reloadSatellites]),
+    updateSlotTarget: useCallback((slotID: string, targetSlotID: string) => backend.updateSlotTarget(slotID, targetSlotID)
+      .then(() => reloadDevices(v => v + 1))
+      .then(() => {}), [backend, reloadDevices]),
+    deleteSlotConnection: useCallback((slotID: string) => backend.deleteSlotConnection(slotID)
+      .then(() => reloadDevices(v => v + 1))
+      .then(() => {}), [backend, reloadDevices]),
   };
 }
 
