@@ -31,7 +31,7 @@ export const DevicePage: React.VFC = () =>
     getMetrics(deviceID)
       .then(pMetrics => setMetrics(pMetrics))
       .catch(() => setMetrics([]));
-  }, [getDevice, setDevice, deviceID, getMetrics, setMetrics]);
+  }, [getDevice, deviceID, getMetrics]);
 
   // undefined = loading
   if (device === undefined || metrics === undefined)
@@ -44,7 +44,8 @@ export const DevicePage: React.VFC = () =>
   // found
   return <DevicePageWithData device={device}
                              metrics={metrics || []}
-                             onDelete={() => deleteDevice(deviceID)}
+                             onDelete={() => deleteDevice(deviceID)
+                               .then(() => push("/stacks/" + stackID))}
                              onSave={((changedMetrics, changedDevice) => updateDevice(changedDevice)
                                .then(() => Promise.all(_.entries(changedMetrics).map(pMetric => updateMetric(deviceID, pMetric[1]))))
                                .then(() => push("/stacks/" + stackID)))}/>;
