@@ -2,7 +2,7 @@ import { DELETE, GET, PUT } from "helpers/fetchHelper";
 import _ from "lodash";
 import { IStack } from "models/definitions/backend/common";
 import { IDevice, IMetric } from "models/definitions/backend/device";
-import { ISatellite } from "models/definitions/backend/satellite";
+import { ISatellite, ISatelliteLease } from "models/definitions/backend/satellite";
 
 type HomeStackBackend = {
   getDevices: (stackID: string) => Promise<IDevice[] | null>,
@@ -12,8 +12,12 @@ type HomeStackBackend = {
   deleteDevice: (deviceID: string) => Promise<void>,
   getStacks: () => Promise<IStack[] | null>,
   getSatellites: (stackID: string) => Promise<ISatellite[] | null>,
+  getSatellite: (satelliteID: string) => Promise<ISatellite | null>,
   createSatellite: (stackID: string, satelliteID: string) => Promise<ISatellite | null>,
   deleteSatellite: (satelliteID: string) => Promise<void>,
+  getLeases: (satelliteID: string) => Promise<ISatelliteLease[] | null>,
+  generateLease: (satelliteID: string) => Promise<ISatelliteLease | null>,
+  revokeLease: (satelliteID: string, leaseID: string) => Promise<void>,
   getMetrics: (deviceID: string) => Promise<IMetric[] | null>,
   updateMetric: (deviceID: string, metric: IMetric) => Promise<IMetric | null>,
   updateSlotTarget: (slotID: string, targetSlotID: string) => Promise<void>,
@@ -51,9 +55,17 @@ export function getHomeStackBackend(sessionToken: string): HomeStackBackend
       .then(pResponse => pResponse.json()),
     getSatellites: (stackID) => GET('/api/stacks/' + stackID + '/satellites', sessionToken)
       .then(pResult => pResult.json()),
+    getSatellite: (satelliteID) => GET('/api/satellites/' + satelliteID, sessionToken)
+      .then(pResult => pResult.json()),
     createSatellite: (stackID, satelliteID) => PUT('/api/satellites/' + satelliteID, sessionToken, JSON.stringify({satelliteID, stackID}))
       .then(res => res.json()),
     deleteSatellite: (satelliteID) => DELETE('/api/satellites/' + satelliteID, sessionToken)
+      .then(() => {}),
+    getLeases: (satelliteID) => GET("/api/satellites/" + satelliteID + "/leases", sessionToken)
+      .then(pResult => pResult.json()),
+    generateLease: (satelliteID) => PUT("/api/satellites/" + satelliteID + "/leases", sessionToken)
+      .then(pResult => pResult.json()),
+    revokeLease: (satelliteID, leaseID) => DELETE("/api/satellites/" + satelliteID + "/leases/" + leaseID, sessionToken)
       .then(() => {}),
     getMetrics: (deviceID) => GET("/api/metrics/" + deviceID, sessionToken)
       .then(pResult => pResult.json()),

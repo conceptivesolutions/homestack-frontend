@@ -1,6 +1,7 @@
 import { PageLayout } from "layouts/PageLayout";
 import { useAuth } from "models/states/AuthState";
 import { DevicePage } from "pages/details/DevicePage";
+import { SatellitePage } from "pages/details/SatellitePage";
 import { ErrorPage } from "pages/ErrorPage";
 import { LoginPage } from "pages/LoginPage";
 import { StackPage } from "pages/StackPage";
@@ -35,6 +36,9 @@ export const App = () => (
           </PrivateRoute>
           <PrivateRoute path="/stacks/:id/devices/:deviceID" exact>
             <DevicePage/>
+          </PrivateRoute>
+          <PrivateRoute path="/stacks/:id/satellites/:satelliteID" exact>
+            <SatellitePage/>
           </PrivateRoute>
           <PrivateRoute path="/settings" exact>
             <div>settings</div>

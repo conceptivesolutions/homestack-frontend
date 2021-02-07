@@ -45,7 +45,7 @@ export const StackPage: React.VFC = () =>
 /**
  * Tree for Satellites on the left side
  */
-const SatellitesTree: React.VFC<{ onSelect: (id: string) => void, selection: string | null }> = ({onSelect, selection}) =>
+const SatellitesTree: React.VFC<{ onSelect: (id: string) => void, selection: string | null }> = ({selection}) =>
 {
   const {satellites} = useActiveStackSatellites();
   const {url} = useRouteMatch();
@@ -55,7 +55,6 @@ const SatellitesTree: React.VFC<{ onSelect: (id: string) => void, selection: str
   return <div className={styles.listContainer}>
     <TitledList className={styles.list} title="Satellites">
       {satellites?.map(pSat => <TitledListEntry key={pSat.id} icon={mdiSatelliteUplink}
-                                                onClick={() => onSelect(pSat.id)}
                                                 active={selection === pSat.id}
                                                 hoverIcon={mdiTrashCanOutline}
                                                 hoverIconColor={"#ca1a1a"}
