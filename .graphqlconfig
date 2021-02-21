@@ -1,0 +1,15 @@
+{
+  "name": "HomeStack GraphQL Schema",
+  "schemaPath": "schema.graphql",
+  "extensions": {
+    "endpoints": {
+      "HomeStack (Local) GraphQL": {
+        "url": "http://localhost:8080/graphql",
+        "headers": {
+          "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InE4RWJaQXF2SHlJOGVLMUczZnhIZm1WcFktRSJ9.eyJhdWQiOiIyNGM3YjBmMy1lMGVlLTRhY2YtYmY1OC0wZTc5ZGJhNmFlNTciLCJleHAiOjE2MTM5MTU4OTYsImlhdCI6MTYxMzkxMjI5NiwiaXNzIjoiaHR0cHM6Ly9hdXRoLmhvbWVzdGFjay5kZSIsInN1YiI6ImViY2VlZjU4LTI5NDQtNDQyMC05NzIxLWIzNmUyMDNiYWEyYiIsImp0aSI6IjBjYzYyNjAwLWJlZDgtNGJmOC04NjE3LWIzOGU4ZjNiNzJmOCIsImF1dGhlbnRpY2F0aW9uVHlwZSI6IlBBU1NXT1JEIiwiZW1haWwiOiJ3LmdsYW56ZXJAY29uY2VwdGl2ZS5pbyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhcHBsaWNhdGlvbklkIjoiMjRjN2IwZjMtZTBlZS00YWNmLWJmNTgtMGU3OWRiYTZhZTU3Iiwicm9sZXMiOlsiYWRtaW4iLCJ1c2VyIl19.be6Et7UyByWF01K0kILenXPpsNObkqdBF5UQ-Nv59W6e7ndm3hiR9G0FogQXuk0JfOl-ZY5UJCvHSaaJ7113hBwna7RNBj8PyuEF53An6Iryc9K0ERMU9i8_hfizTKWUHoZfqFeABQnsZS_iilFtaqiVXRZ-SZdmtDk7zXIvSI7qQnLlAqWAZERrX5UFoXfjbdPduT1lZ5o_qebi58Ar34naAk31NOKtprn4AiEG6a1NkScsA4sRPE77e0uvsPPvJNLro4YkH5-Ps6sN52XKJGQUaTvzWDiMq4FbreN-Lot6V8YCLdbbh1KOelHTGoTGlsUwI4cEMJ92Q1oeelk0uA"
+        },
+        "introspect": true
+      }
+    }
+  }
+}

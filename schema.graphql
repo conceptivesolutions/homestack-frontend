@@ -1,0 +1,176 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Device {
+    address: String
+    icon: String
+    id: ID!
+    location: Location
+    metrics: [Metric]!
+    slots: [[NetworkSlot]]
+}
+
+type Lease {
+    id: ID!
+    "ISO-8601"
+    revokedDate: DateTime
+    token: String
+    userID: String
+}
+
+type Location {
+    x: Float!
+    y: Float!
+}
+
+type Metric {
+    enabled: Boolean
+    id: ID!
+    records: [Record]!
+    settings: [Property]
+    type: String
+}
+
+"Mutation root"
+type Mutation {
+    createLease(satelliteID: String!): Lease
+    deleteDevice(id: String!, stackID: String!): Boolean!
+    deleteMetric(deviceID: String!, id: String!): Boolean!
+    deleteSatellite(id: String!, stackID: String!): Boolean!
+    deleteStack(id: String!): Boolean!
+    migrateUser(id: String!): String!
+    revokeLease(id: String!, satelliteID: String!): Lease
+    upsertDevice(device: GQLDeviceInput!, stackID: String!): Device
+    upsertMetric(deviceID: String!, metric: GQLMetricInput!): Metric
+    upsertSatellite(satellite: GQLSatelliteInput!, stackID: String!): Satellite
+    upsertStack(stack: GQLStackInput!): Stack
+}
+
+type NetworkSlot {
+    id: ID!
+    state: SlotState
+    targetSlotID: String
+}
+
+type Property {
+    key: String!
+    value: String
+}
+
+"Query root"
+type Query {
+    device(id: String!, stackID: String!): Device
+    devices(stack: GQLStackInput!): [Device]!
+    lease(id: String!, satelliteID: String!): Lease
+    leases(satellite: GQLSatelliteInput!): [Lease]!
+    metric(deviceID: String!, id: String!): Metric
+    metrics(device: GQLDeviceInput!): [Metric]!
+    records(metric: GQLMetricInput): [Record]!
+    satellite(id: String!, stackID: String!): Satellite
+    satellites(stack: GQLStackInput!): [Satellite]!
+    shutdown: Boolean!
+    stack(id: String!): Stack
+    stacks: [Stack]!
+}
+
+type Record {
+    id: ID!
+    "ISO-8601"
+    recordTime: DateTime
+    result: [Property]
+    state: RecordState
+}
+
+type Satellite {
+    id: ID!
+    leases: [Lease]!
+}
+
+type Stack {
+    devices: [Device]!
+    displayName: String
+    id: ID!
+    satellites: [Satellite]!
+}
+
+enum RecordState {
+    FAILURE
+    SUCCESS
+    UNKNOWN
+    WARNING
+}
+
+enum SlotState {
+    DISABLED
+    OFFLINE
+    ONLINE
+}
+
+input GQLDeviceInput {
+    address: String
+    icon: String
+    id: ID!
+    location: GQLLocationInput
+    metrics: [GQLMetricInput]
+    slots: [[GQLNetworkSlotInput]]
+}
+
+input GQLLocationInput {
+    x: Float!
+    y: Float!
+}
+
+input GQLMetricInput {
+    enabled: Boolean
+    id: ID!
+    records: [GQLMetricRecordInput]
+    settings: [GQLPropertyInput]
+    type: String
+}
+
+input GQLMetricRecordInput {
+    id: ID!
+    "ISO-8601"
+    recordTime: DateTime
+    result: [GQLPropertyInput]
+    state: RecordState
+}
+
+input GQLNetworkSlotInput {
+    id: ID!
+    state: SlotState
+    targetSlotID: String
+}
+
+input GQLPropertyInput {
+    key: String!
+    value: String
+}
+
+input GQLSatelliteInput {
+    id: ID!
+    leases: [GQLSatelliteLeaseInput]
+}
+
+input GQLSatelliteLeaseInput {
+    id: ID!
+    "ISO-8601"
+    revokedDate: DateTime
+    token: String
+    userID: String
+}
+
+input GQLStackInput {
+    devices: [GQLDeviceInput]
+    displayName: String
+    id: ID!
+    satellites: [GQLSatelliteInput]
+}
+
+
+"Scalar for DateTime"
+scalar DateTime
