@@ -1,4 +1,4 @@
-name: Build and Push
+name: Compile / onTagged
 
 on:
   push:
@@ -9,27 +9,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Checkout Sources
-      - name: Checkout Sources
+      - name: Setup / Checkout
         uses: actions/checkout@v2
 
-      # Set Version
-      - name: Set Version
+      - name: Setup / Environment Variables
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
-      # Login to Nexus
-      - uses: azure/docker-login@v1
+      - name: Setup / Docker Login
+        uses: azure/docker-login@v1
         with:
           login-server: images.conceptive.io
           username: ${{ secrets.nexus_user }}
           password: ${{ secrets.nexus_password }}
 
-      # Build Docker Image
-      - name: Build
+      - name: Compile / Build
         run: docker build -t images.conceptive.io/homestack.frontend:latest -t images.conceptive.io/homestack.frontend:${{ env.RELEASE_VERSION }} .
 
-      # Push Docker Image
-      - name: Push
+      - name: Deploy / Docker
         run: |
           docker push images.conceptive.io/homestack.frontend:latest
           docker push images.conceptive.io/homestack.frontend:${{ env.RELEASE_VERSION }}

@@ -1,0 +1,24 @@
+name: Compile / onManualRun
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup / Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup / Docker Login
+        uses: azure/docker-login@v1
+        with:
+          login-server: images.conceptive.io
+          username: ${{ secrets.nexus_user }}
+          password: ${{ secrets.nexus_password }}
+
+      - name: Compile / Build
+        run: docker build -t images.conceptive.io/homestack.frontend:latest .
+
+      - name: Deploy / Docker
+        run: docker push images.conceptive.io/homestack.frontend:latest
