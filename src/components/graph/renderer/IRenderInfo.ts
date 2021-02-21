@@ -80,11 +80,11 @@ export interface IRenderInfo
     /* listener that fires, if an object was dropped onto another one */
     onDrop?: (source: any, target: any) => void,
 
-    /* listener that fires, if an object was moved to another location */
-    onMove?: (source: any, x: number, y: number) => boolean,
+    /* listener that fires, if a node was moved to another location */
+    onNodeMoved?: (source: Node, x: number, y: number) => boolean,
 
-    /* listener that fires, if the user wanted to delete an object */
-    onDelete?: (source: any) => void,
+    /* listener that fires, if the user wanted to delete a node */
+    onNodeDeleted?: (source: Node) => void,
 
     /* listener that fires, if the selection changed */
     onSelectionChanged?: (object: any) => void,

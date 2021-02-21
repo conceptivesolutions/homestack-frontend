@@ -1,0 +1,25 @@
+query Query($stackID: String!, $deviceID: String!) {
+    device(stackID: $stackID, id: $deviceID) {
+        id
+        icon
+        address
+        location {
+            x
+            y
+        }
+        slots {
+            id
+            targetSlotID
+            state
+        }
+        metrics {
+            id
+            enabled
+            settings {
+                key
+                value
+            }
+            type
+        }
+    }
+}

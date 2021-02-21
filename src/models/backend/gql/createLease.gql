@@ -1,0 +1,8 @@
+mutation Mutation($satelliteID: String!) {
+    createLease(satelliteID: $satelliteID) {
+        id
+        revokedDate
+        token
+        userID
+    }
+}

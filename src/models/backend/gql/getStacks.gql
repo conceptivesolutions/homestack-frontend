@@ -1,0 +1,6 @@
+query {
+    stacks {
+        id
+        displayName
+    }
+}

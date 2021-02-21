@@ -7,7 +7,7 @@ export interface IDevice
   icon?: string,
   address?: string,
   location?: ILocation,
-  metricRecords?: IMetricRecord[],
+  metrics?: IMetric[],
   slots?: INetworkSlot[][],
 }
 
@@ -27,6 +27,7 @@ export enum ESlotState
 
 export interface IMetric
 {
+  id: string,
   deviceID: string,
   type: EMetricTypes | string,
   enabled: boolean,

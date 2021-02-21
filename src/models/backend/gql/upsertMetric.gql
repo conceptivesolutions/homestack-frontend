@@ -1,0 +1,5 @@
+mutation Mutation($deviceID: String!, $metric: GQLMetricInput!) {
+    upsertMetric(deviceID: $deviceID, metric: $metric) {
+        id
+    }
+}

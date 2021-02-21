@@ -1,27 +1,24 @@
-import { DELETE, GET, PUT } from "helpers/fetchHelper";
+import { GraphQLClient } from 'graphql-request'
+import { loader } from "graphql.macro";
 import _ from "lodash";
 import { IStack } from "models/definitions/backend/common";
 import { IDevice, IMetric } from "models/definitions/backend/device";
 import { ISatellite, ISatelliteLease } from "models/definitions/backend/satellite";
 
 type HomeStackBackend = {
-  getDevices: (stackID: string) => Promise<IDevice[] | null>,
-  getDevice: (deviceID: string) => Promise<IDevice | null>,
-  createDevice: (stackID: string, deviceID: string) => Promise<IDevice | null>,
-  updateDevice: (device: IDevice) => Promise<IDevice | null>,
-  deleteDevice: (deviceID: string) => Promise<void>,
   getStacks: () => Promise<IStack[] | null>,
+  getDevices: (stackID: string) => Promise<IDevice[] | null>,
+  getDevice: (stackID: string, deviceID: string) => Promise<IDevice | null>,
+  createDevice: (stackID: string, deviceID: string) => Promise<IDevice | null>,
+  updateDevice: (stackID: string, device: IDevice) => Promise<IDevice | null>,
+  deleteDevice: (stackID: string, deviceID: string) => Promise<void>,
   getSatellites: (stackID: string) => Promise<ISatellite[] | null>,
-  getSatellite: (satelliteID: string) => Promise<ISatellite | null>,
+  getSatellite: (stackID: string, satelliteID: string) => Promise<ISatellite | null>,
   createSatellite: (stackID: string, satelliteID: string) => Promise<ISatellite | null>,
-  deleteSatellite: (satelliteID: string) => Promise<void>,
-  getLeases: (satelliteID: string) => Promise<ISatelliteLease[] | null>,
-  generateLease: (satelliteID: string) => Promise<ISatelliteLease | null>,
-  revokeLease: (satelliteID: string, leaseID: string) => Promise<void>,
-  getMetrics: (deviceID: string) => Promise<IMetric[] | null>,
-  updateMetric: (deviceID: string, metric: IMetric) => Promise<IMetric | null>,
-  updateSlotTarget: (slotID: string, targetSlotID: string) => Promise<void>,
-  deleteSlotConnection: (slotID: string) => Promise<void>,
+  deleteSatellite: (stackID: string, satelliteID: string) => Promise<void>,
+  generateLease: (stackID: string, satelliteID: string) => Promise<ISatelliteLease | null>,
+  revokeLease: (stackID: string, satelliteID: string, leaseID: string) => Promise<void>,
+  updateMetric: (stackID: string, deviceID: string, metric: IMetric) => Promise<void>,
 }
 
 /**
@@ -31,49 +28,89 @@ type HomeStackBackend = {
  */
 export function getHomeStackBackend(sessionToken: string): HomeStackBackend
 {
+  const client = new GraphQLClient("/api/graphql", {
+    headers: {
+      authorization: 'Bearer ' + sessionToken,
+    },
+  })
+
   return {
-    getDevices: (stackID) => GET('/api/stacks/' + stackID + '/devices', sessionToken)
-      .then(res => res.json())
-      .then((pDevices: IDevice[]) => Promise.all(pDevices.map(pDevice => GET('/api/metrics/' + pDevice.id + "/records", sessionToken)
-        .then(pResult => pResult.json())
-        .then(pRecords => pDevice.metricRecords = pRecords)
-        .then(() => pDevice))))
+    getStacks: () => client.request(loader("./gql/getStacks.gql"))
+      .then(data => data.stacks),
+
+    getDevices: (stackID) => client.request(loader("./gql/getDevicesByStackID.gql"), { stackID })
+      .then(data => data.stack.devices)
+      .then((pDevices: IDevice[]) => _.forEach(pDevices, pDev => pDev.stackID = stackID))
       .then(pDevices => _.sortBy(pDevices, ["address", "id"])),
-    getDevice: (deviceID) => GET('/api/devices/' + deviceID, sessionToken)
-      .then(res => res.json())
-      .then((pDevice: IDevice) => GET('/api/metrics/' + pDevice.id + "/records", sessionToken)
-        .then(pResult => pResult.json())
-        .then(pRecords => pDevice.metricRecords = pRecords)
-        .then(() => pDevice)),
-    createDevice: (stackID, deviceID) => PUT('/api/devices/' + deviceID, sessionToken, JSON.stringify({deviceID, stackID}))
-      .then(res => res.json()),
-    updateDevice: (device) => PUT('/api/devices/' + device.id, sessionToken, JSON.stringify(device))
-      .then(res => res.json()),
-    deleteDevice: (deviceID) => DELETE('/api/devices/' + deviceID, sessionToken)
-      .then(() => {}),
-    getStacks: () => GET("/api/stacks", sessionToken)
-      .then(pResponse => pResponse.json()),
-    getSatellites: (stackID) => GET('/api/stacks/' + stackID + '/satellites', sessionToken)
-      .then(pResult => pResult.json()),
-    getSatellite: (satelliteID) => GET('/api/satellites/' + satelliteID, sessionToken)
-      .then(pResult => pResult.json()),
-    createSatellite: (stackID, satelliteID) => PUT('/api/satellites/' + satelliteID, sessionToken, JSON.stringify({satelliteID, stackID}))
-      .then(res => res.json()),
-    deleteSatellite: (satelliteID) => DELETE('/api/satellites/' + satelliteID, sessionToken)
-      .then(() => {}),
-    getLeases: (satelliteID) => GET("/api/satellites/" + satelliteID + "/leases", sessionToken)
-      .then(pResult => pResult.json()),
-    generateLease: (satelliteID) => PUT("/api/satellites/" + satelliteID + "/leases", sessionToken)
-      .then(pResult => pResult.json()),
-    revokeLease: (satelliteID, leaseID) => DELETE("/api/satellites/" + satelliteID + "/leases/" + leaseID, sessionToken)
-      .then(() => {}),
-    getMetrics: (deviceID) => GET("/api/metrics/" + deviceID, sessionToken)
-      .then(pResult => pResult.json()),
-    updateMetric: (deviceID, metric) => PUT("/api/metrics/" + deviceID + "/" + metric.type, sessionToken, JSON.stringify(metric))
-      .then(pResult => pResult.json()),
-    updateSlotTarget: (slotID, targetSlotID) => PUT("/api/slots/" + slotID + "/target", sessionToken, targetSlotID)
-      .then(() => {}),
-    deleteSlotConnection: (slotID) => DELETE("/api/slots/" + slotID + "/target", sessionToken)
-      .then(() => {}),
+
+    getDevice: (stackID, deviceID) => client.request(loader("./gql/getDeviceByID.gql"), { stackID, deviceID })
+      .then(data => data.device)
+      .then(pDev => {
+        pDev.stackID = stackID;
+        return pDev;
+      }),
+
+    createDevice: (stackID, deviceID) => client.request(loader("./gql/upsertDevice.gql"), {
+        stackID,
+        device: {
+          id: deviceID,
+        },
+      })
+      .then(data => data.upsertDevice)
+      .then(pDev => {
+        pDev.stackID = stackID;
+        return pDev;
+      }),
+
+    updateDevice: (stackID, device) => client.request(loader("./gql/upsertDevice.gql"), {
+        stackID,
+        device: {
+          id: device.id,
+          address: device.address,
+          icon: device.icon,
+          location: device.location,
+          slots: device.slots
+        },
+      })
+      .then(data => data.upsertDevice)
+      .then(pDev => {
+        pDev.stackID = stackID;
+        return pDev;
+      }),
+
+    deleteDevice: (stackID, deviceID) => client.request(loader("./gql/deleteDevice.gql"), { stackID, deviceID }),
+
+    getSatellites: (stackID) => client.request(loader("./gql/getSatellitesByStackID.gql"), { stackID })
+      .then(data => _.flatMap(data.stacks, pStack => pStack.satellites))
+      .then(pSatellites => _.sortBy(pSatellites, ["id"])),
+
+    getSatellite: (stackID, satelliteID) => client.request(loader("./gql/getSatelliteByID.gql"), { stackID, satelliteID })
+      .then(data => data.satellite),
+
+    createSatellite: (stackID, satelliteID) => client.request(loader("./gql/upsertSatellite.gql"), {
+        stackID,
+        satellite: {
+          id: satelliteID
+        }
+      })
+      .then(data => data.createSatellite),
+
+    deleteSatellite: (stackID, satelliteID) => client.request(loader("./gql/deleteSatellite.gql"), { stackID, satelliteID }),
+
+    generateLease: (stackID, satelliteID) => client.request(loader("./gql/createLease.gql"), { satelliteID })
+      .then(data => data.createLease),
+
+    revokeLease: (stackID, satelliteID, leaseID) => client.request(loader("./gql/revokeLease.gql"), { satelliteID, leaseID })
+      .then(data => data.createLease),
+
+    updateMetric: (stackID, deviceID, metric) => client.request(loader("./gql/upsertMetric.gql"), {
+      deviceID,
+      metric: {
+        id: metric.id,
+        enabled: metric.enabled,
+        settings: metric.settings,
+        type: metric.type
+      }
+    }),
   };
 }

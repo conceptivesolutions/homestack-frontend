@@ -10,31 +10,24 @@ import { ErrorPage } from "pages/ErrorPage";
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from "react-router";
 import Select from "react-select";
+import { v4 as uuid } from "uuid";
 import styles from "./DevicePage.module.scss";
 
-export const DevicePage: React.VFC = () =>
-{
-  const {id: stackID, deviceID} = useParams<{ id: string, deviceID: string }>();
-  const {getDevice, getMetrics, deleteDevice, updateMetric, updateDevice} = useBackend();
+export const DevicePage: React.VFC = () => {
+  const { id: stackID, deviceID } = useParams<{ id: string, deviceID: string }>();
+  const { getDevice, deleteDevice, updateDevice, updateMetric } = useBackend();
   const [device, setDevice] = useState<IDevice | null>();
-  const [metrics, setMetrics] = useState<IMetric[] | null>();
   const {push} = useHistory();
 
-  useEffect(() =>
-  {
+  useEffect(() => {
     // Load Device
-    getDevice(deviceID)
+    getDevice(stackID, deviceID)
       .then(pDev => setDevice(pDev))
       .catch(() => setDevice(null));
-
-    // Load Metrics
-    getMetrics(deviceID)
-      .then(pMetrics => setMetrics(pMetrics))
-      .catch(() => setMetrics([]));
-  }, [getDevice, deviceID, getMetrics]);
+  }, [getDevice, deviceID, stackID]);
 
   // undefined = loading
-  if (device === undefined || metrics === undefined)
+  if (device === undefined)
     return <Loading size={10}/>;
 
   // null = not found
@@ -43,22 +36,20 @@ export const DevicePage: React.VFC = () =>
 
   // found
   return <DevicePageWithData device={device}
-                             metrics={metrics || []}
-                             onDelete={() => deleteDevice(deviceID)
+                             onDelete={() => deleteDevice(stackID, deviceID)
                                .then(() => push("/stacks/" + stackID))}
-                             onSave={((changedMetrics, changedDevice) => updateDevice(changedDevice)
-                               .then(() => Promise.all(_.entries(changedMetrics).map(pMetric => updateMetric(deviceID, pMetric[1]))))
+                             onSave={((changedMetrics, changedDevice) => updateDevice(stackID, changedDevice)
+                               .then(() => Promise.all(_.entries(changedMetrics).map(pMetric => updateMetric(stackID, deviceID, pMetric[1]))))
                                .then(() => push("/stacks/" + stackID)))}/>;
 };
 
 type PageWithData = {
   device: IDevice,
-  metrics: IMetric[],
   onDelete: () => void,
   onSave: (changedMetrics: { [t: string]: IMetric }, changedDevice: IDevice) => void
 }
 
-const DevicePageWithData: React.VFC<PageWithData> = ({device, onDelete, metrics, onSave}) =>
+const DevicePageWithData: React.VFC<PageWithData> = ({device, onDelete, onSave}) =>
 {
   const deviceDNSName = device && (getMetricRecordByType(device, EMetricTypes.REVERSE_DNS)?.result?.name);
   const changedMetrics: { [t: string]: IMetric } = {};
@@ -102,8 +93,8 @@ const DevicePageWithData: React.VFC<PageWithData> = ({device, onDelete, metrics,
     </table>
     <table className={styles.contentTable}>
       <tbody>
-      {_createMetricRow("Ping", EMetricTypes.PING, changedMetrics, device.id, metrics)}
-      {_createMetricRow("DNS", EMetricTypes.REVERSE_DNS, changedMetrics, device.id, metrics)}
+      {_createMetricRow("Ping", EMetricTypes.PING, changedMetrics, device.id, device.metrics || [])}
+      {_createMetricRow("DNS", EMetricTypes.REVERSE_DNS, changedMetrics, device.id, device.metrics || [])}
       </tbody>
     </table>
   </CardLayout>;
@@ -111,7 +102,8 @@ const DevicePageWithData: React.VFC<PageWithData> = ({device, onDelete, metrics,
 
 function _createMetricRow(name: string, type: EMetricTypes, changedMetrics: { [t: string]: IMetric }, deviceID: string, allMetrics: IMetric[])
 {
-  const myMetric: IMetric = _.head(allMetrics.filter(pMetric => pMetric.type === type)) || {
+  const myMetric: IMetric = _.head(allMetrics.filter(pMetric => pMetric.type.toLowerCase() === type.toLowerCase())) || {
+    id: uuid(),
     type,
     deviceID,
     enabled: false,

@@ -1,0 +1,10 @@
+query Query($stackID: String!, $satelliteID: String!) {
+    satellite(stackID: $stackID, id: $satelliteID) {
+        id
+        leases {
+            id
+            userID
+            revokedDate
+        }
+    }
+}

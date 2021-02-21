@@ -1,0 +1,27 @@
+query Query($stackID: String!) {
+    stack(id: $stackID) {
+        devices {
+            id
+            icon
+            address
+            location {
+                x
+                y
+            }
+            slots {
+                id
+                targetSlotID
+                state
+            }
+            metrics {
+                id
+                enabled
+                settings {
+                    key
+                    value
+                }
+                type
+            }
+        }
+    }
+}

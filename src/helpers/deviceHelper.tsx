@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { EMetricRecordState, EMetricTypes, IDevice, IMetricRecord } from "models/definitions/backend/device";
 
 /**
@@ -9,9 +8,11 @@ import { EMetricRecordState, EMetricTypes, IDevice, IMetricRecord } from "models
  */
 export function getMetricRecordByType(pDevice: IDevice, pType: EMetricTypes | string): IMetricRecord | undefined
 {
-  if (!pDevice.metricRecords)
-    return undefined;
-  return _.head(pDevice.metricRecords.filter(pRecord => pRecord.type === pType));
+  //todo
+  return undefined;
+  // if (!pDevice.metricRecords)
+  //   return undefined;
+  // return _.head(pDevice.metricRecords.filter(pRecord => pRecord.type === pType));
 }
 
 /**

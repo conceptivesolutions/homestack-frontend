@@ -99,12 +99,12 @@ export function useActiveStackCRUD()
         .then(() => reloadDevices(v => v + 1))
         .then(() => id);
     }, [backend, reloadDevices, stackID]),
-    updateDevice: useCallback((device: IDevice) => backend.updateDevice(device)
+    updateDevice: useCallback((device: IDevice) => backend.updateDevice(stackID!, device)
       .then(() => reloadDevices(v => v + 1))
-      .then(() => {}), [backend, reloadDevices]),
-    deleteDevice: useCallback((id: string) => backend.deleteDevice(id)
+      .then(() => {}), [backend, reloadDevices, stackID]),
+    deleteDevice: useCallback((id: string) => backend.deleteDevice(stackID!, id)
       .then(() => reloadDevices(v => v + 1))
-      .then(() => id), [backend, reloadDevices]),
+      .then(() => id), [backend, reloadDevices, stackID]),
     createSatellite: useCallback(() =>
     {
       const id = uuidv4();
@@ -112,15 +112,9 @@ export function useActiveStackCRUD()
         .then(() => reloadSatellites(v => v + 1))
         .then(() => id);
     }, [backend, reloadSatellites, stackID]),
-    deleteSatellite: useCallback((id: string) => backend.deleteSatellite(id)
+    deleteSatellite: useCallback((id: string) => backend.deleteSatellite(stackID!, id)
       .then(() => reloadSatellites(v => v + 1))
-      .then(() => id), [backend, reloadSatellites]),
-    updateSlotTarget: useCallback((slotID: string, targetSlotID: string) => backend.updateSlotTarget(slotID, targetSlotID)
-      .then(() => reloadDevices(v => v + 1))
-      .then(() => {}), [backend, reloadDevices]),
-    deleteSlotConnection: useCallback((slotID: string) => backend.deleteSlotConnection(slotID)
-      .then(() => reloadDevices(v => v + 1))
-      .then(() => {}), [backend, reloadDevices]),
+      .then(() => id), [backend, reloadSatellites, stackID]),
   };
 }
 

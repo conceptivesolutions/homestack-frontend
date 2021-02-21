@@ -1,0 +1,3 @@
+mutation Mutation ($stackID: String!, $deviceID: String!) {
+    deleteDevice(stackID: $stackID, id: $deviceID)
+}

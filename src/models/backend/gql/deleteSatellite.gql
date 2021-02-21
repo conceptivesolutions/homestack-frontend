@@ -1,0 +1,3 @@
+mutation Mutation($stackID: String!, $satelliteID: String!) {
+    deleteSatellite(stackID: $stackID, id: $satelliteID)
+}

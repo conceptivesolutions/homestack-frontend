@@ -1,0 +1,10 @@
+mutation Mutation($stackID: String!, $satellite: GQLSatelliteInput!) {
+    upsertSatellite(stackID: $stackID, satellite: $satellite) {
+        id
+        leases {
+            id
+            revokedDate
+            userID
+        }
+    }
+}

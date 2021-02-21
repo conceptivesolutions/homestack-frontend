@@ -122,7 +122,7 @@ const Details: React.VFC<{ selection: string }> = ({selection}) =>
 const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection: string | null }> = ({onSelect, selection}) =>
 {
   const {devices} = useActiveStackDevices();
-  const {updateDevice, deleteDevice, updateSlotTarget, deleteSlotConnection} = useActiveStackCRUD();
+  const {updateDevice, deleteDevice} = useActiveStackCRUD();
 
   return <NetworkComponent className={styles.network}
                            data={{nodes: devices || []}}
@@ -141,7 +141,7 @@ const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection
                              x: pDev.location?.x || 0,
                              y: pDev.location?.y || 0,
                              icon: pDev.icon,
-                             color: getStateColor(pDev.metricRecords),
+                             color: getStateColor(), //todo
                              slots: pDev.slots?.map(pRow => pRow.map(pSlot => ({
                                kind: "slot",
                                id: pSlot.id,
@@ -149,35 +149,22 @@ const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection
                                state: pSlot.state,
                              }) as Slot)) || [],
                            })}
-                           onMove={(pSource, pX, pY) =>
+                           onNodeMoved={(pSource, pX, pY) =>
                            {
-                             if (pSource.kind === "node")
+                             const device = _.find(devices, pDev => pDev.id === pSource.id);
+                             if (device)
                              {
-                               const device = _.find(devices, pDev => pDev.id === pSource.id);
-                               if (device)
-                               {
-                                 updateDevice({
-                                   ...device,
-                                   location: {
-                                     x: pX,
-                                     y: pY,
-                                   },
-                                 });
-                                 return true;
-                               }
+                               updateDevice({
+                                 ...device,
+                                 location: {
+                                   x: pX,
+                                   y: pY,
+                                 },
+                               });
+                               return true;
                              }
+
                              return false;
                            }}
-                           onDelete={pObject =>
-                           {
-                             if (pObject.kind === "node")
-                               deleteDevice(pObject.id);
-                             else if (pObject.kind === "connection")
-                               deleteSlotConnection(pObject.fromSlot);
-                           }}
-                           onDrop={(pSource: any, pTarget: any) =>
-                           {
-                             if (pSource.kind === "slot" && pTarget.kind === "slot")
-                               updateSlotTarget(pSource.id, pTarget.id);
-                           }}/>;
+                           onNodeDeleted={pNode => deleteDevice(pNode.id)}/>;
 };

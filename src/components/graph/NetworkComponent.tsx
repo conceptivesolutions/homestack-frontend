@@ -22,8 +22,8 @@ interface INetworkComponent
   },
   nodeToNodeConverter: (node: any) => Node | undefined,
   onDrop?: (source: any, target: any) => void,
-  onMove?: (source: any, x: number, y: number) => boolean,
-  onDelete?: (source: any) => void,
+  onNodeMoved?: (source: Node, x: number, y: number) => boolean,
+  onNodeDeleted?: (source: Node) => void,
   onSelectionChanged?: (object?: any) => void,
 }
 
@@ -52,11 +52,11 @@ const NetworkComponent = (props: INetworkComponent) =>
   {
     info.current.events = {
       onDrop: props.onDrop,
-      onMove: props.onMove,
-      onDelete: props.onDelete,
+      onNodeMoved: props.onNodeMoved,
+      onNodeDeleted: props.onNodeDeleted,
       onSelectionChanged: props.onSelectionChanged,
     };
-  }, [props.onDrop, props.onMove, props.onDelete, props.onSelectionChanged]);
+  }, [props.onDrop, props.onNodeMoved, props.onNodeDeleted, props.onSelectionChanged]);
 
   // transform data, if data changes
   useEffect(() =>
@@ -207,11 +207,11 @@ function _onCanvasDragEnded(info: IRenderInfo, cancelled: boolean, clientX?: num
         info.events.onDrop(info.dragging.object, target);
     }
 
-    // Move Object
-    if (!!info.events?.onMove)
+    // Move Node
+    if (!!info.events?.onNodeMoved && info.dragging.object.kind === "node")
     {
       const targetPoint = {x: info.dragging.origin.x + info.dragging.change.x, y: info.dragging.origin.y + info.dragging.change.y};
-      const moveInstantly = info.events.onMove(info.dragging.object, targetPoint.x, targetPoint.y);
+      const moveInstantly = info.events.onNodeMoved(info.dragging.object, targetPoint.x, targetPoint.y);
       if (moveInstantly)
       {
         if (info.dragging.object.hasOwnProperty("x"))
@@ -230,9 +230,11 @@ function _onCanvasDragEnded(info: IRenderInfo, cancelled: boolean, clientX?: num
  */
 function _onKey(info: IRenderInfo, key: string)
 {
-  if (key === "Delete")
-    if (!!info.selection?.object && !!info.events?.onDelete)
-      info.events.onDelete(info.selection.object);
+  if (key === "Delete" && !!info.selection?.object)
+  {
+    if(info.selection.object.kind === "node" && !!info.events?.onNodeDeleted)
+      info.events.onNodeDeleted(info.selection.object);
+  }
 }
 
 /**

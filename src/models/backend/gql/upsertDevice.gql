@@ -1,0 +1,25 @@
+mutation Mutation ($stackID: String!, $device: GQLDeviceInput!) {
+    upsertDevice(stackID: $stackID, device: $device) {
+        id
+        icon
+        address
+        location {
+            x
+            y
+        }
+        slots {
+            id
+            targetSlotID
+            state
+        }
+        metrics {
+            id
+            enabled
+            settings {
+                key
+                value
+            }
+            type
+        }
+    }
+}
