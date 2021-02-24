@@ -15,9 +15,9 @@ type AuthBackend = {
 export function getAnonymousAuthBackend(): AnonymousAuthBackend
 {
   return {
-    login: (user, password) => POST("/api/auth/login", null, JSON.stringify({"loginId": user, "password": password}))
+    login: (user, password) => POST("/api/auth/oauth/token", null, JSON.stringify({"username": user, "password": password}))
       .then(pResult => pResult.json())
-      .then(pResult => pResult.token),
+      .then(pResult => pResult.access_token),
   };
 }
 
@@ -29,16 +29,15 @@ export function getAnonymousAuthBackend(): AnonymousAuthBackend
 export function getAuthBackend(sessionToken: string): AuthBackend
 {
   return {
-    getUserInfo: () => GET("/api/auth/user", sessionToken)
+    getUserInfo: () => GET("/api/auth/userinfo", sessionToken)
       .then(pResult => pResult.json())
-      .then(pResult => pResult.user)
       .then(pInfo => ({
-        username: pInfo.username,
+        username: pInfo.nickname,
         email: pInfo.email,
-        firstName: pInfo.firstName,
-        lastName: pInfo.lastName,
-        picture: pInfo.picture || (pInfo.verified ? "https://www.gravatar.com/avatar/" + md5(pInfo.email) : undefined),
-        verified: pInfo.verified,
+        firstName: pInfo.given_name,
+        lastName: pInfo.family_name,
+        picture: pInfo.picture || (pInfo.email_verified ? "https://www.gravatar.com/avatar/" + md5(pInfo.email) : undefined),
+        verified: pInfo.email_verified,
       })),
   };
 }

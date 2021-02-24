@@ -19,7 +19,7 @@ module.exports = function (app)
   app.use('/api/auth', createProxyMiddleware({
     target: process.env.AUTH_TARGET,
     pathRewrite: {
-      '^/api/auth': '/api',
+      '^/api/auth': '/',
     },
     changeOrigin: true,
     logLevel: "warn",
@@ -30,8 +30,10 @@ module.exports = function (app)
 
       const bodyData = JSON.stringify({
         ...req.body,
-        "applicationId": process.env.AUTH_APPLICATIONID,
-        "noJWT": false,
+        "grant_type": "password",
+        "audience": "https://api.homestack.de",
+        "client_id": process.env.AUTH_APPLICATIONID,
+        "scope": "openid profile email",
       });
       proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
       proxyReq.write(bodyData);
