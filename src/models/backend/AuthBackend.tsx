@@ -15,7 +15,7 @@ type AuthBackend = {
 export function getAnonymousAuthBackend(): AnonymousAuthBackend
 {
   return {
-    login: (user, password) => POST("/api/auth/oauth/token", null, JSON.stringify({"username": user, "password": password}))
+    login: (user, password) => POST("/auth/oauth/token", null, JSON.stringify({"username": user, "password": password}))
       .then(pResult => pResult.json())
       .then(pResult => pResult.access_token),
   };
@@ -29,7 +29,7 @@ export function getAnonymousAuthBackend(): AnonymousAuthBackend
 export function getAuthBackend(sessionToken: string): AuthBackend
 {
   return {
-    getUserInfo: () => GET("/api/auth/userinfo", sessionToken)
+    getUserInfo: () => GET("/auth/userinfo", sessionToken)
       .then(pResult => pResult.json())
       .then(pInfo => ({
         username: pInfo.nickname,
