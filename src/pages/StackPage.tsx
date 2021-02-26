@@ -1,7 +1,6 @@
 import { mdiMonitor, mdiPlus, mdiSatelliteUplink, mdiTrashCanOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { TitledList, TitledListEntry } from "components/base/list/TitledList";
-import { Loading } from "components/base/Loading";
 import { DeviceDetails } from "components/details/DeviceDetails";
 import NetworkComponent from "components/graph/NetworkComponent";
 import { Slot } from "components/graph/NetworkComponentModel";
@@ -10,15 +9,15 @@ import { iconToSVG } from "helpers/iconHelper";
 import _ from "lodash";
 import { EMetricTypes, IDevice } from "models/definitions/backend/device";
 import { useActiveStackCRUD, useActiveStackDevices, useActiveStackSatellites, useSetActiveStackID } from "models/states/DataState";
-import React, { Suspense, useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { useHistory, useParams, useRouteMatch } from "react-router";
 import SplitPane from "react-split-pane";
 import styles from "./StackPage.module.scss";
 
 export const StackPage: React.VFC = () =>
 {
-  const {id} = useParams<{ id: string }>();
-  const {setStackID} = useSetActiveStackID();
+  const { id } = useParams<{ id: string }>();
+  const { setStackID } = useSetActiveStackID();
   const [selected, setSelected] = useState<string | null>(null);
 
   // set stack id before rendering (and on id updating) to avoid flickering
@@ -27,17 +26,13 @@ export const StackPage: React.VFC = () =>
   return <>
     <SplitPane className={styles.page} split="vertical" defaultSize={216} minSize={216} primary="first">
       <div className={styles.navigator}>
-        <Suspense fallback={<Loading size={1}/>}>
-          <div className={styles.navigatorTrees}>
-            <SatellitesTree selection={selected} onSelect={setSelected}/>
-            <DevicesTree selection={selected} onSelect={setSelected}/>
-          </div>
-        </Suspense>
+        <div className={styles.navigatorTrees}>
+          <SatellitesTree selection={selected} onSelect={setSelected}/>
+          <DevicesTree selection={selected} onSelect={setSelected}/>
+        </div>
       </div>
-      <Suspense fallback={<Loading size={1}/>}>
-        <NetworkGraph selection={selected} onSelect={setSelected}/>
-        {selected && <Details selection={selected}/>}
-      </Suspense>
+      <NetworkGraph selection={selected} onSelect={setSelected}/>
+      {selected && <Details selection={selected}/>}
     </SplitPane>
   </>;
 };
@@ -45,12 +40,12 @@ export const StackPage: React.VFC = () =>
 /**
  * Tree for Satellites on the left side
  */
-const SatellitesTree: React.VFC<{ onSelect: (id: string) => void, selection: string | null }> = ({selection}) =>
+const SatellitesTree: React.VFC<{ onSelect: (id: string) => void, selection: string | null }> = ({ selection }) =>
 {
-  const {satellites} = useActiveStackSatellites();
-  const {url} = useRouteMatch();
-  const {createSatellite, deleteSatellite} = useActiveStackCRUD();
-  const {push} = useHistory();
+  const { satellites } = useActiveStackSatellites();
+  const { url } = useRouteMatch();
+  const { createSatellite, deleteSatellite } = useActiveStackCRUD();
+  const { push } = useHistory();
 
   return <div className={styles.listContainer}>
     <TitledList className={styles.list} title="Satellites">
@@ -72,12 +67,12 @@ const SatellitesTree: React.VFC<{ onSelect: (id: string) => void, selection: str
 /**
  * Tree for Devices on the left side
  */
-const DevicesTree: React.VFC<{ onSelect: (id: string) => void, selection: string | null }> = ({onSelect, selection}) =>
+const DevicesTree: React.VFC<{ onSelect: (id: string) => void, selection: string | null }> = ({ onSelect, selection }) =>
 {
-  const {devices} = useActiveStackDevices();
-  const {url} = useRouteMatch();
-  const {createDevice, deleteDevice} = useActiveStackCRUD();
-  const {push} = useHistory();
+  const { devices } = useActiveStackDevices();
+  const { url } = useRouteMatch();
+  const { createDevice, deleteDevice } = useActiveStackCRUD();
+  const { push } = useHistory();
 
   return <div className={styles.listContainer}>
     <TitledList className={styles.list} title="Devices">
@@ -100,9 +95,9 @@ const DevicesTree: React.VFC<{ onSelect: (id: string) => void, selection: string
 /**
  * Details of the currently selected object
  */
-const Details: React.VFC<{ selection: string }> = ({selection}) =>
+const Details: React.VFC<{ selection: string }> = ({ selection }) =>
 {
-  const {devices} = useActiveStackDevices();
+  const { devices } = useActiveStackDevices();
   const device = _.find(devices, pDev => pDev.id === selection);
 
   // we do not support other selection than devices
@@ -119,13 +114,13 @@ const Details: React.VFC<{ selection: string }> = ({selection}) =>
 /**
  * Main Graph component
  */
-const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection: string | null }> = ({onSelect, selection}) =>
+const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection: string | null }> = ({ onSelect, selection }) =>
 {
-  const {devices} = useActiveStackDevices();
-  const {updateDevice, deleteDevice} = useActiveStackCRUD();
+  const { devices } = useActiveStackDevices();
+  const { updateDevice, deleteDevice } = useActiveStackCRUD();
 
   return <NetworkComponent className={styles.network}
-                           data={{nodes: devices || []}}
+                           data={{ nodes: devices || [] }}
                            onSelectionChanged={(obj) =>
                            {
                              if (!obj || !obj.id)
@@ -133,7 +128,7 @@ const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection
                              else
                                onSelect(obj.id);
                            }}
-                           selection={{node: _.find(devices, pDev => pDev.id === selection)}}
+                           selection={{ node: _.find(devices, pDev => pDev.id === selection) }}
                            nodeToNodeConverter={(pDev: IDevice) => ({
                              kind: "node",
                              id: pDev.id,

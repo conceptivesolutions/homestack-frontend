@@ -7,6 +7,7 @@ import { _sessionToken } from "models/states/AuthState";
 import { useCallback, useMemo } from "react";
 import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil";
 import { v4 as uuidv4 } from 'uuid';
+import { useLoadable } from "../../helpers/recoilHelper";
 
 /**
  * Contains all information about all stacks the current user has
@@ -134,7 +135,7 @@ export function useSetActiveStackID()
  */
 export function useStacks()
 {
-  const stacks = useRecoilValue(_stacks);
+  const [stacks] = useLoadable([], _stacks);
   return useMemo(() => ({
     stacks,
   }), [stacks]);
@@ -145,7 +146,7 @@ export function useStacks()
  */
 export function useActiveStackDevices()
 {
-  const activeDevices = useRecoilValue(_activeStackDevices);
+  const [activeDevices] = useLoadable([], _activeStackDevices);
   return useMemo(() => ({
     devices: activeDevices,
   }), [activeDevices]);
@@ -156,7 +157,7 @@ export function useActiveStackDevices()
  */
 export function useActiveStackSatellites()
 {
-  const activeSatellites = useRecoilValue(_activeStackSatellites);
+  const [activeSatellites] = useLoadable([], _activeStackSatellites);
   return useMemo(() => ({
     satellites: activeSatellites,
   }), [activeSatellites]);
