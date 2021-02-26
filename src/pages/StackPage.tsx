@@ -31,8 +31,10 @@ export const StackPage: React.VFC = () =>
           <DevicesTree selection={selected} onSelect={setSelected}/>
         </div>
       </div>
-      <NetworkGraph selection={selected} onSelect={setSelected}/>
-      {selected && <Details selection={selected}/>}
+      <>
+        <NetworkGraph selection={selected} onSelect={setSelected}/>
+        {selected && <Details selection={selected}/>}
+      </>
     </SplitPane>
   </>;
 };
