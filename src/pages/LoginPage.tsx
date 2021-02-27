@@ -51,6 +51,15 @@ export const LoginPage: React.VFC = () =>
           setLoading(false);
           setError(pErr);
         })
+    else
+    {
+      addToast("Please enter a valid email and password combination", {
+        appearance: "error",
+        autoDismiss: true
+      })
+      setLoading(false)
+      setError(new Error());
+    }
   }
 
   return (

@@ -3,6 +3,8 @@
 .container {
   display: flex;
   flex-direction: row;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
 }
 
 .icon {
@@ -10,8 +12,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-top-left-radius: $border-radius;
-  border-bottom-left-radius: $border-radius;
+  border-top-left-radius: 3px; // $border-radius - 2
+  border-bottom-left-radius: 3px; // $border-radius - 2
+  border: none;
+  box-sizing: border-box;
   width: 50px;
 }
 
@@ -20,6 +24,7 @@
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   -webkit-appearance: none;
+  border: none;
 
   &:focus {
     outline: none;
