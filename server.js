@@ -69,10 +69,10 @@ app.use('/auth', createProxyMiddleware({
 
     const bodyData = JSON.stringify({
       ...req.body,
-      "grant_type": "password",
+      "grant_type": !!req.body.refresh_token ? "refresh_token" : "password",
       "audience": "https://api.homestack.de",
       "client_id": process.env.AUTH_APPLICATIONID,
-      "scope": "openid profile email",
+      "scope": "openid profile email offline_access",
     });
     proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
     proxyReq.write(bodyData);
