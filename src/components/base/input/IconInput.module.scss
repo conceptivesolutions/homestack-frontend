@@ -1,0 +1,27 @@
+@import "../../../css/styles";
+
+.container {
+  display: flex;
+  flex-direction: row;
+}
+
+.icon {
+  background: $border-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-left-radius: $border-radius;
+  border-bottom-left-radius: $border-radius;
+  width: 50px;
+}
+
+.input {
+  width: 100%;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  -webkit-appearance: none;
+
+  &:focus {
+    outline: none;
+  }
+}

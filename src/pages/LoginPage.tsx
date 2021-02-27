@@ -1,3 +1,4 @@
+import { mdiEmailOutline, mdiLockOutline } from "@mdi/js";
 import logo from "assets/images/300.png";
 import classNames from "classnames";
 import { Loading } from "components/base/Loading";
@@ -6,6 +7,7 @@ import { useLogin } from "models/states/AuthState";
 import React, { useState } from 'react';
 import { useHistory, useLocation } from "react-router";
 import { useToasts } from "react-toast-notifications";
+import { IconInput } from "../components/base/input/IconInput";
 import styles from "./LoginPage.module.scss";
 
 export const LoginPage: React.VFC = () =>
@@ -60,8 +62,8 @@ export const LoginPage: React.VFC = () =>
         <div className={styles.right}>
           <form className={styles.form} onSubmit={_onSubmit}>
             <h1 className={styles.header}>Login</h1>
-            <input disabled={loading} name={"user"} autoFocus className={classNames(styles.user, { [styles.error]: !!error })}/>
-            <input disabled={loading} name={"password"} type={"password"} className={classNames(styles.password, { [styles.error]: !!error })}/>
+            <IconInput placeholder={"E-Mail"} icon={mdiEmailOutline} disabled={loading} name={"user"} autoFocus className={classNames(styles.user, { [styles.error]: !!error })}/>
+            <IconInput placeholder={"Password"} icon={mdiLockOutline} disabled={loading} name={"password"} type={"password"} className={classNames(styles.password, { [styles.error]: !!error })}/>
             <button className={classNames(styles.primary, styles.login)}>
               {loading ? <Loading size={1.2}/> : "Log In"}
             </button>
