@@ -5,15 +5,17 @@ import _ from "lodash";
 import { useLogin } from "models/states/AuthState";
 import React, { useState } from 'react';
 import { useHistory, useLocation } from "react-router";
+import { useToasts } from "react-toast-notifications";
 import styles from "./LoginPage.module.scss";
 
 export const LoginPage: React.VFC = () =>
 {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>();
-  const {login} = useLogin();
+  const { login } = useLogin();
   const history = useHistory();
-  const {state} = useLocation<{ from: string }>();
+  const { addToast } = useToasts();
+  const { state } = useLocation<{ from: string }>();
 
   /**
    * function that executes on form submit
@@ -40,6 +42,10 @@ export const LoginPage: React.VFC = () =>
         })
         .catch(pErr =>
         {
+          addToast(pErr.message, {
+            appearance: "error",
+            autoDismiss: true
+          })
           setLoading(false);
           setError(pErr);
         })
@@ -54,8 +60,8 @@ export const LoginPage: React.VFC = () =>
         <div className={styles.right}>
           <form className={styles.form} onSubmit={_onSubmit}>
             <h1 className={styles.header}>Login</h1>
-            <input disabled={loading} name={"user"} autoFocus className={classNames(styles.user, {[styles.error]: !!error})}/>
-            <input disabled={loading} name={"password"} type={"password"} className={classNames(styles.password, {[styles.error]: !!error})}/>
+            <input disabled={loading} name={"user"} autoFocus className={classNames(styles.user, { [styles.error]: !!error })}/>
+            <input disabled={loading} name={"password"} type={"password"} className={classNames(styles.password, { [styles.error]: !!error })}/>
             <button className={classNames(styles.primary, styles.login)}>
               {loading ? <Loading size={1.2}/> : "Log In"}
             </button>

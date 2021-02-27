@@ -10,56 +10,59 @@ import { useLogin, useUserInfo } from "models/states/AuthState";
 import { useStacks } from "models/states/DataState";
 import React, { Suspense } from 'react';
 import { useHistory, useLocation } from "react-router";
+import { ToastProvider } from "react-toast-notifications";
 import styles from "./PageLayout.module.scss";
 
 type PageLayoutProps = {
   stripItems?: React.ReactNode[],
 }
 
-export const PageLayout: React.FC<PageLayoutProps> = ({children, stripItems}) =>
+export const PageLayout: React.FC<PageLayoutProps> = ({ children, stripItems }) =>
 {
   const location = useLocation();
   const history = useHistory();
-  const {logout} = useLogin();
+  const { logout } = useLogin();
 
   return (
-    <div className={styles.container}>
-      <ButtonStrip className={styles.strip}>
-        <Suspense fallback={<Loading size={1.5}/>}>
-          <UserProfileButtonStripItem>
-            <PopupItem icon={mdiAccount}>My Profile</PopupItem>
-            <PopupItem icon={mdiLogout} separatorTop onClick={logout}>Logout</PopupItem>
-          </UserProfileButtonStripItem>
-        </Suspense>
-        <ButtonStripItem icon={mdiBellOutline}/>
-        <ButtonStripItem icon={mdiCogOutline} active={location.pathname.startsWith("/settings")} onClick={() => history.push("/settings")}/>
-        {stripItems && _.reverse(stripItems)}
-      </ButtonStrip>
-      <div className={styles.context}>
-        <TitledList title={"Main"}>
-          <TitledListEntry icon={mdiHomeOutline} color={"#ab6393"} active={location.pathname === "/dashboard"} url={"/dashboard"}>Dashboard</TitledListEntry>
-          <TitledListEntry icon={mdiBellOutline} color={"#ecbe7a"}>Notifications</TitledListEntry>
-        </TitledList>
-        <Suspense fallback={<Loading size={1.5}/>}>
-          <StacksTitledList/>
-        </Suspense>
+    <ToastProvider>
+      <div className={styles.container}>
+        <ButtonStrip className={styles.strip}>
+          <Suspense fallback={<Loading size={1.5}/>}>
+            <UserProfileButtonStripItem>
+              <PopupItem icon={mdiAccount}>My Profile</PopupItem>
+              <PopupItem icon={mdiLogout} separatorTop onClick={logout}>Logout</PopupItem>
+            </UserProfileButtonStripItem>
+          </Suspense>
+          <ButtonStripItem icon={mdiBellOutline}/>
+          <ButtonStripItem icon={mdiCogOutline} active={location.pathname.startsWith("/settings")} onClick={() => history.push("/settings")}/>
+          {stripItems && _.reverse(stripItems)}
+        </ButtonStrip>
+        <div className={styles.context}>
+          <TitledList title={"Main"}>
+            <TitledListEntry icon={mdiHomeOutline} color={"#ab6393"} active={location.pathname === "/dashboard"} url={"/dashboard"}>Dashboard</TitledListEntry>
+            <TitledListEntry icon={mdiBellOutline} color={"#ecbe7a"}>Notifications</TitledListEntry>
+          </TitledList>
+          <Suspense fallback={<Loading size={1.5}/>}>
+            <StacksTitledList/>
+          </Suspense>
+        </div>
+        <div className={styles.edge} onClick={() => history.push("/")}/>
+        <div className={styles.content}>
+          <Suspense fallback={<Loading className={styles.loadingContent} size={10}/>}>
+            {children}
+          </Suspense>
+        </div>
       </div>
-      <div className={styles.edge} onClick={() => history.push("/")}/>
-      <div className={styles.content}>
-        <Suspense fallback={<Loading className={styles.loadingContent} size={10}/>}>
-          {children}
-        </Suspense>
-      </div>
-    </div>
+    </ToastProvider>
   );
 };
 
 /**
  * Item to show the user information and the appropriate user picture
  */
-const UserProfileButtonStripItem: React.FC = ({children}) =>
+const UserProfileButtonStripItem: React.FC = ({ children }) =>
 {
-  const {getUserInfo} = useUserInfo();
+  const { getUserInfo } = useUserInfo();
   return <ProfileButtonStripItem iconSrc={getUserInfo()?.picture}>
     {children}
   </ProfileButtonStripItem>
@@ -70,8 +73,8 @@ const UserProfileButtonStripItem: React.FC = ({children}) =>
  */
 const StacksTitledList: React.VFC = () =>
 {
-  const {pathname} = useLocation();
-  const {stacks} = useStacks();
+  const { pathname } = useLocation();
+  const { stacks } = useStacks();
   return <TitledList title={"Stacks"}>
     {_createStackSwitcherEntries(stacks, pathname || "")}
   </TitledList>
