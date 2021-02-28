@@ -6,7 +6,7 @@ import _ from "lodash";
 import { useLogin } from "models/states/AuthState";
 import React, { useState } from 'react';
 import { useHistory, useLocation } from "react-router";
-import { useToasts } from "react-toast-notifications";
+import { toast } from "react-toastify";
 import { IconInput } from "../components/base/input/IconInput";
 import styles from "./LoginPage.module.scss";
 
@@ -16,7 +16,6 @@ export const LoginPage: React.VFC = () =>
   const [error, setError] = useState<Error | null>();
   const { login } = useLogin();
   const history = useHistory();
-  const { addToast } = useToasts();
   const { state } = useLocation<{ from: string }>();
 
   /**
@@ -44,19 +43,13 @@ export const LoginPage: React.VFC = () =>
         })
         .catch(pErr =>
         {
-          addToast(pErr.message, {
-            appearance: "error",
-            autoDismiss: true
-          })
+          toast.error(pErr.message);
           setLoading(false);
           setError(pErr);
         })
     else
     {
-      addToast("Please enter a valid email and password combination", {
-        appearance: "error",
-        autoDismiss: true
-      })
+      toast.error("Please enter a valid email and password combination");
       setLoading(false)
       setError(new Error());
     }

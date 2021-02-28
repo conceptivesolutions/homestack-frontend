@@ -10,7 +10,7 @@ import { useLogin, useUserInfo } from "models/states/AuthState";
 import { useStacks } from "models/states/DataState";
 import React, { Suspense } from 'react';
 import { useHistory, useLocation } from "react-router";
-import { ToastProvider } from "react-toast-notifications";
+import { ToastContainer } from "react-toastify";
 import styles from "./PageLayout.module.scss";
 
 type PageLayoutProps = {
@@ -24,7 +24,8 @@ export const PageLayout: React.FC<PageLayoutProps> = ({ children, stripItems }) 
   const { logout } = useLogin();
 
   return (
-    <ToastProvider>
+    <>
+      <ToastContainer position={"top-right"} autoClose={5000} hideProgressBar newestOnTop closeOnClick draggable pauseOnHover />
       <div className={styles.container}>
         <ButtonStrip className={styles.strip}>
           <Suspense fallback={<Loading size={1.5}/>}>
@@ -53,7 +54,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({ children, stripItems }) 
           </Suspense>
         </div>
       </div>
-    </ToastProvider>
+    </>
   );
 };
 
@@ -65,8 +66,8 @@ const UserProfileButtonStripItem: React.FC = ({ children }) =>
   const { getUserInfo } = useUserInfo();
   return <ProfileButtonStripItem iconSrc={getUserInfo()?.picture}>
     {children}
-  </ProfileButtonStripItem>
-}
+  </ProfileButtonStripItem>;
+};
 
 /**
  * List to show the current stacks
@@ -77,8 +78,8 @@ const StacksTitledList: React.VFC = () =>
   const { stacks } = useStacks();
   return <TitledList title={"Stacks"}>
     {_createStackSwitcherEntries(stacks, pathname || "")}
-  </TitledList>
-}
+  </TitledList>;
+};
 
 /**
  * Creates the stacks entries for the switcher
