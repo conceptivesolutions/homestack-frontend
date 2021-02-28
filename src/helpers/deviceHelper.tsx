@@ -8,23 +8,25 @@ import { EMetricRecordState, IMetricRecord } from "models/definitions/backend/de
  */
 export function getStateColor(pRecords?: IMetricRecord[])
 {
-  if (pRecords === undefined || pRecords.length === 0)
-    return "#737373";
-
   let failed = [];
+  let warn = [];
   let success = [];
 
-  pRecords.forEach(pRecord =>
+  pRecords?.forEach(pRecord =>
   {
     if (pRecord.state === EMetricRecordState.SUCCESS)
       success.push(pRecord);
-    else
+    else if (pRecord.state === EMetricRecordState.WARNING)
+      warn.push(pRecord);
+    else if (pRecord.state === EMetricRecordState.FAILURE)
       failed.push(pRecord);
   });
 
-  if (failed.length > 0 && success.length === 0)
+  if (failed.length === 0 && warn.length === 0 && success.length === 0)
+    return "#737373";
+  else if (failed.length > 0)
     return "#dd0404";
-  else if (failed.length > 0 && success.length > 0)
+  else if (warn.length > 0)
     return "#fffb03";
   else
     return "#4bbf04";
