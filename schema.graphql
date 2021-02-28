@@ -30,7 +30,7 @@ type Location {
 type Metric {
     enabled: Boolean
     id: ID!
-    records: [Record]!
+    records(type: RecordFetchType!): [Record]!
     settings: [Property]
     type: String
 }
@@ -69,7 +69,7 @@ type Query {
     leases(satellite: GQLSatelliteInput!): [Lease]!
     metric(deviceID: String!, id: String!): Metric
     metrics(device: GQLDeviceInput!): [Metric]!
-    records(metric: GQLMetricInput): [Record]!
+    records(metric: GQLMetricInput, type: RecordFetchType!): [Record]!
     satellite(id: String!, stackID: String!): Satellite
     satellites(stack: GQLStackInput!): [Satellite]!
     shutdown: Boolean!
@@ -95,6 +95,10 @@ type Stack {
     displayName: String
     id: ID!
     satellites: [Satellite]!
+}
+
+enum RecordFetchType {
+    LATEST
 }
 
 enum RecordState {

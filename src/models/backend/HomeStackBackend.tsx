@@ -2,7 +2,7 @@ import { GraphQLClient } from 'graphql-request';
 import { loader } from "graphql.macro";
 import _ from "lodash";
 import { IStack } from "models/definitions/backend/common";
-import { IDevice, IMetric } from "models/definitions/backend/device";
+import { IDevice, IMetric, IMetricRecord } from "models/definitions/backend/device";
 import { ISatellite, ISatelliteLease } from "models/definitions/backend/satellite";
 import { captureError } from "../../helpers/errorHelper";
 
@@ -20,6 +20,7 @@ type HomeStackBackend = {
   generateLease: (stackID: string, satelliteID: string) => Promise<ISatelliteLease | null>,
   revokeLease: (stackID: string, satelliteID: string, leaseID: string) => Promise<void>,
   updateMetric: (stackID: string, deviceID: string, metric: IMetric) => Promise<void>,
+  getLatestRecords: (stackID: string) => Promise<IMetricRecord[] | null>,
 }
 
 /**
@@ -29,7 +30,7 @@ type HomeStackBackend = {
  */
 const responseToError = (data: any) =>
 {
-  if(data?.errors)
+  if (data?.errors)
     throw new Error(data.errors.flatMap((pError: any) => pError.message));
   return data;
 };
@@ -49,7 +50,7 @@ export function getHomeStackBackend(sessionToken: string): HomeStackBackend
 
   const onError = (err: any) =>
   {
-    captureError(err, "Failed to fetch data") //todo i18n
+    captureError(err, "Failed to fetch data"); //todo i18n
     return null;
   };
 
@@ -159,6 +160,19 @@ export function getHomeStackBackend(sessionToken: string): HomeStackBackend
         },
       })
       .then(responseToError)
+      .catch(onError),
+
+    getLatestRecords: (stackID) => client.request(loader("./gql/getLatestMetricRecordsByStackID.gql"), { stackID })
+      .then(responseToError)
+      .then(data => _.flatMap(data?.stack?.devices, pDevice =>
+        _.flatMap(pDevice?.metrics?.filter((pMetric: any) => pMetric?.enabled === true), pMetric =>
+          _.flatMap(pMetric?.records, pRecord => ({
+            deviceID: pDevice.id,
+            recordTime: pRecord.recordTime,
+            state: pRecord.state,
+            type: pMetric.type,
+            result: pRecord.result?.map((pResultEntry: any) => ({ [pResultEntry.key]: pResultEntry.value }))?.reduce((r: any, c: any) => _.merge(r, c)),
+          } as IMetricRecord)))))
       .catch(onError),
   };
 }

@@ -1,0 +1,20 @@
+query Query($stackID: String!) {
+    stack(id: $stackID) {
+        devices {
+            id
+            metrics {
+                type
+                enabled
+                records(type: LATEST) {
+                    id
+                    recordTime
+                    state
+                    result {
+                        key
+                        value
+                    }
+                }
+            }
+        }
+    }
+}

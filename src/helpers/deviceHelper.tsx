@@ -1,19 +1,4 @@
-import { EMetricRecordState, EMetricTypes, IDevice, IMetricRecord } from "models/definitions/backend/device";
-
-/**
- * Returns the record with the given type
- *
- * @param pDevice Device for model data
- * @param pType type of record
- */
-export function getMetricRecordByType(pDevice: IDevice, pType: EMetricTypes | string): IMetricRecord | undefined
-{
-  //todo
-  return undefined;
-  // if (!pDevice.metricRecords)
-  //   return undefined;
-  // return _.head(pDevice.metricRecords.filter(pRecord => pRecord.type === pType));
-}
+import { EMetricRecordState, IMetricRecord } from "models/definitions/backend/device";
 
 /**
  * Returns the color for a given device state

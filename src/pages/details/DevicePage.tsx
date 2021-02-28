@@ -1,10 +1,9 @@
 import { ToggleButton } from "components/base/button/ToggleButton";
 import { CardLayout, CardLayoutFooter, CardLayoutHeader } from "components/base/layouts/CardLayout";
 import { Loading } from "components/base/Loading";
-import { getMetricRecordByType } from "helpers/deviceHelper";
 import { getIcons } from "helpers/iconHelper";
 import _ from "lodash";
-import { EMetricTypes, IDevice, IMetric } from "models/definitions/backend/device";
+import { EMetricTypes, IDevice, IMetric, IMetricRecord } from "models/definitions/backend/device";
 import { useBackend } from "models/states/DataState";
 import { ErrorPage } from "pages/ErrorPage";
 import React, { useEffect, useState } from 'react';
@@ -15,16 +14,24 @@ import styles from "./DevicePage.module.scss";
 
 export const DevicePage: React.VFC = () => {
   const { id: stackID, deviceID } = useParams<{ id: string, deviceID: string }>();
-  const { getDevice, deleteDevice, updateDevice, updateMetric } = useBackend();
+  const { getDevice, deleteDevice, updateDevice, updateMetric, getLatestRecords } = useBackend();
   const [device, setDevice] = useState<IDevice | null>();
-  const {push} = useHistory();
+  const [records, setRecords] = useState<IMetricRecord[] | null>();
+  const { push } = useHistory();
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     // Load Device
     getDevice(stackID, deviceID)
-      .then(pDev => setDevice(pDev))
+      .then(setDevice)
       .catch(() => setDevice(null));
-  }, [getDevice, deviceID, stackID]);
+
+    // Load Record
+    getLatestRecords(stackID)
+      .then(pRecords => pRecords?.filter(pRecord => pRecord.deviceID === deviceID))
+      .then(setRecords)
+      .catch(() => setRecords(null));
+  }, [getDevice, getLatestRecords, deviceID, stackID]);
 
   // undefined = loading
   if (device === undefined)
@@ -35,7 +42,7 @@ export const DevicePage: React.VFC = () => {
     return <ErrorPage/>;
 
   // found
-  return <DevicePageWithData device={device}
+  return <DevicePageWithData device={device} records={records || []}
                              onDelete={() => deleteDevice(stackID, deviceID)
                                .then(() => push("/stacks/" + stackID))}
                              onSave={((changedMetrics, changedDevice) => updateDevice(stackID, changedDevice)
@@ -45,13 +52,14 @@ export const DevicePage: React.VFC = () => {
 
 type PageWithData = {
   device: IDevice,
+  records: IMetricRecord[],
   onDelete: () => void,
   onSave: (changedMetrics: { [t: string]: IMetric }, changedDevice: IDevice) => void
 }
 
-const DevicePageWithData: React.VFC<PageWithData> = ({device, onDelete, onSave}) =>
+const DevicePageWithData: React.VFC<PageWithData> = ({ device, records, onDelete, onSave }) =>
 {
-  const deviceDNSName = device && (getMetricRecordByType(device, EMetricTypes.REVERSE_DNS)?.result?.name);
+  const deviceDNSName = device && (_.head(records.filter(pRecord => pRecord.type === EMetricTypes.REVERSE_DNS))?.result?.name);
   const changedMetrics: { [t: string]: IMetric } = {};
   const changedDevice: IDevice = {
     ...device,

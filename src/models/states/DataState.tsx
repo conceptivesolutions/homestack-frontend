@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { getHomeStackBackend } from "models/backend/HomeStackBackend";
 import { IStack } from "models/definitions/backend/common";
-import { IDevice } from "models/definitions/backend/device";
+import { EMetricTypes, IDevice, IMetricRecord } from "models/definitions/backend/device";
 import { ISatellite } from "models/definitions/backend/satellite";
 import { _sessionToken } from "models/states/AuthState";
 import { useCallback, useMemo } from "react";
@@ -14,7 +14,7 @@ import { useLoadable } from "../../helpers/recoilHelper";
  */
 const _stacks = selector<IStack[] | null>({
   key: "stacks",
-  get: ({get}) =>
+  get: ({ get }) =>
   {
     const token = get(_sessionToken);
     if (_.isEmpty(token))
@@ -54,7 +54,7 @@ const _activeStackSatellitesQueryID = atom<number>({
  */
 const _activeStackDevices = selector<IDevice[] | null>({
   key: "activeStackDevices",
-  get: ({get}) =>
+  get: ({ get }) =>
   {
     get(_activeStackDevicesQueryID); // bind
     const token = get(_sessionToken);
@@ -70,7 +70,7 @@ const _activeStackDevices = selector<IDevice[] | null>({
  */
 const _activeStackSatellites = selector<ISatellite[] | null>({
   key: "activeStackSatellites",
-  get: ({get}) =>
+  get: ({ get }) =>
   {
     get(_activeStackSatellitesQueryID); // bind
     const token = get(_sessionToken);
@@ -78,6 +78,22 @@ const _activeStackSatellites = selector<ISatellite[] | null>({
     if (_.isEmpty(token) || _.isEmpty(stackID))
       return null;
     return getHomeStackBackend(token!).getSatellites(stackID!);
+  },
+});
+
+/**
+ * Contains the latest records of the devices in the current stack
+ */
+const _activeStackLatestRecords = selector<IMetricRecord[] | null>({
+  key: "_activeStackLatestRecords",
+  get: ({ get }) =>
+  {
+    get(_activeStackDevicesQueryID); // bind
+    const token = get(_sessionToken);
+    const stackID = get(_activeStackID);
+    if (_.isEmpty(token) || _.isEmpty(stackID))
+      return null;
+    return getHomeStackBackend(token!).getLatestRecords(stackID!);
   },
 });
 
@@ -161,6 +177,19 @@ export function useActiveStackSatellites()
   return useMemo(() => ({
     satellites: activeSatellites,
   }), [activeSatellites]);
+}
+
+/**
+ * Provides all records of the devices in the current stack
+ */
+export function useActiveStackRecords()
+{
+  const [latest] = useLoadable([], _activeStackLatestRecords);
+  return useMemo(() => ({
+    latestRecords: latest,
+    latestRecordOfDevice: (pDeviceID: string, pType: EMetricTypes): IMetricRecord | null => _.head(latest?.filter(pRec => pRec.type === pType)?.filter(pRec => pRec.deviceID === pDeviceID)) || null,
+    latestRecordsOfDevice: (pDeviceID: string): IMetricRecord[] => latest?.filter(pRecord => pRecord.deviceID === pDeviceID) || [],
+  }), [latest]);
 }
 
 /**

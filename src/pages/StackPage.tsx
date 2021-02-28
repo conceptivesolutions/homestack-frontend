@@ -4,11 +4,11 @@ import { TitledList, TitledListEntry } from "components/base/list/TitledList";
 import { DeviceDetails } from "components/details/DeviceDetails";
 import NetworkComponent from "components/graph/NetworkComponent";
 import { Slot } from "components/graph/NetworkComponentModel";
-import { getMetricRecordByType, getStateColor } from "helpers/deviceHelper";
+import { getStateColor } from "helpers/deviceHelper";
 import { iconToSVG } from "helpers/iconHelper";
 import _ from "lodash";
 import { EMetricTypes, IDevice } from "models/definitions/backend/device";
-import { useActiveStackCRUD, useActiveStackDevices, useActiveStackSatellites, useSetActiveStackID } from "models/states/DataState";
+import { useActiveStackCRUD, useActiveStackDevices, useActiveStackRecords, useActiveStackSatellites, useSetActiveStackID } from "models/states/DataState";
 import React, { useLayoutEffect, useState } from 'react';
 import { useHistory, useParams, useRouteMatch } from "react-router";
 import SplitPane from "react-split-pane";
@@ -75,17 +75,19 @@ const DevicesTree: React.VFC<{ onSelect: (id: string) => void, selection: string
   const { url } = useRouteMatch();
   const { createDevice, deleteDevice } = useActiveStackCRUD();
   const { push } = useHistory();
+  const { latestRecordOfDevice, latestRecordsOfDevice } = useActiveStackRecords();
 
   return <div className={styles.listContainer}>
     <TitledList className={styles.list} title="Devices">
       {devices?.map(pDev => <TitledListEntry key={pDev.id} icon={(pDev.icon && iconToSVG(pDev.icon)) || mdiMonitor}
+                                             color={getStateColor(latestRecordsOfDevice(pDev.id))}
                                              onClick={() => onSelect(pDev.id)}
                                              active={selection === pDev.id}
                                              url={url + "/devices/" + pDev.id}
                                              hoverIcon={mdiTrashCanOutline}
                                              hoverIconColor={"#ca1a1a"}
                                              onHoverIconClick={() => deleteDevice(pDev.id)}>
-        {pDev.address || pDev.id}
+        {latestRecordOfDevice(pDev.id, EMetricTypes.REVERSE_DNS)?.result?.name || pDev.address || pDev.id}
       </TitledListEntry>)}
     </TitledList>
     <button className={styles.listAdd} onClick={() => createDevice().then(pNewID => push(url + "/devices/" + pNewID))}>
@@ -120,6 +122,7 @@ const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection
 {
   const { devices } = useActiveStackDevices();
   const { updateDevice, deleteDevice } = useActiveStackCRUD();
+  const { latestRecordOfDevice, latestRecordsOfDevice } = useActiveStackRecords();
 
   return <NetworkComponent className={styles.network}
                            data={{ nodes: devices || [] }}
@@ -134,11 +137,11 @@ const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection
                            nodeToNodeConverter={(pDev: IDevice) => ({
                              kind: "node",
                              id: pDev.id,
-                             title: getMetricRecordByType(pDev, EMetricTypes.REVERSE_DNS)?.result?.name || pDev.address || pDev.id,
+                             title: latestRecordOfDevice(pDev.id, EMetricTypes.REVERSE_DNS)?.result?.name || pDev.address || pDev.id,
                              x: pDev.location?.x || 0,
                              y: pDev.location?.y || 0,
                              icon: pDev.icon,
-                             color: getStateColor(), //todo
+                             color: getStateColor(latestRecordsOfDevice(pDev.id)),
                              slots: pDev.slots?.map(pRow => pRow.map(pSlot => ({
                                kind: "slot",
                                id: pSlot.id,
