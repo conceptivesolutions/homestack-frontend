@@ -70,8 +70,8 @@ const DevicePageWithData: React.VFC<PageWithData> = ({ device, records, onDelete
 
   const header = (
     <CardLayoutHeader>
-      <h1>{deviceDNSName || device.address}</h1>
-      <span>{device.id}</span>
+      <h1>{deviceDNSName || device.address || device.id}</h1>
+      {(deviceDNSName || device.address) && <span>{device.id}</span>}
     </CardLayoutHeader>
   );
 
