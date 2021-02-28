@@ -4,7 +4,7 @@ import { Loading } from "components/base/Loading";
 import { getIcons } from "helpers/iconHelper";
 import _ from "lodash";
 import { EMetricTypes, IDevice, IMetric, IMetricRecord } from "models/definitions/backend/device";
-import { useBackend } from "models/states/DataState";
+import { useActiveStack, useBackend } from "models/states/DataState";
 import { ErrorPage } from "pages/ErrorPage";
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from "react-router";
@@ -15,6 +15,7 @@ import styles from "./DevicePage.module.scss";
 export const DevicePage: React.VFC = () => {
   const { id: stackID, deviceID } = useParams<{ id: string, deviceID: string }>();
   const { getDevice, deleteDevice, updateDevice, updateMetric, getLatestRecords } = useBackend();
+  const { reload } = useActiveStack();
   const [device, setDevice] = useState<IDevice | null>();
   const [records, setRecords] = useState<IMetricRecord[] | null>();
   const { push } = useHistory();
@@ -44,9 +45,11 @@ export const DevicePage: React.VFC = () => {
   // found
   return <DevicePageWithData device={device} records={records || []}
                              onDelete={() => deleteDevice(stackID, deviceID)
+                               .then(reload)
                                .then(() => push("/stacks/" + stackID))}
                              onSave={((changedMetrics, changedDevice) => updateDevice(stackID, changedDevice)
                                .then(() => Promise.all(_.entries(changedMetrics).map(pMetric => updateMetric(stackID, deviceID, pMetric[1]))))
+                               .then(reload)
                                .then(() => push("/stacks/" + stackID)))}/>;
 };
 

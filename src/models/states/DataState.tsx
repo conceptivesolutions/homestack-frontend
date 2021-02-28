@@ -158,6 +158,22 @@ export function useStacks()
 }
 
 /**
+ * Provides functions on the current stack
+ */
+export function useActiveStack()
+{
+  const triggerReloadDevices = useSetRecoilState(_activeStackDevicesQueryID);
+  const triggerReloadSatellites = useSetRecoilState(_activeStackSatellitesQueryID);
+  return useMemo(() => ({
+    reload: () =>
+    {
+      triggerReloadDevices(v => v + 1);
+      triggerReloadSatellites(v => v + 1);
+    },
+  }), [triggerReloadDevices, triggerReloadSatellites]);
+}
+
+/**
  * Provides all devices of the currently selected stack
  */
 export function useActiveStackDevices()

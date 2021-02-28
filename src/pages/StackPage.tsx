@@ -8,8 +8,8 @@ import { getStateColor } from "helpers/deviceHelper";
 import { iconToSVG } from "helpers/iconHelper";
 import _ from "lodash";
 import { EMetricTypes, IDevice } from "models/definitions/backend/device";
-import { useActiveStackCRUD, useActiveStackDevices, useActiveStackRecords, useActiveStackSatellites, useSetActiveStackID } from "models/states/DataState";
-import React, { useLayoutEffect, useState } from 'react';
+import { useActiveStack, useActiveStackCRUD, useActiveStackDevices, useActiveStackRecords, useActiveStackSatellites, useSetActiveStackID } from "models/states/DataState";
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useHistory, useParams, useRouteMatch } from "react-router";
 import SplitPane from "react-split-pane";
 import styles from "./StackPage.module.scss";
@@ -19,9 +19,17 @@ export const StackPage: React.VFC = () =>
   const { id } = useParams<{ id: string }>();
   const { setStackID } = useSetActiveStackID();
   const [selected, setSelected] = useState<string | null>(null);
+  const { reload } = useActiveStack();
 
   // set stack id before rendering (and on id updating) to avoid flickering
   useLayoutEffect(() => setStackID(id), [id, setStackID]);
+
+  // reload automatically
+  useEffect(() =>
+  {
+    const ref = setInterval(() => reload(), 5000);
+    return () => clearInterval(ref);
+  });
 
   return <>
     <SplitPane className={styles.page} split="vertical" defaultSize={216} minSize={216} primary="first">
