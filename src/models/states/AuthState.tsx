@@ -24,11 +24,11 @@ export const validateJWTEffect: () => AtomEffect<TokenData | null> = () => ({ re
       // @ts-ignore
       const expiredAt = jwt_decode(newValue!.token)?.exp
       const jitterOffset = 5 * 60 * 1000;
-      if (!expiredAt || expiredAt * 1000 < new Date().getUTCMilliseconds() - jitterOffset)
+      if (!expiredAt || expiredAt * 1000 < new Date().getTime() - jitterOffset)
       {
-        if(!_.isEmpty(newValue?.refreshToken))
-          await getAnonymousAuthBackend().refresh(newValue!.refreshToken!)
-            .then(pToken => setSelf(pToken))
+        if (!_.isEmpty(newValue?.refreshToken))
+          await getAnonymousAuthBackend().refresh(newValue!.refreshToken!) //todo does not wait, if it has to re-authenticate. The current request will use the old token, even if it is not valid anymore
+            .then(pToken => setSelf(pToken));
         else
           resetSelf();
       }
