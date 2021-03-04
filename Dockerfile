@@ -13,6 +13,9 @@ WORKDIR /app
 # (This avoids rebuilds if the package.json hasn’t changed)
 COPY package.json yarn.lock .npmrc /app/
 
+# do not generate sourcemaps in production mode
+ARG GENERATE_SOURCEMAP=false
+
 # Install dependencies (including dev dependencies)
 RUN yarn install
 
