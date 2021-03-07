@@ -34,7 +34,7 @@ export const PopupItem: React.FC<PopupItemProps> = ({children, icon, onClick, se
   <div className={classNames(styles.itemContainer, {
     [styles.itemSeparatorTop]: separatorTop
   })} onClick={onClick}>
-    {!!icon && <Icon path={icon} size={0.8} className={styles.itemIcon}/>}
+    {!!icon && <Icon path={icon} size={1} className={styles.itemIcon}/>}
     <span>
       {children}
     </span>

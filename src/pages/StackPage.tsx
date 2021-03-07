@@ -12,6 +12,7 @@ import { useActiveStack, useActiveStackCRUD, useActiveStackDevices, useActiveSta
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useHistory, useParams, useRouteMatch } from "react-router";
 import SplitPane from "react-split-pane";
+import { Button } from "semantic-ui-react";
 import styles from "./StackPage.module.scss";
 
 export const StackPage: React.VFC = () =>
@@ -68,9 +69,9 @@ const SatellitesTree: React.VFC<{ onSelect: (id: string) => void, selection: str
         {pSat.id}
       </TitledListEntry>)}
     </TitledList>
-    <button className={styles.listAdd} onClick={() => createSatellite().then(pNewID => push(url + "/satellites/" + pNewID))}>
+    <Button basic className={styles.listAdd} onClick={() => createSatellite().then(pNewID => push(url + "/satellites/" + pNewID))}>
       <Icon size={1} path={mdiPlus}/>
-    </button>
+    </Button>
   </div>;
 };
 
@@ -98,9 +99,9 @@ const DevicesTree: React.VFC<{ onSelect: (id: string) => void, selection: string
         {latestRecordOfDevice(pDev.id, EMetricTypes.REVERSE_DNS)?.result?.name || pDev.address || pDev.id}
       </TitledListEntry>)}
     </TitledList>
-    <button className={styles.listAdd} onClick={() => createDevice().then(pNewID => push(url + "/devices/" + pNewID))}>
+    <Button basic className={styles.listAdd} onClick={() => createDevice().then(pNewID => push(url + "/devices/" + pNewID))}>
       <Icon size={1} path={mdiPlus}/>
-    </button>
+    </Button>
   </div>;
 };
 

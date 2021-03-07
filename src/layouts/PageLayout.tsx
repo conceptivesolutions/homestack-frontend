@@ -1,7 +1,6 @@
 import { mdiAccount, mdiBellOutline, mdiCogOutline, mdiHomeOutline, mdiLaptop, mdiLogout } from "@mdi/js";
 import { ButtonStrip, ButtonStripItem } from "components/base/list/ButtonStrip";
 import { TitledList, TitledListEntry } from "components/base/list/TitledList";
-import { Loading } from "components/base/Loading";
 import { PopupItem } from "components/base/Popup";
 import { ProfileButtonStripItem } from "components/profile/ProfileButtonStripItem";
 import _ from "lodash";
@@ -11,6 +10,7 @@ import { useStacks } from "models/states/DataState";
 import React, { Suspense } from 'react';
 import { useHistory, useLocation } from "react-router";
 import { ToastContainer } from "react-toastify";
+import { Loader } from "semantic-ui-react";
 import styles from "./PageLayout.module.scss";
 
 type PageLayoutProps = {
@@ -25,10 +25,10 @@ export const PageLayout: React.FC<PageLayoutProps> = ({ children, stripItems }) 
 
   return (
     <>
-      <ToastContainer position={"top-right"} autoClose={5000} hideProgressBar newestOnTop closeOnClick draggable pauseOnHover />
+      <ToastContainer position={"top-right"} autoClose={5000} hideProgressBar newestOnTop closeOnClick draggable pauseOnHover/>
       <div className={styles.container}>
         <ButtonStrip className={styles.strip}>
-          <Suspense fallback={<Loading size={1.5}/>}>
+          <Suspense fallback={<Loader active/>}>
             <UserProfileButtonStripItem>
               <PopupItem icon={mdiAccount}>My Profile</PopupItem>
               <PopupItem icon={mdiLogout} separatorTop onClick={logout}>Logout</PopupItem>
@@ -43,13 +43,13 @@ export const PageLayout: React.FC<PageLayoutProps> = ({ children, stripItems }) 
             <TitledListEntry icon={mdiHomeOutline} color={"#ab6393"} active={location.pathname === "/dashboard"} url={"/dashboard"}>Dashboard</TitledListEntry>
             <TitledListEntry icon={mdiBellOutline} color={"#ecbe7a"}>Notifications</TitledListEntry>
           </TitledList>
-          <Suspense fallback={<Loading size={1.5}/>}>
+          <Suspense fallback={<Loader active/>}>
             <StacksTitledList/>
           </Suspense>
         </div>
         <div className={styles.edge} onClick={() => history.push("/")}/>
         <div className={styles.content}>
-          <Suspense fallback={<Loading className={styles.loadingContent} size={10}/>}>
+          <Suspense fallback={<Loader active/>}>
             {children}
           </Suspense>
         </div>

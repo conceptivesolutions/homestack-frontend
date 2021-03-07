@@ -1,13 +1,10 @@
-import { mdiEmailOutline, mdiLockOutline } from "@mdi/js";
 import logo from "assets/images/300.png";
-import classNames from "classnames";
-import { Loading } from "components/base/Loading";
 import _ from "lodash";
 import { useLogin } from "models/states/AuthState";
 import React, { useState } from 'react';
 import { useHistory, useLocation } from "react-router";
 import { toast } from "react-toastify";
-import { IconInput } from "../components/base/input/IconInput";
+import { Button, Input } from "semantic-ui-react";
 import styles from "./LoginPage.module.scss";
 
 export const LoginPage: React.VFC = () =>
@@ -30,7 +27,7 @@ export const LoginPage: React.VFC = () =>
       return;
 
     setError(null);
-    setLoading(true)
+    setLoading(true);
     const data = new FormData(e.target);
     const user = data.get("user");
     const pass = data.get("password");
@@ -46,14 +43,14 @@ export const LoginPage: React.VFC = () =>
           toast.error(pErr.message);
           setLoading(false);
           setError(pErr);
-        })
+        });
     else
     {
       toast.error("Please enter a valid email and password combination");
-      setLoading(false)
+      setLoading(false);
       setError(new Error());
     }
-  }
+  };
 
   return (
     <div className={styles.page}>
@@ -64,11 +61,11 @@ export const LoginPage: React.VFC = () =>
         <div className={styles.right}>
           <form className={styles.form} onSubmit={_onSubmit}>
             <h1 className={styles.header}>Login</h1>
-            <IconInput placeholder={"E-Mail"} icon={mdiEmailOutline} disabled={loading} name={"user"} autoFocus className={classNames(styles.user, { [styles.error]: !!error })}/>
-            <IconInput placeholder={"Password"} icon={mdiLockOutline} disabled={loading} name={"password"} type={"password"} className={classNames(styles.password, { [styles.error]: !!error })}/>
-            <button className={classNames(styles.primary, styles.login)}>
-              {loading ? <Loading size={1.2}/> : "Log In"}
-            </button>
+            <Input iconPosition={"left"} placeholder={"E-Mail"} icon={"mail"} disabled={loading} name={"user"} error={!!error} autoFocus className={styles.user}/>
+            <Input iconPosition={"left"} placeholder={"Password"} icon={"lock"} disabled={loading} name={"password"} error={!!error} type={"password"} className={styles.password}/>
+            <Button loading={loading} primary className={styles.login}>
+              Login
+            </Button>
           </form>
         </div>
       </div>

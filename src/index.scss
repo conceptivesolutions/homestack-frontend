@@ -1,27 +1,11 @@
 @import "css/styles";
 @import "css/global/resizer";
 @import "~react-toastify/dist/ReactToastify.min.css";
-
-* {
-  color: inherit;
-  text-decoration: inherit;
-  font-size: inherit;
-  font-family: inherit;
-  margin: 0;
-  padding: 0;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-size: revert;
-}
+@import "~semantic-ui-css/semantic.min.css";
 
 html {
   width: 100%;
   height: 100%;
-  font-size: 14px;
-  font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -32,34 +16,6 @@ body {
   overflow: hidden; // Disable Safari Overscroll
   color: $font-color;
   text-decoration: none;
-}
-
-button {
-  background: white;
-  border: 1px solid $border-color;
-  padding: 10px 30px;
-  border-radius: $border-radius;
-  cursor: pointer;
-
-  @include hover_color;
-
-  &:active {
-    background-color: darken(white, 9%);
-  }
-}
-
-input {
-  background: white;
-  border: 1px solid $border-color;
-  padding: 10px;
-  border-radius: $border-radius;
-}
-
-select {
-  background: white;
-  border: 1px solid $border-color;
-  padding: 4px;
-  border-radius: $border-radius;
 }
 
 #root {

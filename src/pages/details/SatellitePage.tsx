@@ -2,21 +2,21 @@ import { mdiTrashCanOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { CardLayout, CardLayoutFooter, CardLayoutHeader } from "components/base/layouts/CardLayout";
 import { FormLayout } from "components/base/layouts/FormLayout";
-import { Loading } from "components/base/Loading";
 import { ISatellite } from "models/definitions/backend/satellite";
 import { useBackend } from "models/states/DataState";
 import { ErrorPage } from "pages/ErrorPage";
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from "react-router";
+import { Button, Loader } from "semantic-ui-react";
 import styles from "./SatellitePage.module.scss";
 
 export const SatellitePage: React.VFC = () =>
 {
-  const {id: stackID, satelliteID} = useParams<{ id: string, satelliteID: string }>();
-  const {getSatellite, deleteSatellite, generateLease, revokeLease} = useBackend();
+  const { id: stackID, satelliteID } = useParams<{ id: string, satelliteID: string }>();
+  const { getSatellite, deleteSatellite, generateLease, revokeLease } = useBackend();
   const [reloadCounter, setReloadCounter] = useState<number>(0);
   const [satellite, setSatellite] = useState<ISatellite | null>();
-  const {push} = useHistory();
+  const { push } = useHistory();
 
   useEffect(() =>
   {
@@ -28,7 +28,7 @@ export const SatellitePage: React.VFC = () =>
 
   // undefined = loading
   if (satellite === undefined)
-    return <Loading size={10}/>;
+    return <Loader active/>;
 
   // null = not found
   if (satellite === null)
@@ -54,14 +54,14 @@ type SatellitePageWithDataProps = {
   onSave: () => void,
 };
 
-const SatellitePageWithData: React.VFC<SatellitePageWithDataProps> = ({satellite, onGenerateLease, onRevokeLease, onDelete, onSave}) =>
+const SatellitePageWithData: React.VFC<SatellitePageWithDataProps> = ({ satellite, onGenerateLease, onRevokeLease, onDelete, onSave }) =>
 {
   const footer = (
     <CardLayoutFooter>
-      <button className={styles.primary} onClick={onSave}>Save</button>
-      <button onClick={onGenerateLease}>Generate Lease</button>
+      <Button positive onClick={onSave}>Save</Button>
+      <Button onClick={onGenerateLease}>Generate Lease</Button>
       <div className={styles.spacer}/>
-      <button className={styles.destructive} onClick={onDelete}>Delete Satellite</button>
+      <Button negative onClick={onDelete}>Delete Satellite</Button>
     </CardLayoutFooter>
   );
 
@@ -79,9 +79,9 @@ const SatellitePageWithData: React.VFC<SatellitePageWithDataProps> = ({satellite
             <span>Lease</span>
             <div className={styles.leaseContainer}>
               <div className={styles.leaseID}>{pLease.id}</div>
-              <button onClick={() => onRevokeLease(pLease.id)}>
+              <Button basic onClick={() => onRevokeLease(pLease.id)}>
                 <Icon path={mdiTrashCanOutline} size={0.8}/>
-              </button>
+              </Button>
             </div>
           </React.Fragment>
         ))}

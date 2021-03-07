@@ -1,18 +1,17 @@
-import { ToggleButton } from "components/base/button/ToggleButton";
 import { CardLayout, CardLayoutFooter, CardLayoutHeader } from "components/base/layouts/CardLayout";
-import { Loading } from "components/base/Loading";
 import { getIcons } from "helpers/iconHelper";
 import _ from "lodash";
 import { EMetricTypes, IDevice, IMetric, IMetricRecord } from "models/definitions/backend/device";
 import { useActiveStack, useBackend } from "models/states/DataState";
-import { ErrorPage } from "pages/ErrorPage";
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from "react-router";
-import Select from "react-select";
+import { Button, Checkbox, Dropdown, Input, Loader } from "semantic-ui-react";
 import { v4 as uuid } from "uuid";
+import { ErrorPage } from "../ErrorPage";
 import styles from "./DevicePage.module.scss";
 
-export const DevicePage: React.VFC = () => {
+export const DevicePage: React.VFC = () =>
+{
   const { id: stackID, deviceID } = useParams<{ id: string, deviceID: string }>();
   const { getDevice, deleteDevice, updateDevice, updateMetric, getLatestRecords } = useBackend();
   const { reload } = useActiveStack();
@@ -36,7 +35,7 @@ export const DevicePage: React.VFC = () => {
 
   // undefined = loading
   if (device === undefined)
-    return <Loading size={10}/>;
+    return <Loader active/>;
 
   // null = not found
   if (device === null)
@@ -77,9 +76,9 @@ const DevicePageWithData: React.VFC<PageWithData> = ({ device, records, onDelete
 
   const footer = (
     <CardLayoutFooter>
-      <button className={styles.primary} onClick={() => onSave(changedMetrics, changedDevice)}>Save</button>
+      <Button positive onClick={() => onSave(changedMetrics, changedDevice)}>Save</Button>
       <div className={styles.spacer}/>
-      <button className={styles.destructive} onClick={onDelete}>Delete Device</button>
+      <Button negative onClick={onDelete}>Delete Device</Button>
     </CardLayoutFooter>
   );
 
@@ -89,15 +88,15 @@ const DevicePageWithData: React.VFC<PageWithData> = ({ device, records, onDelete
       <tr>
         <td>Address</td>
         <td>
-          <input defaultValue={device?.address} onChange={e => changedDevice.address = e.target.value}/>
+          <Input defaultValue={device?.address} onChange={e => changedDevice.address = e.target.value}/>
         </td>
       </tr>
       <tr>
         <td>Icon</td>
         <td>
-          <Select options={getIcons().map(pIcon => ({value: pIcon, label: pIcon}))}
-                  defaultValue={{value: device?.icon, label: device?.icon}}
-                  onChange={(e) => changedDevice.icon = e?.value}/>
+          <Dropdown options={getIcons().map(pIcon => ({ key: pIcon, text: pIcon, value: pIcon }))}
+                    defaultValue={device?.icon}
+                    fluid selection onChange={(e, data) => changedDevice.icon = data?.text}/>
         </td>
       </tr>
       </tbody>
@@ -123,9 +122,9 @@ function _createMetricRow(name: string, type: EMetricTypes, changedMetrics: { [t
   return <tr>
     <td>{name}</td>
     <td>
-      <ToggleButton value={myMetric.enabled} onValueChange={(isOn) =>
+      <Checkbox toggle defaultChecked={myMetric.enabled} onClick={(e, { checked }) =>
       {
-        myMetric.enabled = isOn;
+        myMetric.enabled = checked || false;
         changedMetrics[type] = myMetric;
       }}/>
     </td>
