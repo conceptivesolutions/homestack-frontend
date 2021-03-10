@@ -41,6 +41,7 @@ $selection-border-width: 3px;
 }
 
 .link {
+  flex: 1 1;
   display: flex;
   flex-direction: row;
   align-items: center;
