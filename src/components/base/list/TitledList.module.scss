@@ -27,6 +27,7 @@ $selection-border-width: 3px;
   display: flex;
   align-items: center;
   border-left: $selection-border-width solid transparent;
+  cursor: pointer;
 
   @include hover_color;
 
@@ -36,6 +37,18 @@ $selection-border-width: 3px;
     .hoverIcon {
       display: block;
     }
+  }
+}
+
+.link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: hidden;
+  color: unset;
+
+  &:hover {
+    color: unset;
   }
 }
 

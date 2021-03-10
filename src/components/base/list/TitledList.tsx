@@ -40,7 +40,7 @@ export const TitledListEntry: React.FC<TitledListEntryProps> = (props) =>
   const customizeHoverIcon = props.customizeHoverIcon || ((item) => item);
 
   return (
-    <Link to={props.url || ""} className={classNames(styles.entry, props.className, { [styles.active]: props.active })} onClick={(e) =>
+    <div className={classNames(styles.entry, props.className, { [styles.active]: props.active })} onClick={(e) =>
     {
       if (props.onClick && e.button === 0)
       {
@@ -48,10 +48,12 @@ export const TitledListEntry: React.FC<TitledListEntryProps> = (props) =>
         props.onClick();
       }
     }}>
-      {props.icon && <div className={styles.icon}>
-        <Icon path={props.icon} color={props.color} size={1}/>
-      </div>}
-      {props.children && <span className={styles.text}>{props.children}</span>}
+      <Link to={props.url || ""} className={styles.link}>
+        {props.icon && <div className={styles.icon}>
+          <Icon path={props.icon} color={props.color} size={1}/>
+        </div>}
+        {props.children && <span className={styles.text}>{props.children}</span>}
+      </Link>
       {props.hoverIcon && customizeHoverIcon(<div className={styles.hoverIcon} onClick={(e) =>
       {
         if (props.onHoverIconClick && e.button === 0)
@@ -62,7 +64,7 @@ export const TitledListEntry: React.FC<TitledListEntryProps> = (props) =>
       }}>
         <Icon path={props.hoverIcon} color={props.hoverIconColor || props.color} size={1}/>
       </div>)}
-    </Link>
+    </div>
   );
 };
 
