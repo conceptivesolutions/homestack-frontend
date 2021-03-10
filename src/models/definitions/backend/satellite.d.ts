@@ -1,6 +1,7 @@
 export interface ISatellite
 {
   id: string,
+  displayName?: string,
   leases?: ISatelliteLease[],
 }
 

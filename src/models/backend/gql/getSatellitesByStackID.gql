@@ -2,6 +2,7 @@ query Query {
     stacks {
         satellites {
             id
+            displayName
         }
     }
 }

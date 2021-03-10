@@ -75,9 +75,10 @@ const SatellitesTree: React.VFC<{ onSelect: (id: string) => void, selection: str
                            After this you are unable to login with the satellite and you probably have to reconfigure your infrastructure.
                            <pre>
                              id: {pSat.id}<br/>
+                             name: {pSat.displayName}
                            </pre>
                          </ApproveDestructiveModal>}>
-          {pSat.id}
+          {pSat.displayName || pSat.id}
         </TitledListEntry>,
       )}
     </TitledList>

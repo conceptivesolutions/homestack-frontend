@@ -17,3 +17,9 @@
 .leaseID {
   flex-grow: 1;
 }
+
+.general {
+  &:nth-child(odd) {
+    text-align: right;
+  }
+}

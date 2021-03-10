@@ -3,18 +3,19 @@ import Icon from "@mdi/react";
 import { CardLayout, CardLayoutFooter, CardLayoutHeader } from "components/base/layouts/CardLayout";
 import { FormLayout } from "components/base/layouts/FormLayout";
 import { ISatellite } from "models/definitions/backend/satellite";
-import { useBackend } from "models/states/DataState";
+import { useActiveStack, useBackend } from "models/states/DataState";
 import { ErrorPage } from "pages/ErrorPage";
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from "react-router";
-import { Button, Loader } from "semantic-ui-react";
+import { Button, Input, Loader } from "semantic-ui-react";
 import { ApproveDestructiveModal } from "../../modals/CommonModals";
 import styles from "./SatellitePage.module.scss";
 
 export const SatellitePage: React.VFC = () =>
 {
   const { id: stackID, satelliteID } = useParams<{ id: string, satelliteID: string }>();
-  const { getSatellite, deleteSatellite, generateLease, revokeLease } = useBackend();
+  const { getSatellite, deleteSatellite, updateSatellite, generateLease, revokeLease } = useBackend();
+  const { reload } = useActiveStack();
   const [reloadCounter, setReloadCounter] = useState<number>(0);
   const [satellite, setSatellite] = useState<ISatellite | null>();
   const { push } = useHistory();
@@ -43,8 +44,11 @@ export const SatellitePage: React.VFC = () =>
                                 onRevokeLease={(leaseID) => revokeLease(stackID, satellite.id, leaseID)
                                   .then(() => setReloadCounter(pV => pV + 1))}
                                 onDelete={() => deleteSatellite(stackID, satellite.id)
+                                  .then(reload)
                                   .then(() => push("/stacks/" + stackID))}
-                                onSave={() => push("/stacks/" + stackID)}/>;
+                                onSave={(satellite) => updateSatellite(stackID, satellite)
+                                  .then(reload)
+                                  .then(() => push("/stacks/" + stackID))}/>;
 };
 
 type SatellitePageWithDataProps = {
@@ -52,14 +56,18 @@ type SatellitePageWithDataProps = {
   onGenerateLease: () => void,
   onRevokeLease: (leaseID: string) => void,
   onDelete: () => void,
-  onSave: () => void,
+  onSave: (changedSatellite: ISatellite) => void,
 };
 
 const SatellitePageWithData: React.VFC<SatellitePageWithDataProps> = ({ satellite, onGenerateLease, onRevokeLease, onDelete, onSave }) =>
 {
+  const changedSatellite: ISatellite = {
+    ...satellite,
+  };
+
   const footer = (
     <CardLayoutFooter>
-      <Button positive onClick={onSave}>Save</Button>
+      <Button positive onClick={() => onSave(changedSatellite)}>Save</Button>
       <Button onClick={onGenerateLease}>Generate Lease</Button>
       <div className={styles.spacer}/>
       <ApproveDestructiveModal title={"Delete Satellite?"} trigger={<Button negative onClick={onDelete}>Delete Satellite</Button>}>
@@ -68,6 +76,7 @@ const SatellitePageWithData: React.VFC<SatellitePageWithDataProps> = ({ satellit
         After this you are unable to login with the satellite and you probably have to reconfigure your infrastructure.
         <pre>
           id: {satellite.id}<br/>
+          name: {satellite.displayName}
         </pre>
       </ApproveDestructiveModal>
     </CardLayoutFooter>
@@ -93,6 +102,10 @@ const SatellitePageWithData: React.VFC<SatellitePageWithDataProps> = ({ satellit
             </div>
           </React.Fragment>
         ))}
+    </FormLayout>
+    <FormLayout className={styles.general}>
+      <span>Name</span>
+      <Input defaultValue={satellite.displayName} onChange={e => changedSatellite.displayName = e.target.value}/>
     </FormLayout>
   </CardLayout>;
 };

@@ -1,6 +1,7 @@
 query Query($stackID: String!, $satelliteID: String!) {
     satellite(stackID: $stackID, id: $satelliteID) {
         id
+        displayName
         leases {
             id
             userID

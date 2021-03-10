@@ -16,6 +16,7 @@ type HomeStackBackend = {
   getSatellites: (stackID: string) => Promise<ISatellite[] | null>,
   getSatellite: (stackID: string, satelliteID: string) => Promise<ISatellite | null>,
   createSatellite: (stackID: string, satelliteID: string) => Promise<ISatellite | null>,
+  updateSatellite: (stackID: string, satellite: ISatellite) => Promise<ISatellite | null>,
   deleteSatellite: (stackID: string, satelliteID: string) => Promise<void>,
   generateLease: (stackID: string, satelliteID: string) => Promise<ISatelliteLease | null>,
   revokeLease: (stackID: string, satelliteID: string, leaseID: string) => Promise<void>,
@@ -134,6 +135,14 @@ export function getHomeStackBackend(sessionToken: string): HomeStackBackend
       })
       .then(responseToError)
       .then(data => data.createSatellite)
+      .catch(onError),
+
+    updateSatellite: (stackID, satellite) => client.request(loader("./gql/upsertSatellite.gql"), {
+        stackID,
+        satellite,
+      })
+      .then(responseToError)
+      .then(data => data.upsertSatellite)
       .catch(onError),
 
     deleteSatellite: (stackID, satelliteID) => client.request(loader("./gql/deleteSatellite.gql"), { stackID, satelliteID })
