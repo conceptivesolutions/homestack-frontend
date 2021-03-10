@@ -70,7 +70,7 @@ const SatellitePageWithData: React.VFC<SatellitePageWithDataProps> = ({ satellit
       <Button positive onClick={() => onSave(changedSatellite)}>Save</Button>
       <Button onClick={onGenerateLease}>Generate Lease</Button>
       <div className={styles.spacer}/>
-      <ApproveDestructiveModal title={"Delete Satellite?"} trigger={<Button negative onClick={onDelete}>Delete Satellite</Button>}>
+      <ApproveDestructiveModal title={"Delete Satellite?"} onProceed={onDelete} trigger={<Button negative>Delete Satellite</Button>}>
         Do you really want to permanently delete this satellite?<br/>
         This action can not be undone and results in loosing all satellite related data!<br/>
         After this you are unable to login with the satellite and you probably have to reconfigure your infrastructure.
