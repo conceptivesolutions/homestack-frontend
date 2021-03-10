@@ -13,6 +13,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useHistory, useParams, useRouteMatch } from "react-router";
 import SplitPane from "react-split-pane";
 import { Button } from "semantic-ui-react";
+import { ApproveDestructiveModal } from "../modals/CommonModals";
 import styles from "./StackPage.module.scss";
 
 export const StackPage: React.VFC = () =>
@@ -60,14 +61,25 @@ const SatellitesTree: React.VFC<{ onSelect: (id: string) => void, selection: str
 
   return <div className={styles.listContainer}>
     <TitledList className={styles.list} title="Satellites">
-      {satellites?.map(pSat => <TitledListEntry key={pSat.id} icon={mdiSatelliteUplink}
-                                                active={selection === pSat.id}
-                                                hoverIcon={mdiTrashCanOutline}
-                                                hoverIconColor={"#ca1a1a"}
-                                                onHoverIconClick={() => deleteSatellite(pSat.id)}
-                                                url={url + "/satellites/" + pSat.id}>
-        {pSat.id}
-      </TitledListEntry>)}
+      {satellites?.map(pSat =>
+        <TitledListEntry key={pSat.id} icon={mdiSatelliteUplink}
+                         active={selection === pSat.id}
+                         hoverIcon={mdiTrashCanOutline}
+                         hoverIconColor={"#ca1a1a"}
+                         url={url + "/satellites/" + pSat.id}
+                         customizeHoverIcon={pIcon => <ApproveDestructiveModal title={"Delete Satellite?"}
+                                                                               onProceed={() => deleteSatellite(pSat.id)}
+                                                                               trigger={pIcon}>
+                           Do you really want to permanently delete this satellite?<br/>
+                           This action can not be undone and results in loosing all satellite related data!<br/>
+                           After this you are unable to login with the satellite and you probably have to reconfigure your infrastructure.
+                           <pre>
+                             id: {pSat.id}<br/>
+                           </pre>
+                         </ApproveDestructiveModal>}>
+          {pSat.id}
+        </TitledListEntry>,
+      )}
     </TitledList>
     <Button basic className={styles.listAdd} onClick={() => createSatellite().then(pNewID => push(url + "/satellites/" + pNewID))}>
       <Icon size={1} path={mdiPlus}/>
@@ -88,16 +100,27 @@ const DevicesTree: React.VFC<{ onSelect: (id: string) => void, selection: string
 
   return <div className={styles.listContainer}>
     <TitledList className={styles.list} title="Devices">
-      {devices?.map(pDev => <TitledListEntry key={pDev.id} icon={(pDev.icon && iconToSVG(pDev.icon)) || mdiMonitor}
-                                             color={getStateColor(latestRecordsOfDevice(pDev.id))}
-                                             onClick={() => onSelect(pDev.id)}
-                                             active={selection === pDev.id}
-                                             url={url + "/devices/" + pDev.id}
-                                             hoverIcon={mdiTrashCanOutline}
-                                             hoverIconColor={"#ca1a1a"}
-                                             onHoverIconClick={() => deleteDevice(pDev.id)}>
-        {latestRecordOfDevice(pDev.id, EMetricTypes.REVERSE_DNS)?.result?.name || pDev.address || pDev.id}
-      </TitledListEntry>)}
+      {devices?.map(pDev =>
+        <TitledListEntry key={pDev.id} icon={(pDev.icon && iconToSVG(pDev.icon)) || mdiMonitor}
+                         color={getStateColor(latestRecordsOfDevice(pDev.id))}
+                         onClick={() => onSelect(pDev.id)}
+                         active={selection === pDev.id}
+                         url={url + "/devices/" + pDev.id}
+                         hoverIcon={mdiTrashCanOutline}
+                         hoverIconColor={"#ca1a1a"}
+                         customizeHoverIcon={pIcon => <ApproveDestructiveModal title={"Delete Device?"}
+                                                                               onProceed={() => deleteDevice(pDev.id)}
+                                                                               trigger={pIcon}>
+                           Do you really want to permanently delete this device?<br/>
+                           This action can not be undone and results in loosing all device related data!<br/>
+                           <pre>
+                             id: {pDev.id}<br/>
+                             dns: {latestRecordOfDevice(pDev.id, EMetricTypes.REVERSE_DNS)?.result?.name}<br/>
+                             address: {pDev.address}<br/>
+                           </pre>
+                         </ApproveDestructiveModal>}>
+          {latestRecordOfDevice(pDev.id, EMetricTypes.REVERSE_DNS)?.result?.name || pDev.address || pDev.id}
+        </TitledListEntry>)}
     </TitledList>
     <Button basic className={styles.listAdd} onClick={() => createDevice().then(pNewID => push(url + "/devices/" + pNewID))}>
       <Icon size={1} path={mdiPlus}/>

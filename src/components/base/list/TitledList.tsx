@@ -19,12 +19,13 @@ type TitledListEntryProps = {
   active?: boolean,
   onClick?: () => void,
   onHoverIconClick?: () => void,
+  customizeHoverIcon?: (item: React.ReactNode) => React.ReactNode,
 }
 
 /**
  * Displays TitledListEntries in a titled list view
  */
-export const TitledList: React.FC<TitledListProps> = ({title, className, children}) => (
+export const TitledList: React.FC<TitledListProps> = ({ title, className, children }) => (
   <div className={classNames(styles.container, className)}>
     <span className={styles.title}>{title}</span>
     {children}
@@ -34,30 +35,35 @@ export const TitledList: React.FC<TitledListProps> = ({title, className, childre
 /**
  * Entry for titled list
  */
-export const TitledListEntry: React.FC<TitledListEntryProps> = (props) => (
-  <Link to={props.url || ""} className={classNames(styles.entry, props.className, {[styles.active]: props.active})} onClick={(e) =>
-  {
-    if (props.onClick && e.button === 0)
+export const TitledListEntry: React.FC<TitledListEntryProps> = (props) =>
+{
+  const customizeHoverIcon = props.customizeHoverIcon || ((item) => item);
+
+  return (
+    <Link to={props.url || ""} className={classNames(styles.entry, props.className, { [styles.active]: props.active })} onClick={(e) =>
     {
-      e.preventDefault();
-      props.onClick();
-    }
-  }}>
-    {props.icon && <div className={styles.icon}>
-      <Icon path={props.icon} color={props.color} size={1}/>
-    </div>}
-    {props.children && <span className={styles.text}>{props.children}</span>}
-    {props.hoverIcon && <div className={styles.hoverIcon} onClick={(e) =>
-    {
-      if (props.onHoverIconClick && e.button === 0)
+      if (props.onClick && e.button === 0)
       {
         e.preventDefault();
-        props.onHoverIconClick();
+        props.onClick();
       }
     }}>
-      <Icon path={props.hoverIcon} color={props.hoverIconColor || props.color} size={1}/>
-    </div>}
-  </Link>
-);
+      {props.icon && <div className={styles.icon}>
+        <Icon path={props.icon} color={props.color} size={1}/>
+      </div>}
+      {props.children && <span className={styles.text}>{props.children}</span>}
+      {props.hoverIcon && customizeHoverIcon(<div className={styles.hoverIcon} onClick={(e) =>
+      {
+        if (props.onHoverIconClick && e.button === 0)
+        {
+          e.preventDefault();
+          props.onHoverIconClick();
+        }
+      }}>
+        <Icon path={props.hoverIcon} color={props.hoverIconColor || props.color} size={1}/>
+      </div>)}
+    </Link>
+  );
+};
 
 

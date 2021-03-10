@@ -8,6 +8,7 @@ import { ErrorPage } from "pages/ErrorPage";
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from "react-router";
 import { Button, Loader } from "semantic-ui-react";
+import { ApproveDestructiveModal } from "../../modals/CommonModals";
 import styles from "./SatellitePage.module.scss";
 
 export const SatellitePage: React.VFC = () =>
@@ -61,7 +62,14 @@ const SatellitePageWithData: React.VFC<SatellitePageWithDataProps> = ({ satellit
       <Button positive onClick={onSave}>Save</Button>
       <Button onClick={onGenerateLease}>Generate Lease</Button>
       <div className={styles.spacer}/>
-      <Button negative onClick={onDelete}>Delete Satellite</Button>
+      <ApproveDestructiveModal title={"Delete Satellite?"} trigger={<Button negative onClick={onDelete}>Delete Satellite</Button>}>
+        Do you really want to permanently delete this satellite?<br/>
+        This action can not be undone and results in loosing all satellite related data!<br/>
+        After this you are unable to login with the satellite and you probably have to reconfigure your infrastructure.
+        <pre>
+          id: {satellite.id}<br/>
+        </pre>
+      </ApproveDestructiveModal>
     </CardLayoutFooter>
   );
 

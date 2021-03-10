@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from "react-router";
 import { Button, Checkbox, Dropdown, Input, Loader } from "semantic-ui-react";
 import { v4 as uuid } from "uuid";
+import { ApproveDestructiveModal } from "../../modals/CommonModals";
 import { ErrorPage } from "../ErrorPage";
 import styles from "./DevicePage.module.scss";
 
@@ -78,7 +79,15 @@ const DevicePageWithData: React.VFC<PageWithData> = ({ device, records, onDelete
     <CardLayoutFooter>
       <Button positive onClick={() => onSave(changedMetrics, changedDevice)}>Save</Button>
       <div className={styles.spacer}/>
-      <Button negative onClick={onDelete}>Delete Device</Button>
+      <ApproveDestructiveModal trigger={<Button negative>Delete Device</Button>} title={"Delete Device?"} onProceed={onDelete}>
+        Do you really want to permanently delete this device?<br/>
+        This action can not be undone and results in loosing all device related data!<br/>
+        <pre>
+          id: {device.id}<br/>
+          dns: {deviceDNSName}<br/>
+          address: {device.address}<br/>
+        </pre>
+      </ApproveDestructiveModal>
     </CardLayoutFooter>
   );
 
