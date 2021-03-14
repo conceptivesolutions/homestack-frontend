@@ -1,25 +1,15 @@
 @import "css/styles";
 
 .container {
-  padding-left: $content-padding;
+  padding: $content-padding;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.innerContainer {
+  padding: $content-padding;
 }
 
 .spacer {
   flex-grow: 1;
-}
-
-.leaseContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.leaseID {
-  flex-grow: 1;
-}
-
-.general {
-  &:nth-child(odd) {
-    text-align: right;
-  }
 }

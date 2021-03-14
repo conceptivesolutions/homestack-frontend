@@ -1,12 +1,12 @@
 import { CardLayout, CardLayoutFooter, CardLayoutHeader } from "components/base/layouts/CardLayout";
-import { getIcons } from "helpers/iconHelper";
 import _ from "lodash";
 import { EMetricTypes, IDevice, IMetric, IMetricRecord } from "models/definitions/backend/device";
 import { useActiveStack, useBackend } from "models/states/DataState";
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from "react-router";
-import { Button, Checkbox, Dropdown, Input, Loader } from "semantic-ui-react";
+import { Button, Checkbox, Form, Loader } from "semantic-ui-react";
 import { v4 as uuid } from "uuid";
+import { getIcons } from "../../helpers/iconHelper";
 import { ApproveDestructiveModal } from "../../modals/CommonModals";
 import { ErrorPage } from "../ErrorPage";
 import styles from "./DevicePage.module.scss";
@@ -60,13 +60,12 @@ type PageWithData = {
   onSave: (changedMetrics: { [t: string]: IMetric }, changedDevice: IDevice) => void
 }
 
-const DevicePageWithData: React.VFC<PageWithData> = ({ device, records, onDelete, onSave }) =>
+const DevicePageWithData: React.VFC<PageWithData> = ({ device: initialData, records, onDelete, onSave }) =>
 {
+  const [device, setDevice] = useState<IDevice>({ ...initialData });
+  const [errors, setErrors] = useState<Map<string, string>>(new Map());
   const deviceDNSName = device && (_.head(records.filter(pRecord => pRecord.type === EMetricTypes.REVERSE_DNS))?.result?.name);
   const changedMetrics: { [t: string]: IMetric } = {};
-  const changedDevice: IDevice = {
-    ...device,
-  };
 
   const header = (
     <CardLayoutHeader>
@@ -77,9 +76,9 @@ const DevicePageWithData: React.VFC<PageWithData> = ({ device, records, onDelete
 
   const footer = (
     <CardLayoutFooter>
-      <Button positive onClick={() => onSave(changedMetrics, changedDevice)}>Save</Button>
+      <Button positive>Save</Button>
       <div className={styles.spacer}/>
-      <ApproveDestructiveModal trigger={<Button negative>Delete Device</Button>} title={"Delete Device?"} onProceed={onDelete}>
+      <ApproveDestructiveModal trigger={<Button negative type="button">Delete Device</Button>} title={"Delete Device?"} onProceed={onDelete}>
         Do you really want to permanently delete this device?<br/>
         This action can not be undone and results in loosing all device related data!<br/>
         <pre>
@@ -91,33 +90,45 @@ const DevicePageWithData: React.VFC<PageWithData> = ({ device, records, onDelete
     </CardLayoutFooter>
   );
 
-  return <CardLayout header={header} footer={footer} className={styles.container}>
-    <table className={styles.contentTable}>
-      <tbody>
-      <tr>
-        <td>Address</td>
-        <td>
-          <Input defaultValue={device?.address} onChange={e => changedDevice.address = e.target.value}/>
-        </td>
-      </tr>
-      <tr>
-        <td>Icon</td>
-        <td>
-          <Dropdown options={getIcons().map(pIcon => ({ key: pIcon, text: pIcon, value: pIcon }))}
-                    defaultValue={device?.icon}
-                    fluid selection onChange={(e, data) => changedDevice.icon = data?.text}/>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-    <table className={styles.contentTable}>
-      <tbody>
-      {_createMetricRow("Ping", EMetricTypes.PING, changedMetrics, device.id, device.metrics || [])}
-      {_createMetricRow("DNS", EMetricTypes.REVERSE_DNS, changedMetrics, device.id, device.metrics || [])}
-      </tbody>
-    </table>
-  </CardLayout>;
+  // validate if object changes
+  useEffect(() => setErrors(_validate(device)), [device]);
+
+  return <Form onSubmit={() => _validate(device) && onSave(changedMetrics, device)} className={styles.container}>
+    <CardLayout header={header} footer={footer}>
+      <div className={styles.innerContainer}>
+        {/* Common */}
+        <Form.Group>
+          <Form.Dropdown label={"Icon"} width={4} name={"icon"} error={errors.get("icon")}
+                         options={getIcons().map(pIcon => ({ key: pIcon, text: pIcon, value: pIcon }))}
+                         defaultValue={device?.icon}
+                         selection onChange={(e, data) => setDevice({ ...device, icon: (data?.value as string) })}/>
+          <Form.Input label={"Address"} width={12} name={"address"} error={errors.get("address")} defaultValue={device.address}
+                      onChange={(e, data) => setDevice({ ...device, address: (data?.value as string) })}/>
+        </Form.Group>
+      </div>
+
+      <div className={styles.innerContainer}>
+        {/* Metrics */}
+        <Form.Group>
+          {_createMetricRow("DNS", EMetricTypes.REVERSE_DNS, changedMetrics, device.id, device.metrics || [])}
+          {_createMetricRow("Ping", EMetricTypes.PING, changedMetrics, device.id, device.metrics || [])}
+        </Form.Group>
+      </div>
+    </CardLayout>
+  </Form>;
 };
+
+function _validate(verifyObj: IDevice): Map<string, string>
+{
+  const currentErrors = new Map<string, string>();
+
+  // validate address
+  const ipRegex = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+  if (!verifyObj.address || !ipRegex.test(verifyObj.address))
+    currentErrors.set("address", "Not a valid IP address");
+
+  return currentErrors;
+}
 
 function _createMetricRow(name: string, type: EMetricTypes, changedMetrics: { [t: string]: IMetric }, deviceID: string, allMetrics: IMetric[])
 {
@@ -128,14 +139,12 @@ function _createMetricRow(name: string, type: EMetricTypes, changedMetrics: { [t
     enabled: false,
   } as IMetric;
 
-  return <tr>
-    <td>{name}</td>
-    <td>
-      <Checkbox toggle defaultChecked={myMetric.enabled} onClick={(e, { checked }) =>
-      {
-        myMetric.enabled = checked || false;
-        changedMetrics[type] = myMetric;
-      }}/>
-    </td>
-  </tr>;
+  return <Form.Field width={"2"}>
+    <label>{name}</label>
+    <Checkbox toggle defaultChecked={myMetric.enabled} onClick={(e, { checked }) =>
+    {
+      myMetric.enabled = checked || false;
+      changedMetrics[type] = myMetric;
+    }}/>
+  </Form.Field>;
 }

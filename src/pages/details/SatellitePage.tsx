@@ -1,13 +1,11 @@
-import { mdiTrashCanOutline } from "@mdi/js";
-import Icon from "@mdi/react";
 import { CardLayout, CardLayoutFooter, CardLayoutHeader } from "components/base/layouts/CardLayout";
-import { FormLayout } from "components/base/layouts/FormLayout";
+import _ from "lodash";
 import { ISatellite } from "models/definitions/backend/satellite";
 import { useActiveStack, useBackend } from "models/states/DataState";
 import { ErrorPage } from "pages/ErrorPage";
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from "react-router";
-import { Button, Input, Loader } from "semantic-ui-react";
+import { Button, Form, Icon, Loader, Table } from "semantic-ui-react";
 import { ApproveDestructiveModal } from "../../modals/CommonModals";
 import styles from "./SatellitePage.module.scss";
 
@@ -59,18 +57,16 @@ type SatellitePageWithDataProps = {
   onSave: (changedSatellite: ISatellite) => void,
 };
 
-const SatellitePageWithData: React.VFC<SatellitePageWithDataProps> = ({ satellite, onGenerateLease, onRevokeLease, onDelete, onSave }) =>
+const SatellitePageWithData: React.VFC<SatellitePageWithDataProps> = ({ satellite: initialData, onGenerateLease, onRevokeLease, onDelete, onSave }) =>
 {
-  const changedSatellite: ISatellite = {
-    ...satellite,
-  };
+  const [errors, setErrors] = useState<Map<string, string>>(new Map());
+  const [satellite, setSatellite] = useState<ISatellite>({ ...initialData });
 
   const footer = (
     <CardLayoutFooter>
-      <Button positive onClick={() => onSave(changedSatellite)}>Save</Button>
-      <Button onClick={onGenerateLease}>Generate Lease</Button>
+      <Button positive>Save</Button>
       <div className={styles.spacer}/>
-      <ApproveDestructiveModal title={"Delete Satellite?"} onProceed={onDelete} trigger={<Button negative>Delete Satellite</Button>}>
+      <ApproveDestructiveModal title={"Delete Satellite?"} onProceed={onDelete} trigger={<Button negative type="button">Delete Satellite</Button>}>
         Do you really want to permanently delete this satellite?<br/>
         This action can not be undone and results in loosing all satellite related data!<br/>
         After this you are unable to login with the satellite and you probably have to reconfigure your infrastructure.
@@ -84,28 +80,65 @@ const SatellitePageWithData: React.VFC<SatellitePageWithDataProps> = ({ satellit
 
   const header = (
     <CardLayoutHeader>
-      <h1>{satellite.id}</h1>
+      <h1>{satellite.displayName || satellite.id}</h1>
+      {satellite.displayName && <span>{satellite.id}</span>}
     </CardLayoutHeader>
   );
 
-  return <CardLayout header={header} footer={footer} className={styles.container}>
-    <FormLayout>
-      {satellite.leases?.filter(pLease => !pLease.revokedDate)
-        .map(pLease => (
-          <React.Fragment key={pLease.id}>
-            <span>Lease</span>
-            <div className={styles.leaseContainer}>
-              <div className={styles.leaseID}>{pLease.id}</div>
-              <Button basic onClick={() => onRevokeLease(pLease.id)}>
-                <Icon path={mdiTrashCanOutline} size={0.8}/>
-              </Button>
-            </div>
-          </React.Fragment>
-        ))}
-    </FormLayout>
-    <FormLayout className={styles.general}>
-      <span>Name</span>
-      <Input defaultValue={satellite.displayName} onChange={e => changedSatellite.displayName = e.target.value}/>
-    </FormLayout>
-  </CardLayout>;
+  // validate if object changes
+  useEffect(() => setErrors(_validate(satellite)), [satellite]);
+
+  return <Form onSubmit={() => _validate(satellite) && onSave(satellite)} className={styles.container}>
+    <CardLayout header={header} footer={footer}>
+      <div className={styles.innerContainer}>
+        <Form.Input label={"Name"} width={16} error={errors.get("name")}
+                    defaultValue={satellite.displayName} onChange={e => setSatellite({ ...satellite, displayName: e.target.value })}/>
+      </div>
+      <Form.Field className={styles.innerContainer}>
+        <label>Leases</label>
+        <Table singleLine>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>ID</Table.HeaderCell>
+              <Table.HeaderCell collapsing/>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {satellite.leases?.filter(pLease => !pLease.revokedDate)
+              .map(pLease => (
+                <Table.Row key={pLease.id}>
+                  <Table.Cell>{pLease.id}</Table.Cell>
+                  <Table.Cell collapsing>
+                    <Button labelPosition='left' icon onClick={() => onRevokeLease(pLease.id)}>
+                      <Icon name={"trash alternate outline"}/>
+                      Delete
+                    </Button>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+          </Table.Body>
+          <Table.Footer fullWidth>
+            <Table.Row>
+              <Table.HeaderCell colSpan={2}>
+                <Button labelPosition='left' icon onClick={onGenerateLease}>
+                  <Icon name={'add'}/>
+                  Generate Lease
+                </Button>
+              </Table.HeaderCell>
+            </Table.Row>
+          </Table.Footer>
+        </Table>
+      </Form.Field>
+    </CardLayout>
+  </Form>;
 };
+
+function _validate(verifyObj: ISatellite): Map<string, string>
+{
+  const currentErrors = new Map<string, string>();
+
+  if (_.isEmpty(verifyObj.displayName))
+    currentErrors.set("name", "Name must not be empty");
+
+  return currentErrors;
+}
