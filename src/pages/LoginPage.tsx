@@ -3,8 +3,8 @@ import _ from "lodash";
 import { useLogin } from "models/states/AuthState";
 import React, { useState } from 'react';
 import { useHistory, useLocation } from "react-router";
-import { toast } from "react-toastify";
 import { Button, Input } from "semantic-ui-react";
+import { captureError } from "../helpers/errorHelper";
 import styles from "./LoginPage.module.scss";
 
 export const LoginPage: React.VFC = () =>
@@ -40,13 +40,13 @@ export const LoginPage: React.VFC = () =>
         })
         .catch(pErr =>
         {
-          toast.error(pErr.message);
+          captureError(pErr.message);
           setLoading(false);
           setError(pErr);
         });
     else
     {
-      toast.error("Please enter a valid email and password combination");
+      captureError("Please enter a valid email and password combination");
       setLoading(false);
       setError(new Error());
     }

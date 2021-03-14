@@ -9,10 +9,10 @@ import { toast } from "react-toastify";
  */
 export function captureError(error: any, message?: string): void
 {
-  if(process.env.NODE_ENV === "production")
-    Sentry.captureException(error)
+  if (process.env.NODE_ENV === "production")
+    Sentry.captureException(error);
   else
-    console.error(error.message, error.stack)
+    console.error(error.message, error.stack);
 
   toast.error(message || error?.message || "Internal Server Error"); //todo i18n
 }

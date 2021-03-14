@@ -25,7 +25,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({ children, stripItems }) 
 
   return (
     <>
-      <ToastContainer position={"top-right"} autoClose={5000} hideProgressBar newestOnTop closeOnClick draggable pauseOnHover/>
+      <ToastContainer position={"bottom-left"} autoClose={2500} newestOnTop closeOnClick draggable pauseOnHover/>
       <div className={styles.container}>
         <ButtonStrip className={styles.strip}>
           <Suspense fallback={<Loader active/>}>
