@@ -2,12 +2,10 @@ import { mdiMonitor, mdiPlus, mdiSatelliteUplink, mdiTrashCanOutline } from "@md
 import Icon from "@mdi/react";
 import { TitledList, TitledListEntry } from "components/base/list/TitledList";
 import { DeviceDetails } from "components/details/DeviceDetails";
-import NetworkComponent from "components/graph/NetworkComponent";
-import { Slot } from "components/graph/NetworkComponentModel";
 import { getStateColor } from "helpers/deviceHelper";
 import { iconToSVG } from "helpers/iconHelper";
 import _ from "lodash";
-import { EMetricTypes, IDevice } from "models/definitions/backend/device";
+import { EMetricTypes } from "models/definitions/backend/device";
 import { useActiveStack, useActiveStackCRUD, useActiveStackDevices, useActiveStackRecords, useActiveStackSatellites, useSetActiveStackID } from "models/states/DataState";
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useHistory, useParams, useRouteMatch } from "react-router";
@@ -157,47 +155,49 @@ const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection
   const { updateDevice, deleteDevice } = useActiveStackCRUD();
   const { latestRecordOfDevice, latestRecordsOfDevice } = useActiveStackRecords();
 
-  return <NetworkComponent className={styles.network}
-                           data={{ nodes: devices || [] }}
-                           onSelectionChanged={(obj) =>
-                           {
-                             if (!obj || !obj.id)
-                               onSelect(null);
-                             else
-                               onSelect(obj.id);
-                           }}
-                           selection={{ node: _.find(devices, pDev => pDev.id === selection) }}
-                           nodeToNodeConverter={(pDev: IDevice) => ({
-                             kind: "node",
-                             id: pDev.id,
-                             title: latestRecordOfDevice(pDev.id, EMetricTypes.REVERSE_DNS)?.result?.name || pDev.address || pDev.id,
-                             x: pDev.location?.x || 0,
-                             y: pDev.location?.y || 0,
-                             icon: pDev.icon,
-                             color: getStateColor(latestRecordsOfDevice(pDev.id)),
-                             slots: pDev.slots?.map(pRow => pRow.map(pSlot => ({
-                               kind: "slot",
-                               id: pSlot.id,
-                               targetSlotID: pSlot.targetSlotID,
-                               state: pSlot.state,
-                             }) as Slot)) || [],
-                           })}
-                           onNodeMoved={(pSource, pX, pY) =>
-                           {
-                             const device = _.find(devices, pDev => pDev.id === pSource.id);
-                             if (device)
-                             {
-                               updateDevice({
-                                 ...device,
-                                 location: {
-                                   x: pX,
-                                   y: pY,
-                                 },
-                               });
-                               return true;
-                             }
+  return <div/>;
 
-                             return false;
-                           }}
-                           onNodeDeleted={pNode => deleteDevice(pNode.id)}/>;
+  // return <NetworkComponent className={styles.network}
+  //                          data={{ nodes: devices || [] }}
+  //                          onSelectionChanged={(obj) =>
+  //                          {
+  //                            if (!obj || !obj.id)
+  //                              onSelect(null);
+  //                            else
+  //                              onSelect(obj.id);
+  //                          }}
+  //                          selection={{ node: _.find(devices, pDev => pDev.id === selection) }}
+  //                          nodeToNodeConverter={(pDev: IDevice) => ({
+  //                            kind: "node",
+  //                            id: pDev.id,
+  //                            title: latestRecordOfDevice(pDev.id, EMetricTypes.REVERSE_DNS)?.result?.name || pDev.address || pDev.id,
+  //                            x: pDev.location?.x || 0,
+  //                            y: pDev.location?.y || 0,
+  //                            icon: pDev.icon,
+  //                            color: getStateColor(latestRecordsOfDevice(pDev.id)),
+  //                            slots: pDev.slots?.map(pRow => pRow.map(pSlot => ({
+  //                              kind: "slot",
+  //                              id: pSlot.id,
+  //                              targetSlotID: pSlot.targetSlotID,
+  //                              state: pSlot.state,
+  //                            }) as Slot)) || [],
+  //                          })}
+  //                          onNodeMoved={(pSource, pX, pY) =>
+  //                          {
+  //                            const device = _.find(devices, pDev => pDev.id === pSource.id);
+  //                            if (device)
+  //                            {
+  //                              updateDevice({
+  //                                ...device,
+  //                                location: {
+  //                                  x: pX,
+  //                                  y: pY,
+  //                                },
+  //                              });
+  //                              return true;
+  //                            }
+  //
+  //                            return false;
+  //                          }}
+  //                          onNodeDeleted={pNode => deleteDevice(pNode.id)}/>;
 };
