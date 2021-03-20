@@ -11,6 +11,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useHistory, useParams, useRouteMatch } from "react-router";
 import SplitPane from "react-split-pane";
 import { Button } from "semantic-ui-react";
+import { GraphComponent } from "../components/graph/GraphComponent";
 import { ApproveDestructiveModal } from "../modals/CommonModals";
 import styles from "./StackPage.module.scss";
 
@@ -152,10 +153,10 @@ const Details: React.VFC<{ selection: string }> = ({ selection }) =>
 const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection: string | null }> = ({ onSelect, selection }) =>
 {
   const { devices } = useActiveStackDevices();
-  const { updateDevice, deleteDevice } = useActiveStackCRUD();
-  const { latestRecordOfDevice, latestRecordsOfDevice } = useActiveStackRecords();
+  // const { updateDevice, deleteDevice } = useActiveStackCRUD();
+  // const { latestRecordOfDevice, latestRecordsOfDevice } = useActiveStackRecords();
 
-  return <div/>;
+  return <GraphComponent devices={devices || []}/>;
 
   // return <NetworkComponent className={styles.network}
   //                          data={{ nodes: devices || [] }}
