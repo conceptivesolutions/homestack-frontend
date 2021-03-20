@@ -156,7 +156,7 @@ const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection
   // const { updateDevice, deleteDevice } = useActiveStackCRUD();
   // const { latestRecordOfDevice, latestRecordsOfDevice } = useActiveStackRecords();
 
-  return <GraphComponent devices={devices || []}/>;
+  return <GraphComponent devices={devices || []} onSelect={onSelect}/>;
 
   // return <NetworkComponent className={styles.network}
   //                          data={{ nodes: devices || [] }}
