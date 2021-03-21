@@ -6,6 +6,8 @@ import { IDevice } from "../../models/definitions/backend/device";
 import styles from "./GraphComponent.module.scss";
 
 const PAGESIZE = 20_000;
+const SLOTPADDING = 5;
+const SLOTSIZE = 12;
 
 type Node = IDevice & {
   color: string,
@@ -121,6 +123,22 @@ function _createNodeSkeleton(container: Selection<any, Node, BaseType, any>)
   node.append("text")
     .classed("node_title", true);
 
+  // node slots // todo does this work, or should it be located inside updateNodeData?
+  node.append("g")
+    .classed("node_slots", true)
+    .selectAll(".node_slots_row")
+    .data(d => d.slots || [])
+    .join(enter => enter
+      .append("g")
+      .classed("node_slots_row", true))
+
+    // row -> cell
+    .selectAll(".node_slots_cell")
+    .data(d => d)
+    .join(enter => enter
+      .append("rect")
+      .classed("node_slots_cell", true));
+
   return node;
 }
 
@@ -140,10 +158,23 @@ function _updateNodeData(node: Selection<any, Node, BaseType, any>)
     .attr("d", d => d.icon ? iconToSVG(d.icon!) as string : "")
     .attr("fill", d => d.color);
 
+  // slot rows
+  node.selectAll(".node_slots_row")
+    .attr("transform", (data, i) => "translate(0, " + (30 + ((SLOTSIZE + SLOTPADDING) * i)) + ")");
+
+  // slot cells
+  node.selectAll(".node_slots_row")
+    .selectAll(".node_slots_cell")
+    .attr("data", (data, i) => i)
+    .attr("x", (data, i) => (SLOTSIZE + SLOTPADDING) * i)
+    .attr("width", SLOTSIZE)
+    .attr("height", SLOTSIZE)
+    .attr("fill", "red");
+
   // title
   node.select(".node_title")
-    .attr("y", 36)
+    .attr("y", d => ((d.slots?.length || 0) + 1) * (SLOTSIZE + SLOTPADDING) + 17)
     .attr("text-anchor", "middle")
-    .attr("alignment-baseline", "central")
+    .attr("alignment-baseline", "baseline")
     .text(d => d.title);
 }
