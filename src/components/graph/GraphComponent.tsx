@@ -1,21 +1,28 @@
-import * as d3 from 'd3';
+import * as d3 from "d3";
+import { BaseType, Selection } from "d3";
 import React, { useEffect, useRef } from 'react';
+import { iconToSVG } from "../../helpers/iconHelper";
 import { IDevice } from "../../models/definitions/backend/device";
 import styles from "./GraphComponent.module.scss";
 
 const PAGESIZE = 20_000;
 
+type Node = IDevice & {
+  color: string,
+  title: string,
+}
+
 type GraphComponentProps = {
-  devices: IDevice[],
+  nodes: Node[],
   onSelect: (id: string | null) => void,
 };
 
-export const GraphComponent: React.VFC<GraphComponentProps> = ({ devices: initialDevices, onSelect }) =>
+export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, onSelect }) =>
 {
   const containerRef = useRef<SVGSVGElement>(null);
 
   // render items
-  useEffect(() => _createGraph(containerRef.current!, initialDevices, (pDev) => onSelect(pDev?.id || null)), [initialDevices, onSelect]);
+  useEffect(() => _createGraph(containerRef.current!, nodes, (pDev) => onSelect(pDev?.id || null)), [nodes, onSelect]);
 
   // fixed layer
   const fixedLayer = <g id={"fixedLayer"}>
@@ -38,8 +45,8 @@ export const GraphComponent: React.VFC<GraphComponentProps> = ({ devices: initia
     {/* Background */}
     <rect id={"background"} style={{ pointerEvents: "none" }} x={-(PAGESIZE / 2)} y={-(PAGESIZE / 2)} width={PAGESIZE} height={PAGESIZE} fill="url(#grid)"/>
 
-    {/* Devices */}
-    <g id={"devices"}/>
+    {/* nodes */}
+    <g id={"nodes"}/>
   </g>;
 
   return (<div className={styles.container}>
@@ -53,40 +60,90 @@ export const GraphComponent: React.VFC<GraphComponentProps> = ({ devices: initia
 /**
  * Creates the Graph
  */
-function _createGraph(root: SVGSVGElement, devices: IDevice[], onSelect: (id: IDevice | null) => void)
+function _createGraph(root: SVGSVGElement, nodes: Node[], onSelect: (node: Node | null) => void)
 {
-  const content = d3.select(root)
-    .select("#contentLayer");
+  const content = d3.select(root).select("#contentLayer");
+  const panPinch = d3.select(root).select("#panPinch");
 
-  // zoom
-  d3.select(root)
-    .select("#panPinch")
+  // init gesture handling
+  _initGestures(panPinch, content);
 
-    // @ts-ignore
-    .call(d3.zoom()
-      .scaleExtent([.25, 2])
-      .translateExtent([[-(PAGESIZE / 2), -(PAGESIZE / 2)], [PAGESIZE / 2, PAGESIZE / 2]])
-      .on("zoom", (e) => content.attr("transform", e.transform)))
+  // delete selection, because we clicked in the background
+  panPinch.on("click", () => onSelect(null));
 
-    // delete selection, because we clicked in the background
-    .on("click", () => onSelect(null));
+  // create nodes, if necessary
+  const node = content.select("#nodes")
+    .selectAll(".node")
+    .data(nodes)
+    .join(_createNodeSkeleton)
 
-  // create devices
-  content.select("#devices")
-    .selectAll("g")
-    .data(devices)
-    .enter()
+    // select node on click
+    .on("click", (event, data) => onSelect(data));
+
+  // update nodes with data
+  _updateNodeData(node);
+}
+
+/**
+ * Initializes all gestures
+ *
+ * @param panPinchSelection selection to execute the pan/pinch behavior
+ * @param scaleSelection selection that should be updated with the pan/pinched transform
+ */
+function _initGestures(panPinchSelection: Selection<any, any, any, any>, scaleSelection: Selection<any, any, any, any>)
+{
+  // pan/pinch zoom
+  panPinchSelection.call(d3.zoom()
+    .scaleExtent([.25, 2])
+    .translateExtent([[-(PAGESIZE / 2), -(PAGESIZE / 2)], [PAGESIZE / 2, PAGESIZE / 2]])
+    .on("zoom", (e) => scaleSelection.attr("transform", e.transform)));
+}
+
+/**
+ * Creates the "frame" / "skeleton" of the node svg element.
+ * This is all about fixed structure, not about dynamic data.
+ *
+ * @param container outter container to add to
+ */
+function _createNodeSkeleton(container: Selection<any, Node, BaseType, any>)
+{
+  const node = container
     .append("g")
+    .classed("node", true);
 
-    // translate to position
-    .attr("transform", dev => "translate(" + Math.abs(dev.location?.x || 0) + " " + Math.abs(dev.location?.y || 0) + ")")
+  // node icon
+  node.append("g")
+    .attr("transform", "translate(-20, -20) scale(2, 2)")
+    .append("path")
+    .classed("node_icon", true);
 
-    // create single device
-    .append("rect")
-    .attr("width", 100)
-    .attr("height", 100)
-    .attr("x", 50)
-    .attr("y", 50)
-    .attr("fill", "teal")
-    .on("click", (e, device) => onSelect(device));
+  // node text
+  node.append("text")
+    .classed("node_title", true);
+
+  return node;
+}
+
+/**
+ * Update the data in the previously created node skeleton
+ *
+ * @param node Node container to update
+ */
+function _updateNodeData(node: Selection<any, Node, BaseType, any>)
+{
+  // position
+  node
+    .attr("transform", node => "translate(" + (node.location?.x || 0) + " " + (node.location?.y || 0) + ")");
+
+  // icon
+  node.select(".node_icon")
+    .attr("d", d => d.icon ? iconToSVG(d.icon!) as string : "")
+    .attr("fill", d => d.color);
+
+  // title
+  node.select(".node_title")
+    .attr("y", 36)
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "central")
+    .text(d => d.title);
 }

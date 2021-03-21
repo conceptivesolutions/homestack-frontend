@@ -7,7 +7,7 @@ import { iconToSVG } from "helpers/iconHelper";
 import _ from "lodash";
 import { EMetricTypes } from "models/definitions/backend/device";
 import { useActiveStack, useActiveStackCRUD, useActiveStackDevices, useActiveStackRecords, useActiveStackSatellites, useSetActiveStackID } from "models/states/DataState";
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useHistory, useParams, useRouteMatch } from "react-router";
 import SplitPane from "react-split-pane";
 import { Button } from "semantic-ui-react";
@@ -154,9 +154,15 @@ const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection
 {
   const { devices } = useActiveStackDevices();
   // const { updateDevice, deleteDevice } = useActiveStackCRUD();
-  // const { latestRecordOfDevice, latestRecordsOfDevice } = useActiveStackRecords();
+  const { latestRecordOfDevice, latestRecordsOfDevice } = useActiveStackRecords();
 
-  return <GraphComponent devices={devices || []} onSelect={onSelect}/>;
+  const nodes = useMemo(() => devices?.map(pDev => ({
+    ...pDev,
+    title: latestRecordOfDevice(pDev.id, EMetricTypes.REVERSE_DNS)?.result?.name || pDev.address || pDev.id,
+    color: getStateColor(latestRecordsOfDevice(pDev.id)),
+  })), [devices, latestRecordOfDevice, latestRecordsOfDevice]);
+
+  return <GraphComponent nodes={nodes || []} onSelect={onSelect}/>;
 
   // return <NetworkComponent className={styles.network}
   //                          data={{ nodes: devices || [] }}
