@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import { BaseType, Selection } from "d3";
-import React, { useEffect, useRef } from 'react';
+import _ from "lodash";
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { iconToSVG } from "../../helpers/iconHelper";
 import { IDevice } from "../../models/definitions/backend/device";
 import styles from "./GraphComponent.module.scss";
@@ -12,6 +13,17 @@ const SLOTSIZE = 12;
 type Node = IDevice & {
   color: string,
   title: string,
+  drag?: {
+    x: number,
+    y: number
+  }
+}
+
+type RenderInfo = {
+  nodes: { [name: string]: Node },
+  zoom: number,
+  onSelect?: (node: Node | null) => void,
+  update: (value: (info: RenderInfo) => RenderInfo) => void,
 }
 
 type GraphComponentProps = {
@@ -22,9 +34,19 @@ type GraphComponentProps = {
 export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, onSelect }) =>
 {
   const containerRef = useRef<SVGSVGElement>(null);
+  const memoizedNodes = useMemo(() => _.keyBy(nodes, node => node.id), [nodes]);
+  const [renderInfo, setRenderInfo] = useState<RenderInfo>({ nodes: {}, zoom: 1, update: () => null });
+
+  // update renderinfo, if something changed
+  useEffect(() => setRenderInfo({
+    nodes: memoizedNodes,
+    zoom: 1,
+    onSelect: pNode => onSelect(pNode?.id || null),
+    update: setRenderInfo,
+  }), [memoizedNodes, onSelect, setRenderInfo]);
 
   // render items
-  useEffect(() => _createGraph(containerRef.current!, nodes, (pDev) => onSelect(pDev?.id || null)), [nodes, onSelect]);
+  useEffect(() => _createGraph(containerRef.current!, renderInfo), [renderInfo]);
 
   // fixed layer
   const fixedLayer = <g id={"fixedLayer"}>
@@ -62,25 +84,26 @@ export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, onSelect
 /**
  * Creates the Graph
  */
-function _createGraph(root: SVGSVGElement, nodes: Node[], onSelect: (node: Node | null) => void)
+function _createGraph(root: SVGSVGElement, info: RenderInfo)
 {
   const content = d3.select(root).select("#contentLayer");
   const panPinch = d3.select(root).select("#panPinch");
+  const drag = d3.select(root).selectAll(".node_icon_drag");
 
   // init gesture handling
-  _initGestures(panPinch, content);
+  _initGestures(root, panPinch, content, drag, info.update);
 
   // delete selection, because we clicked in the background
-  panPinch.on("click", () => onSelect(null));
+  panPinch.on("click", () => info.onSelect && info.onSelect(null));
 
   // create nodes, if necessary
   const node = content.select("#nodes")
     .selectAll(".node")
-    .data(nodes)
+    .data(_.values(info.nodes))
     .join(_createNodeSkeleton)
 
     // select node on click
-    .on("click", (event, data) => onSelect(data));
+    .on("click", (event, data) => info.onSelect && info.onSelect(data));
 
   // update nodes with data
   _updateNodeData(node);
@@ -89,16 +112,57 @@ function _createGraph(root: SVGSVGElement, nodes: Node[], onSelect: (node: Node 
 /**
  * Initializes all gestures
  *
+ * @param root root element
  * @param panPinchSelection selection to execute the pan/pinch behavior
  * @param scaleSelection selection that should be updated with the pan/pinched transform
+ * @param dragSelection selection that matches the elements that should be dragged
+ * @param setRenderInfo method to update the render info
  */
-function _initGestures(panPinchSelection: Selection<any, any, any, any>, scaleSelection: Selection<any, any, any, any>)
+function _initGestures(root: SVGSVGElement, panPinchSelection: Selection<any, any, any, any>, scaleSelection: Selection<any, any, any, any>,
+                       dragSelection: Selection<any, any, any, any>, setRenderInfo: (value: (info: RenderInfo) => RenderInfo) => void)
 {
-  // pan/pinch zoom
+  // pan/pinch zoom todo does not work if hovering over node
   panPinchSelection.call(d3.zoom()
     .scaleExtent([.25, 2])
     .translateExtent([[-(PAGESIZE / 2), -(PAGESIZE / 2)], [PAGESIZE / 2, PAGESIZE / 2]])
-    .on("zoom", (e) => scaleSelection.attr("transform", e.transform)));
+    .on("zoom", (e) =>
+    {
+      setRenderInfo(pInfo => ({
+        ...pInfo,
+        zoom: e.transform.k,
+      }));
+      scaleSelection.attr("transform", e.transform);
+    }));
+
+  // dragging
+  dragSelection.call(d3.drag()
+    .container(root)
+    .on("drag", e => setRenderInfo(pInfo =>
+    {
+      const id = e.subject.id;
+      const node: Node = pInfo.nodes[id];
+      node.drag = {
+        x: (node.drag?.x || node.location?.x || 0) + (e.dx / pInfo.zoom),
+        y: (node.drag?.y || node.location?.y || 0) + (e.dy / pInfo.zoom),
+      };
+      pInfo.nodes[id] = node;
+
+      return ({
+        ...pInfo,
+        nodes: pInfo.nodes,
+      });
+    }))
+    .on("end", e => setRenderInfo(pInfo => //todo update node
+    {
+      const id = e.subject.id;
+      const node: Node = pInfo.nodes[id];
+      delete node.drag;
+      pInfo.nodes[id] = node;
+      return ({
+        ...pInfo,
+        nodes: pInfo.nodes,
+      });
+    })));
 }
 
 /**
@@ -113,9 +177,19 @@ function _createNodeSkeleton(container: Selection<any, Node, BaseType, any>)
     .append("g")
     .classed("node", true);
 
+  // node icon container
+  const iconContainer = node.append("g")
+    .attr("transform", "translate(-20, -20) scale(2, 2)");
+
+  // node drag layer
+  iconContainer.append("rect")
+    .classed("node_icon_drag", true)
+    .attr("width", "24")
+    .attr("height", "24")
+    .attr("fill", "transparent");
+
   // node icon
-  node.append("g")
-    .attr("transform", "translate(-20, -20) scale(2, 2)")
+  iconContainer
     .append("path")
     .classed("node_icon", true);
 
@@ -151,7 +225,7 @@ function _updateNodeData(node: Selection<any, Node, BaseType, any>)
 {
   // position
   node
-    .attr("transform", node => "translate(" + (node.location?.x || 0) + " " + (node.location?.y || 0) + ")");
+    .attr("transform", node => "translate(" + (node.drag?.x || node.location?.x || 0) + " " + (node.drag?.y || node.location?.y || 0) + ")");
 
   // icon
   node.select(".node_icon")
