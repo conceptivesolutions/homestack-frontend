@@ -88,7 +88,7 @@ function _createGraph(root: SVGSVGElement, info: RenderInfo)
 {
   const content = d3.select(root).select("#contentLayer");
   const panPinch = d3.select(root).select("#panPinch");
-  const drag = d3.select(root).selectAll(".node_icon_drag");
+  const drag = d3.select(root).selectAll(".node_icon_container");
 
   // init gesture handling
   _initGestures(root, panPinch, content, drag, info.update);
@@ -179,11 +179,11 @@ function _createNodeSkeleton(container: Selection<any, Node, BaseType, any>)
 
   // node icon container
   const iconContainer = node.append("g")
+    .classed("node_icon_container", true)
     .attr("transform", "translate(-20, -20) scale(2, 2)");
 
   // node drag layer
   iconContainer.append("rect")
-    .classed("node_icon_drag", true)
     .attr("width", "24")
     .attr("height", "24")
     .attr("fill", "transparent");
