@@ -29,10 +29,15 @@ type Node = IDevice & {
   }
 }
 
+type Options = {
+  gridType?: "full" | "none",
+}
+
 type RenderInfo = {
   nodes: { [name: string]: Node },
   zoom: number,
-  selection: string[]
+  selection: string[],
+  options?: Options,
   onSelect: (node: Node | null) => void,
   onNodeUpdated: (node: Node, device: IDevice) => Promise<any>,
   update: (value: (info: RenderInfo) => RenderInfo) => void,
@@ -40,12 +45,13 @@ type RenderInfo = {
 
 type GraphComponentProps = {
   nodes: Node[],
-  selection?: string[]
+  selection?: string[],
+  options?: Options,
   onNodeUpdated: (node: Node, device: IDevice) => Promise<any>,
   onSelect: (id: string | null) => void,
 };
 
-export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, selection, onNodeUpdated, onSelect }) =>
+export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, selection, options, onNodeUpdated, onSelect }) =>
 {
   const containerRef = useRef<SVGSVGElement>(null);
   const memoizedNodes = useMemo(() => _.keyBy(nodes, node => node.id), [nodes]);
@@ -76,10 +82,11 @@ export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, selectio
       ...pLastRender?.nodes[pNode.id],
       ...pNode,
     })),
+    options,
     onNodeUpdated: (pNode, pDevice) => callbacks.current.onNodeUpdated(pNode, pDevice),
     onSelect: pNode => callbacks.current.onSelect(pNode?.id || null),
     update: setRenderInfo,
-  })), [memoizedNodes, selection]); //todo nodes jump, if dragged
+  })), [memoizedNodes, selection, options]); //todo nodes jump, if dragged
 
   // render items
   useEffect(() => _createGraph(containerRef.current!, renderInfo), [renderInfo]);
@@ -103,7 +110,8 @@ export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, selectio
     </defs>
 
     {/* Background */}
-    <rect id={"background"} style={{ pointerEvents: "none" }} x={-(PAGESIZE / 2)} y={-(PAGESIZE / 2)} width={PAGESIZE} height={PAGESIZE} fill="url(#grid)"/>
+    <rect id={"background"} style={{ pointerEvents: "none" }} x={-(PAGESIZE / 2)} y={-(PAGESIZE / 2)} width={PAGESIZE} height={PAGESIZE}
+          fill={options?.gridType === "full" ? "url(#grid)" : "transparent"}/>
 
     {/* nodes */}
     <g id={"nodes"}/>
