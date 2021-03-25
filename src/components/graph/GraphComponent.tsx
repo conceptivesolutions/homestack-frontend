@@ -45,7 +45,10 @@ export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, onSelect
   // update renderinfo, if something changed
   useEffect(() => setRenderInfo(pLastRender => ({
     ...pLastRender,
-    nodes: memoizedNodes,
+    nodes: _.mapValues(memoizedNodes, pNode => ({
+      ...pLastRender?.nodes[pNode.id],
+      ...pNode,
+    })),
     update: setRenderInfo,
   })), [memoizedNodes, onSelect, setRenderInfo]);
 
