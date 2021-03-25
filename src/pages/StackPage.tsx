@@ -153,7 +153,7 @@ const Details: React.VFC<{ selection: string }> = ({ selection }) =>
 const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection: string | null }> = ({ onSelect, selection }) =>
 {
   const { devices } = useActiveStackDevices();
-  // const { updateDevice, deleteDevice } = useActiveStackCRUD();
+  const { updateDevice } = useActiveStackCRUD();
   const { latestRecordOfDevice, latestRecordsOfDevice } = useActiveStackRecords();
 
   const nodes = useMemo(() => devices?.map(pDev => ({
@@ -162,7 +162,7 @@ const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection
     color: getStateColor(latestRecordsOfDevice(pDev.id)),
   })), [devices, latestRecordOfDevice, latestRecordsOfDevice]);
 
-  return <GraphComponent nodes={nodes || []} onSelect={onSelect}/>;
+  return <GraphComponent nodes={nodes || []} onSelect={onSelect} onNodeUpdated={(pNode, pDevice) => updateDevice(pDevice)}/>;
 
   // return <NetworkComponent className={styles.network}
   //                          data={{ nodes: devices || [] }}

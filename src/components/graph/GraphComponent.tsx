@@ -10,6 +10,15 @@ const PAGESIZE = 20_000;
 const SLOTPADDING = 5;
 const SLOTSIZE = 12;
 
+const nodeToDevice = (node: Node): IDevice =>
+{
+  const copy: any = { ...node };
+  delete copy.color;
+  delete copy.title;
+  delete copy.drag;
+  return copy;
+};
+
 type Node = IDevice & {
   color: string,
   title: string,
@@ -23,34 +32,49 @@ type RenderInfo = {
   nodes: { [name: string]: Node },
   zoom: number,
   onSelect: (node: Node | null) => void,
+  onNodeUpdated: (node: Node, device: IDevice) => Promise<any>,
   update: (value: (info: RenderInfo) => RenderInfo) => void,
 }
 
 type GraphComponentProps = {
   nodes: Node[],
+  onNodeUpdated: (node: Node, device: IDevice) => Promise<any>,
   onSelect: (id: string | null) => void,
 };
 
-export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, onSelect }) =>
+export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, onNodeUpdated, onSelect }) =>
 {
   const containerRef = useRef<SVGSVGElement>(null);
   const memoizedNodes = useMemo(() => _.keyBy(nodes, node => node.id), [nodes]);
+  const callbacks = useRef({ onNodeUpdated, onSelect });
   const [renderInfo, setRenderInfo] = useState<RenderInfo>({
     nodes: {},
     zoom: 1,
+    onNodeUpdated: () => Promise.resolve(),
     onSelect: pNode => onSelect(pNode?.id || null),
     update: () => null,
   });
 
-  // update renderinfo, if something changed
+  // detach callbacks from triggering a rerender
+  useEffect(() =>
+  {
+    callbacks.current = {
+      onNodeUpdated,
+      onSelect,
+    };
+  }, [onNodeUpdated, onSelect]);
+
+  // update renderinfo, if data changes
   useEffect(() => setRenderInfo(pLastRender => ({
     ...pLastRender,
     nodes: _.mapValues(memoizedNodes, pNode => ({
       ...pLastRender?.nodes[pNode.id],
       ...pNode,
     })),
+    onNodeUpdated: (pNode, pDevice) => callbacks.current.onNodeUpdated(pNode, pDevice),
+    onSelect: pNode => callbacks.current.onSelect(pNode?.id || null),
     update: setRenderInfo,
-  })), [memoizedNodes, onSelect, setRenderInfo]);
+  })), [memoizedNodes]);
 
   // render items
   useEffect(() => _createGraph(containerRef.current!, renderInfo), [renderInfo]);
@@ -98,7 +122,7 @@ function _createGraph(root: SVGSVGElement, info: RenderInfo)
   const drag = d3.select(root).selectAll(".node_icon_container");
 
   // init gesture handling
-  _initGestures(root, panPinch, content, drag, info.update);
+  _initGestures(root, panPinch, content, drag, info);
 
   // delete selection, because we clicked in the background
   panPinch.on("click", () => info.onSelect(null));
@@ -123,10 +147,10 @@ function _createGraph(root: SVGSVGElement, info: RenderInfo)
  * @param panPinchSelection selection to execute the pan/pinch behavior
  * @param scaleSelection selection that should be updated with the pan/pinched transform
  * @param dragSelection selection that matches the elements that should be dragged
- * @param setRenderInfo method to update the render info
+ * @param renderInfo information about the current render
  */
 function _initGestures(root: SVGSVGElement, panPinchSelection: Selection<any, any, any, any>, scaleSelection: Selection<any, any, any, any>,
-                       dragSelection: Selection<any, any, any, any>, setRenderInfo: (value: (info: RenderInfo) => RenderInfo) => void)
+                       dragSelection: Selection<any, any, any, any>, renderInfo: RenderInfo)
 {
   // pan/pinch zoom
   panPinchSelection.call(d3.zoom()
@@ -134,7 +158,7 @@ function _initGestures(root: SVGSVGElement, panPinchSelection: Selection<any, an
     .translateExtent([[-(PAGESIZE / 2), -(PAGESIZE / 2)], [PAGESIZE / 2, PAGESIZE / 2]])
     .on("zoom", (e) =>
     {
-      setRenderInfo(pInfo => ({
+      renderInfo.update(pInfo => ({
         ...pInfo,
         zoom: e.transform.k,
       }));
@@ -144,7 +168,7 @@ function _initGestures(root: SVGSVGElement, panPinchSelection: Selection<any, an
   // dragging
   dragSelection.call(d3.drag()
     .container(root)
-    .on("drag", e => setRenderInfo(pInfo =>
+    .on("drag", e => renderInfo.update(pInfo =>
     {
       const id = e.subject.id;
       const node: Node = pInfo.nodes[id];
@@ -152,6 +176,7 @@ function _initGestures(root: SVGSVGElement, panPinchSelection: Selection<any, an
         x: (node.drag?.x || node.location?.x || 0) + (e.dx / pInfo.zoom),
         y: (node.drag?.y || node.location?.y || 0) + (e.dy / pInfo.zoom),
       };
+      console.log(node.drag);
       pInfo.nodes[id] = node;
 
       return ({
@@ -159,11 +184,14 @@ function _initGestures(root: SVGSVGElement, panPinchSelection: Selection<any, an
         nodes: pInfo.nodes,
       });
     }))
-    .on("end", e => setRenderInfo(pInfo => //todo update node
+    .on("end", e => renderInfo.update(pInfo =>
     {
       const id = e.subject.id;
       const node: Node = pInfo.nodes[id];
-      delete node.drag;
+      if (node.drag)
+        node.location = { ...node.drag };
+      node.drag = undefined;
+      renderInfo.onNodeUpdated(e.subject, nodeToDevice(node)); // fire update
       pInfo.nodes[id] = node;
       return ({
         ...pInfo,
