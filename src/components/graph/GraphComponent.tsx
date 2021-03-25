@@ -128,7 +128,7 @@ function _createGraph(root: SVGSVGElement, info: RenderInfo)
 function _initGestures(root: SVGSVGElement, panPinchSelection: Selection<any, any, any, any>, scaleSelection: Selection<any, any, any, any>,
                        dragSelection: Selection<any, any, any, any>, setRenderInfo: (value: (info: RenderInfo) => RenderInfo) => void)
 {
-  // pan/pinch zoom todo does not work if hovering over node
+  // pan/pinch zoom
   panPinchSelection.call(d3.zoom()
     .scaleExtent([.25, 2])
     .translateExtent([[-(PAGESIZE / 2), -(PAGESIZE / 2)], [PAGESIZE / 2, PAGESIZE / 2]])
@@ -186,6 +186,7 @@ function _createNodeSkeleton(container: Selection<any, Node, BaseType, any>)
 
   // node icon container
   const iconContainer = node.append("g")
+    .on("mousewheel", e => setTimeout(() => document.getElementById("panPinch")?.dispatchEvent(e)))
     .classed("node_icon_container", true)
     .attr("transform", "translate(-20, -20) scale(2, 2)");
 
