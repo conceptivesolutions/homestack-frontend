@@ -1,3 +1,4 @@
+import { mdiCheckboxBlankOutline, mdiCheckBoxOutline } from "@mdi/js";
 import * as d3 from "d3";
 import { BaseType, Selection } from "d3";
 import _ from "lodash";
@@ -31,6 +32,7 @@ type Node = IDevice & {
 type RenderInfo = {
   nodes: { [name: string]: Node },
   zoom: number,
+  selection: string[]
   onSelect: (node: Node | null) => void,
   onNodeUpdated: (node: Node, device: IDevice) => Promise<any>,
   update: (value: (info: RenderInfo) => RenderInfo) => void,
@@ -38,11 +40,12 @@ type RenderInfo = {
 
 type GraphComponentProps = {
   nodes: Node[],
+  selection?: string[]
   onNodeUpdated: (node: Node, device: IDevice) => Promise<any>,
   onSelect: (id: string | null) => void,
 };
 
-export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, onNodeUpdated, onSelect }) =>
+export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, selection, onNodeUpdated, onSelect }) =>
 {
   const containerRef = useRef<SVGSVGElement>(null);
   const memoizedNodes = useMemo(() => _.keyBy(nodes, node => node.id), [nodes]);
@@ -50,6 +53,7 @@ export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, onNodeUp
   const [renderInfo, setRenderInfo] = useState<RenderInfo>({
     nodes: {},
     zoom: 1,
+    selection: [],
     onNodeUpdated: () => Promise.resolve(),
     onSelect: pNode => onSelect(pNode?.id || null),
     update: () => null,
@@ -67,6 +71,7 @@ export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, onNodeUp
   // update renderinfo, if data changes
   useEffect(() => setRenderInfo(pLastRender => ({
     ...pLastRender,
+    selection: selection || [],
     nodes: _.mapValues(memoizedNodes, pNode => ({
       ...pLastRender?.nodes[pNode.id],
       ...pNode,
@@ -74,7 +79,7 @@ export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, onNodeUp
     onNodeUpdated: (pNode, pDevice) => callbacks.current.onNodeUpdated(pNode, pDevice),
     onSelect: pNode => callbacks.current.onSelect(pNode?.id || null),
     update: setRenderInfo,
-  })), [memoizedNodes]);
+  })), [memoizedNodes, selection]); //todo nodes jump, if dragged
 
   // render items
   useEffect(() => _createGraph(containerRef.current!, renderInfo), [renderInfo]);
@@ -137,7 +142,7 @@ function _createGraph(root: SVGSVGElement, info: RenderInfo)
     .on("click", (event, data) => info.onSelect(data));
 
   // update nodes with data
-  _updateNodeData(node);
+  _updateNodeData(node, info);
 }
 
 /**
@@ -229,6 +234,16 @@ function _createNodeSkeleton(container: Selection<any, Node, BaseType, any>)
     .append("path")
     .classed("node_icon", true);
 
+  // node selection
+  iconContainer
+    .append("g")
+    .classed("node_selection", true)
+    .attr("transform", "translate(-5, -5) scale(0.35, 0.35)")
+    .attr("width", "6")
+    .attr("height", "6")
+    .append("path")
+    .classed("node_selected", true);
+
   // node text
   node.append("text")
     .classed("node_title", true);
@@ -256,8 +271,9 @@ function _createNodeSkeleton(container: Selection<any, Node, BaseType, any>)
  * Update the data in the previously created node skeleton
  *
  * @param node Node container to update
+ * @param renderInfo information about the current render
  */
-function _updateNodeData(node: Selection<any, Node, BaseType, any>)
+function _updateNodeData(node: Selection<any, Node, BaseType, any>, renderInfo: RenderInfo)
 {
   // position
   node
@@ -287,4 +303,9 @@ function _updateNodeData(node: Selection<any, Node, BaseType, any>)
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "baseline")
     .text(d => d.title);
+
+  // selection
+  node.select(".node_selected")
+    .attr("fill", d => renderInfo.selection.indexOf(d.id) > -1 ? "#14bae4" : "gray")
+    .attr("d", d => renderInfo.selection.indexOf(d.id) > -1 ? mdiCheckBoxOutline : mdiCheckboxBlankOutline);
 }

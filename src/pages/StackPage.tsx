@@ -162,7 +162,7 @@ const NetworkGraph: React.VFC<{ onSelect: (id: string | null) => void, selection
     color: getStateColor(latestRecordsOfDevice(pDev.id)),
   })), [devices, latestRecordOfDevice, latestRecordsOfDevice]);
 
-  return <GraphComponent nodes={nodes || []} onSelect={onSelect} onNodeUpdated={(pNode, pDevice) => updateDevice(pDevice)}/>;
+  return <GraphComponent nodes={nodes || []} onSelect={onSelect} onNodeUpdated={(pNode, pDevice) => updateDevice(pDevice)} selection={selection ? [selection] : []}/>;
 
   // return <NetworkComponent className={styles.network}
   //                          data={{ nodes: devices || [] }}
