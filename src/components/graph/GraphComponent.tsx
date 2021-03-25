@@ -22,7 +22,7 @@ type Node = IDevice & {
 type RenderInfo = {
   nodes: { [name: string]: Node },
   zoom: number,
-  onSelect?: (node: Node | null) => void,
+  onSelect: (node: Node | null) => void,
   update: (value: (info: RenderInfo) => RenderInfo) => void,
 }
 
@@ -35,15 +35,19 @@ export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, onSelect
 {
   const containerRef = useRef<SVGSVGElement>(null);
   const memoizedNodes = useMemo(() => _.keyBy(nodes, node => node.id), [nodes]);
-  const [renderInfo, setRenderInfo] = useState<RenderInfo>({ nodes: {}, zoom: 1, update: () => null });
-
-  // update renderinfo, if something changed
-  useEffect(() => setRenderInfo({
-    nodes: memoizedNodes,
+  const [renderInfo, setRenderInfo] = useState<RenderInfo>({
+    nodes: {},
     zoom: 1,
     onSelect: pNode => onSelect(pNode?.id || null),
+    update: () => null,
+  });
+
+  // update renderinfo, if something changed
+  useEffect(() => setRenderInfo(pLastRender => ({
+    ...pLastRender,
+    nodes: memoizedNodes,
     update: setRenderInfo,
-  }), [memoizedNodes, onSelect, setRenderInfo]);
+  })), [memoizedNodes, onSelect, setRenderInfo]);
 
   // render items
   useEffect(() => _createGraph(containerRef.current!, renderInfo), [renderInfo]);
@@ -94,7 +98,7 @@ function _createGraph(root: SVGSVGElement, info: RenderInfo)
   _initGestures(root, panPinch, content, drag, info.update);
 
   // delete selection, because we clicked in the background
-  panPinch.on("click", () => info.onSelect && info.onSelect(null));
+  panPinch.on("click", () => info.onSelect(null));
 
   // create nodes, if necessary
   const node = content.select("#nodes")
@@ -103,7 +107,7 @@ function _createGraph(root: SVGSVGElement, info: RenderInfo)
     .join(_createNodeSkeleton)
 
     // select node on click
-    .on("click", (event, data) => info.onSelect && info.onSelect(data));
+    .on("click", (event, data) => info.onSelect(data));
 
   // update nodes with data
   _updateNodeData(node);
