@@ -2,7 +2,8 @@ import { mdiCheckboxBlankOutline, mdiCheckBoxOutline } from "@mdi/js";
 import * as d3 from "d3";
 import { BaseType, Selection } from "d3";
 import _ from "lodash";
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import useDeepCompareEffect from "use-deep-compare-effect";
 import { iconToSVG } from "../../helpers/iconHelper";
 import { IDevice } from "../../models/definitions/backend/device";
 import styles from "./GraphComponent.module.scss";
@@ -54,7 +55,6 @@ type GraphComponentProps = {
 export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, selection, options, onNodeUpdated, onSelect }) =>
 {
   const containerRef = useRef<SVGSVGElement>(null);
-  const memoizedNodes = useMemo(() => _.keyBy(nodes, node => node.id), [nodes]);
   const callbacks = useRef({ onNodeUpdated, onSelect });
   const [renderInfo, setRenderInfo] = useState<RenderInfo>({
     nodes: {},
@@ -75,10 +75,10 @@ export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, selectio
   }, [onNodeUpdated, onSelect]);
 
   // update renderinfo, if data changes
-  useEffect(() => setRenderInfo(pLastRender => ({
+  useDeepCompareEffect(() => setRenderInfo(pLastRender => ({
     ...pLastRender,
     selection: selection || [],
-    nodes: _.mapValues(memoizedNodes, pNode => ({
+    nodes: _.mapValues(_.keyBy(nodes, node => node.id), pNode => ({
       ...pLastRender?.nodes[pNode.id],
       ...pNode,
     })),
@@ -86,7 +86,7 @@ export const GraphComponent: React.VFC<GraphComponentProps> = ({ nodes, selectio
     onNodeUpdated: (pNode, pDevice) => callbacks.current.onNodeUpdated(pNode, pDevice),
     onSelect: pNode => callbacks.current.onSelect(pNode?.id || null),
     update: setRenderInfo,
-  })), [memoizedNodes, selection, options]); //todo nodes jump, if dragged
+  })), [nodes, selection, options]);
 
   // render items
   useEffect(() => _createGraph(containerRef.current!, renderInfo), [renderInfo]);
@@ -189,7 +189,6 @@ function _initGestures(root: SVGSVGElement, panPinchSelection: Selection<any, an
         x: (node.drag?.x || node.location?.x || 0) + (e.dx / pInfo.zoom),
         y: (node.drag?.y || node.location?.y || 0) + (e.dy / pInfo.zoom),
       };
-      console.log(node.drag);
       pInfo.nodes[id] = node;
 
       return ({
